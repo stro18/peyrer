@@ -12,6 +12,7 @@
         <module>modules/retrievalmodule</module>
         <module>modules/indexmodule</module>
         <module>modules/databasemodule</module>
+        <module>modules/mainmodule</module>
     </modules>
 
     <properties>
