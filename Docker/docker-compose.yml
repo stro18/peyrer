@@ -6,6 +6,8 @@ services:
   mongo:
     image: mongo:4.2
     restart: always
+    volumes:
+      - ../raw_data:/raw_data
     ports:
       - 27017:27017
     environment:
