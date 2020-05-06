@@ -1,6 +1,5 @@
 import com.mongodb.client.MongoCollection;
 import de.peyrer.connection.MongoConnector;
-import de.peyrer.model.Argument;
 import org.bson.BsonDocument;
 import org.junit.Assert;
 import org.junit.Test;
