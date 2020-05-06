@@ -1,2 +1,4 @@
 /.idea
-peyrer.iml
+*.iml
+**/target
+raw_data/*
