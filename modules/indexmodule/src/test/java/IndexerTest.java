@@ -1,4 +1,4 @@
-import com.peyrer.indexmodule.PremiseIndexer;
+import de.peyrer.indexer.PremiseIndexer;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import org.junit.Assert;

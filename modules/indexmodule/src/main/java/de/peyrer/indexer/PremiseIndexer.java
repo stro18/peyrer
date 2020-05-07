@@ -1,4 +1,4 @@
-package com.peyrer.indexmodule;
+package de.peyrer.indexer;
 
 import de.peyrer.repository.ArgumentRepository;
 
