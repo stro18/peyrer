@@ -26,4 +26,22 @@ public class ArgumentRepositoryTest {
 
         Assert.assertEquals(argumentRead.id, argumentWrite.id);
     }
+
+    @Test
+    public void testFindAll(){
+        ArgumentRepository argumentRepository = new ArgumentRepository();
+
+        Argument[] arguments = new Argument[2];
+        int count = 0;
+        for(Argument argument: argumentRepository.readAll()){
+            arguments[count] = argument;
+            count++;
+
+            if(count==2){
+                break;
+            }
+        }
+
+        Assert.assertNotEquals(arguments[0].id, arguments[1].id);
+    }
 }

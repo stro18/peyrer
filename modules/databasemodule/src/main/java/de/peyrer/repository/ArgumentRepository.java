@@ -3,6 +3,7 @@ package de.peyrer.repository;
 import com.mongodb.client.MongoCollection;
 import de.peyrer.connection.MongoConnector;
 import de.peyrer.model.Argument;
+import de.peyrer.model.ArgumentIterable;
 import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
@@ -17,7 +18,7 @@ public class ArgumentRepository implements IArgumentRepository {
 
     @Override
     public Iterable<Argument> readAll() {
-        return null;
+        return new ArgumentIterable(collection.find());
     }
 
     @Override
