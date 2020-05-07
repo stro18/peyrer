@@ -1,6 +1,6 @@
-import com.mongodb.client.MongoCollection;
-import com.peyrer.indexmodule.PremiseIndexer;
-import org.bson.Document;
+import de.peyrer.indexer.PremiseIndexer;
+import de.peyrer.model.Argument;
+import de.peyrer.repository.ArgumentRepository;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,10 +11,10 @@ public class IndexerTest {
 
     @Test
     public void testDatabaseConnection() {
-        PremiseIndexer indexer = new PremiseIndexer();
+        PremiseIndexer indexer = new PremiseIndexer(new ArgumentRepository());
 
-        Document d = indexer.coll.find().first();
+        Argument a = indexer.repository.readById("S96f2396e-A2f68e3d2");
 
-        Assert.assertNotNull(d);
+        Assert.assertNotNull(a);
     }
 }

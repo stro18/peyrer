@@ -1,4 +1,4 @@
-package com.peyrer.indexmodule;
+package de.peyrer.connection;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
@@ -7,15 +7,17 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import de.peyrer.model.Argument;
+import org.bson.BsonDocument;
 import org.bson.Document;
 
 import java.util.Arrays;
 
-public class Connector {
+public class MongoConnector {
 
     private MongoDatabase database;
 
-    public Connector() {
+    public MongoConnector() {
         MongoCredential credential = MongoCredential.createCredential("root", "admin", "example".toCharArray());
 
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -26,12 +28,10 @@ public class Connector {
 
         MongoClient mongoClient = MongoClients.create(settings);
 
-        this.database = mongoClient.getDatabase("searchengine");
+        this.database = mongoClient.getDatabase("peyrer");
     }
 
-    public MongoCollection<Document> getCollection(String collection){
-        return database.getCollection("argument");
+    public MongoCollection<BsonDocument> getCollection(String collection){
+        return database.getCollection(collection, BsonDocument.class);
     }
-
-
 }
