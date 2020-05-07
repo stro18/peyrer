@@ -1,18 +1,13 @@
 package com.peyrer.indexmodule;
 
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
-
-import java.util.Arrays;
-
+import de.peyrer.repository.ArgumentRepository;
 
 public class PremiseIndexer {
 
-    public MongoCollection<Document> coll;
+    public ArgumentRepository repository;
 
-    public PremiseIndexer(){
-        Connector connector = new Connector();
-        this.coll = connector.getCollection("argument");
+    public PremiseIndexer(ArgumentRepository repository){
+        this.repository = repository;
     }
 
 }
