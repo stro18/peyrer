@@ -48,13 +48,13 @@ public class GraphBuilder {
         Iterable<Argument> arguments = repository.readAll();
 
         for(Argument argument : arguments){
-            graph.setVertex(argument.id);
+            graph.addVertex(argument.id);
 
             matcher.setStringToMatch(argument.conclusion);
             String[] matches = matcher.match();
 
             for(String match : matches){
-                graph.setEdge(argument.id, match);
+                graph.addEdge(argument.id, match);
             }
         }
 

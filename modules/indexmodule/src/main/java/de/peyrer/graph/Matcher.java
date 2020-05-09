@@ -2,7 +2,7 @@ package de.peyrer.graph;
 
 public interface Matcher {
 
-    public String[] match();
+    String[] match();
 
-    public String setStringToMatch(String stringToMatch);
+    String setStringToMatch(String stringToMatch);
 }

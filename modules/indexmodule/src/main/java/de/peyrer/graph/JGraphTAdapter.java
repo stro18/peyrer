@@ -2,7 +2,6 @@ package de.peyrer.graph;
 
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.LinkedList;
@@ -26,14 +25,14 @@ public class JGraphTAdapter implements IDirectedGraph {
     }
 
     @Override
-    public String setVertex(String vertex) {
+    public String addVertex(String vertex) {
         boolean added = graph.addVertex(vertex);
 
         return added ? vertex : null;
     }
 
     @Override
-    public String[] setEdge(String sourceVertex, String targetVertex) {
+    public String[] addEdge(String sourceVertex, String targetVertex) {
         DefaultEdge edge = graph.addEdge(sourceVertex, targetVertex);
 
         return edge == null ? null : new String[]{graph.getEdgeSource(edge), graph.getEdgeTarget(edge)};

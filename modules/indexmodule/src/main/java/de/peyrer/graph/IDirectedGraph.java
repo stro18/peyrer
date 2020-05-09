@@ -4,11 +4,11 @@ import java.util.Map;
 
 public interface IDirectedGraph {
 
-    public Map<String,Double> computePageRank();
+    Map<String,Double> computePageRank();
 
-    public String setVertex(String vertex);
+    String addVertex(String vertex);
 
-    public String[] setEdge(String sourceVertex, String targetVertex);
+    String[] addEdge(String sourceVertex, String targetVertex);
 
-    public Iterable<String[]> getEdges();
+    Iterable<String[]> getEdges();
 }
