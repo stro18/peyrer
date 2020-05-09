@@ -1,8 +1,10 @@
 package de.peyrer.graph;
 
+import java.util.Map;
+
 public interface IDirectedGraph {
 
-    public IDirectedGraph computePageRank();
+    public Map<String,Double> computePageRank();
 
     public String setVertex(String vertex);
 
