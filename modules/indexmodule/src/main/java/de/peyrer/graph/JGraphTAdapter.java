@@ -7,7 +7,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class JGraphTAdapter implements IDirectedGraph {
+class JGraphTAdapter implements IDirectedGraph {
     private SimpleDirectedGraph<String, DefaultEdge> graph;
 
     private static final double dampingFactor = 0.85;

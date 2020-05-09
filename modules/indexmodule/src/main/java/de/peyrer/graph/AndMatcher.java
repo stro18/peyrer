@@ -1,6 +1,6 @@
 package de.peyrer.graph;
 
-public class AndMatcher implements Matcher {
+class AndMatcher implements Matcher {
 
     private String stringToMatch;
 
