@@ -7,7 +7,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import java.util.LinkedList;
 import java.util.Map;
 
-class JGraphTAdapter implements IDirectedGraph {
+class JGraphTAdapter extends AbstractDirectedGraph {
     private SimpleDirectedGraph<String, DefaultEdge> graph;
 
     private static final double dampingFactor = 0.85;
@@ -25,14 +25,14 @@ class JGraphTAdapter implements IDirectedGraph {
     }
 
     @Override
-    public String addVertex(String vertex) {
+    String addVertex(String vertex) {
         boolean added = graph.addVertex(vertex);
 
         return added ? vertex : null;
     }
 
     @Override
-    public String[] addEdge(String sourceVertex, String targetVertex) {
+    String[] addEdge(String sourceVertex, String targetVertex) {
         DefaultEdge edge = graph.addEdge(sourceVertex, targetVertex);
 
         return edge == null ? null : new String[]{graph.getEdgeSource(edge), graph.getEdgeTarget(edge)};

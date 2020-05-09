@@ -5,7 +5,7 @@ import de.peyrer.repository.ArgumentRepository;
 
 public class GraphBuilder {
 
-    private IDirectedGraph graph;
+    private AbstractDirectedGraph graph;
 
     private ArgumentRepository repository;
 
