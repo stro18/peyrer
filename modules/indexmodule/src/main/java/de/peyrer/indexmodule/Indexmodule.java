@@ -5,6 +5,8 @@ import de.peyrer.graph.IDirectedGraph;
 import de.peyrer.indexer.IIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
 
+import java.io.IOException;
+
 public class Indexmodule implements IIndexmodule {
 
     private GraphBuilder graphBuilder;
@@ -15,7 +17,11 @@ public class Indexmodule implements IIndexmodule {
 
     @Override
     public void indexWithRelevance() {
-        indexer.indexPrem();
+        try {
+            indexer.indexPrem();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         IDirectedGraph graph = graphBuilder.build();
 
