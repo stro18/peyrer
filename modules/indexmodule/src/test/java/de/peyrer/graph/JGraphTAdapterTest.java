@@ -17,7 +17,7 @@ public class JGraphTAdapterTest {
         Map<String, Double> scores = graph.computePageRank();
 
         for(Map.Entry<String,Double> entry : scores.entrySet()){
-            Assert.assertTrue(entry.getValue() > );
+            Assert.assertTrue(entry.getValue() > 0);
         }
 
         Assert.assertTrue(scores.size() > 1);
