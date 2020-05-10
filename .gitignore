@@ -2,3 +2,4 @@
 *.iml
 **/target
 raw_data/*
+**/index

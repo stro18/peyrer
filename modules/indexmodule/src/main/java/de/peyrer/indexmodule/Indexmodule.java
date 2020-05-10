@@ -11,14 +11,16 @@ public class Indexmodule implements IIndexmodule {
 
     private GraphBuilder graphBuilder;
 
-    private IIndexer indexer;
+    private IIndexer premiseIndexer;
+
+    private IIndexer relevanceIndexer;
 
     private IRelevanceComputer relevanceComputer;
 
     @Override
     public void indexWithRelevance() {
         try {
-            indexer.indexPrem();
+            premiseIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,6 +32,10 @@ public class Indexmodule implements IIndexmodule {
 
         graphBuilder.saveToDatabase(graphWithRelevance);
 
-        indexer.indexConc();
+        try {
+            relevanceIndexer.index();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

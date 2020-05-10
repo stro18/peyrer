@@ -9,10 +9,10 @@ public class RelevanceIndexerTest {
 
     @Test
     public void testIndexPrem(){
-        RelevanceIndexer indexer = null;
+        PremiseIndexer indexer = null;
         try {
-            indexer = new RelevanceIndexer("index");
-            indexer.indexPrem();
+            indexer = new PremiseIndexer("index");
+            indexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }
