@@ -13,14 +13,10 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
 
-public class PremiseIndexer implements IIndexer {
+public class PremiseIndexer extends AbstractIndexer {
 
     ArgumentRepository argumentRepository;
 
@@ -31,12 +27,7 @@ public class PremiseIndexer implements IIndexer {
     PremiseIndexer(String directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        Path wantedIndexPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", directory);
-        Files.walk(wantedIndexPath)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
-        this.indexPath = Files.createDirectory(wantedIndexPath);
+        this.indexPath = this.createIndexDirectory(directory);
 
         Analyzer analyzer = new StandardAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
