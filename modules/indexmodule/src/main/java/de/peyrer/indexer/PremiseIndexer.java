@@ -20,14 +20,12 @@ public class PremiseIndexer extends AbstractIndexer {
 
     ArgumentRepository argumentRepository;
 
-    Path indexPath;
-
     IndexWriterConfig config;
 
-    PremiseIndexer(String directory) throws IOException {
+    PremiseIndexer(String directoryName) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        this.indexPath = this.createIndexDirectory(directory);
+        this.indexPath = this.createIndexDirectory("src", "main", "resources", directoryName);
 
         Analyzer analyzer = new StandardAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
@@ -55,5 +53,6 @@ public class PremiseIndexer extends AbstractIndexer {
         }
 
         indexWriter.close();
+        fsDirectory.close();
     }
 }
