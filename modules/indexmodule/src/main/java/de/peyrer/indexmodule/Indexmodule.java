@@ -5,17 +5,25 @@ import de.peyrer.graph.IDirectedGraph;
 import de.peyrer.indexer.IIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
 
+import java.io.IOException;
+
 public class Indexmodule implements IIndexmodule {
 
     private GraphBuilder graphBuilder;
 
-    private IIndexer indexer;
+    private IIndexer premiseIndexer;
+
+    private IIndexer relevanceIndexer;
 
     private IRelevanceComputer relevanceComputer;
 
     @Override
     public void indexWithRelevance() {
-        indexer.indexPrem();
+        try {
+            premiseIndexer.index();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         IDirectedGraph graph = graphBuilder.build();
 
@@ -24,6 +32,10 @@ public class Indexmodule implements IIndexmodule {
 
         graphBuilder.saveToDatabase(graphWithRelevance);
 
-        indexer.indexConc();
+        try {
+            relevanceIndexer.index();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,8 +1,10 @@
 package de.peyrer.indexer;
 
+import java.io.IOException;
+
 public interface IIndexer {
 
-    public void indexPrem();
+    public void index() throws IOException;
 
-    public void indexConc();
+    public String getIndexPath() throws IOException;
 }
