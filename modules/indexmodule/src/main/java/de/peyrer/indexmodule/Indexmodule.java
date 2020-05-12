@@ -6,6 +6,7 @@ import de.peyrer.indexer.IIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class Indexmodule implements IIndexmodule {
 
@@ -27,10 +28,13 @@ public class Indexmodule implements IIndexmodule {
 
         IDirectedGraph graph = graphBuilder.build();
 
-        relevanceComputer.setGraph(graph);
-        IDirectedGraph graphWithRelevance = relevanceComputer.computeRelevance();
+        Map<String,Double> pageRank = graph.computePageRank();
 
-        graphBuilder.saveToDatabase(graphWithRelevance);
+        relevanceComputer.setGraph(graph);
+        relevanceComputer.setPageRank(graph.computePageRank());
+        Map<String,Double> relevance = relevanceComputer.computeRelevance();
+
+        graphBuilder.saveToDatabase(graph, pageRank, relevance);
 
         try {
             relevanceIndexer.index();
