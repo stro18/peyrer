@@ -1,6 +1,5 @@
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
-import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,4 +43,28 @@ public class ArgumentRepositoryTest {
 
         Assert.assertNotEquals(arguments[0].id, arguments[1].id);
     }
+
+    @Test
+    public void testUpdate(){
+        ArgumentRepository argumentRepository = new ArgumentRepository();
+        Argument argumentInitial = argumentRepository.readById("1");
+        Argument argumentUpdated = new Argument("1", "Abortion", new String[]{"Every woman has the right to decide", "Every life counts", "Abortion is murder"});
+
+        argumentRepository.update(argumentInitial,argumentUpdated);
+
+        Assert.assertEquals(argumentInitial.id,argumentUpdated.id);
+    }
+
+    @Test
+    public void testDelete() {
+
+        ArgumentRepository argumentRepository = new ArgumentRepository();
+
+        Argument argument = argumentRepository.readById("1");
+
+        Argument argumentDelete= argumentRepository.delete(argument);
+
+        Assert.assertEquals(argumentDelete.id,argument.id);
+    }
 }
+

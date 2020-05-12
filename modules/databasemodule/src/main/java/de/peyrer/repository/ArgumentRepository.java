@@ -8,6 +8,11 @@ import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
 
+import java.util.Objects;
+
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.set;
+
 public class ArgumentRepository implements IArgumentRepository {
 
     private MongoCollection<BsonDocument> collection;
@@ -31,17 +36,23 @@ public class ArgumentRepository implements IArgumentRepository {
 
     @Override
     public Argument create(Argument entity) {
-         BsonObjectId bsonId = collection.insertOne(entity.toBson()).getInsertedId().asObjectId();
-         return bsonId != null ? entity : null;
+         if (collection.find(entity.toBson()).first() == null) {
+            BsonObjectId bsonId = Objects.requireNonNull(collection.insertOne(entity.toBson()).getInsertedId()).asObjectId();
+            return bsonId != null ? entity : null;
+         }
+         else{
+             return null;
+         }
     }
 
     @Override
-    public Argument update(Argument entity) {
-        return null;
+    public Argument update(Argument entity, Argument entity2) {
+        BsonDocument bsonEntity = entity.toBson();
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()),combine(set("conclusion",entity2.toBson().get("conclusion")),set("premises",entity2.toBson().getArray("premises")))).wasAcknowledged() ? entity : null;
     }
 
     @Override
     public Argument delete(Argument entity) {
-        return null;
+        return collection.deleteOne(entity.toBson()).wasAcknowledged() ? entity : null;
     }
 }
