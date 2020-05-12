@@ -3,6 +3,8 @@ package de.peyrer.graph;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 
+import java.util.Map;
+
 public class GraphBuilder {
 
     private AbstractDirectedGraph graph;
@@ -40,7 +42,7 @@ public class GraphBuilder {
         return null;
     };
 
-    public void saveToDatabase(IDirectedGraph graph){
+    public void saveToDatabase(IDirectedGraph graph, Map<String,Double> pageRank, Map<String,Double> relevance){
         return;
     };
 
@@ -54,7 +56,7 @@ public class GraphBuilder {
             String[] matches = matcher.match();
 
             for(String match : matches){
-                graph.addEdge(argument.id, match);
+                graph.addEdge(match, argument.id);
             }
         }
 
