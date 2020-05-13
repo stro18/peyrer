@@ -1,16 +1,23 @@
 package de.peyrer.graph;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 class AndMatcher implements Matcher {
 
     private String stringToMatch;
 
     @Override
-    public String[] match() {
+    public Iterable<Map<String,String>> match() {
+        LinkedList<Map<String,String>> result = new LinkedList<>();
         if(!stringToMatch.equals("Mine Ban Treaty (Ottawa Treaty)")) {
-            return new String[]{"S96f2396e-A2f68e3d2"};
-        }else {
-            return new String[0];
+            Map<String,String> match = new HashMap<>();
+            match.put("argumentId", "S96f2396e-A2f68e3d2");
+            match.put("premiseId", "1");
+            result.add(match);
         }
+        return result;
     }
 
     @Override

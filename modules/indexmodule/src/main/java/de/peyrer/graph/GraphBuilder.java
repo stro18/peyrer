@@ -53,10 +53,11 @@ public class GraphBuilder {
             graph.addVertex(argument.id);
 
             matcher.setStringToMatch(argument.conclusion);
-            String[] matches = matcher.match();
+            Iterable<Map<String,String>> matches = matcher.match();
 
-            for(String match : matches){
-                graph.addEdge(match, argument.id);
+            for(Map<String,String> match : matches){
+                graph.addVertex(match.get("argumentId"));
+                graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"));
             }
         }
 
