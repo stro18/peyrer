@@ -46,9 +46,21 @@ public class ArgumentRepository implements IArgumentRepository {
     }
 
     @Override
-    public Argument update(Argument entity, Argument entity2) {
+    public Argument replace(Argument entity, Argument entity2) {
         BsonDocument bsonEntity = entity.toBson();
-        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()),combine(set("conclusion",entity2.toBson().get("conclusion")),set("premises",entity2.toBson().getArray("premises")))).wasAcknowledged() ? entity : null;
+        return collection.replaceOne(Objects.requireNonNull(collection.find(bsonEntity).first()),entity2.toBson()).wasAcknowledged() ? entity : null;
+    }
+
+    @Override
+    public Argument updatePageRank(Argument entity, double value) {
+        BsonDocument bsonEntity = entity.toBson();
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()),set("pageRank",value)).wasAcknowledged() ? entity : null;
+    }
+
+    @Override
+    public Argument updateRelevance(Argument entity, double value) {
+        BsonDocument bsonEntity = entity.toBson();
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()), set("relevance", value)).wasAcknowledged() ? entity : null;
     }
 
     @Override
