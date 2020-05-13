@@ -8,6 +8,8 @@ public interface IRepository<T> {
 
     T readById(String id);
     T create(T entity);
-    T update(T entity,T entity2);
+    T replace(T entity,T entity2);
     T delete(T entity);
+    T updatePageRank (T entity, double value);
+    T updateRelevance(T entity, double value);
 }

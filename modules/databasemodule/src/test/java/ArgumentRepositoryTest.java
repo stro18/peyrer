@@ -1,12 +1,17 @@
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 
 public class ArgumentRepositoryTest {
 
     @Test
-    public void testReadById(){
+
+    public void test_A_ReadById(){
         ArgumentRepository argumentRepository = new ArgumentRepository();
 
         Argument argument = argumentRepository.readById("S96f2396e-A2f68e3d2");
@@ -15,7 +20,7 @@ public class ArgumentRepositoryTest {
     }
 
     @Test
-    public void testCreate(){
+    public void test_B_Create(){
         ArgumentRepository argumentRepository = new ArgumentRepository();
         Argument argumentWrite = new Argument("1", "Abortion", new String[]{"Every woman has the right to decide", "Every life counts"});
 
@@ -27,7 +32,7 @@ public class ArgumentRepositoryTest {
     }
 
     @Test
-    public void testFindAll(){
+    public void test_C_FindAll(){
         ArgumentRepository argumentRepository = new ArgumentRepository();
 
         Argument[] arguments = new Argument[2];
@@ -45,26 +50,51 @@ public class ArgumentRepositoryTest {
     }
 
     @Test
-    public void testUpdate(){
+    public void test_D_Replace(){
         ArgumentRepository argumentRepository = new ArgumentRepository();
         Argument argumentInitial = argumentRepository.readById("1");
-        Argument argumentUpdated = new Argument("1", "Abortion", new String[]{"Every woman has the right to decide", "Every life counts", "Abortion is murder"});
+        Argument argumentUpdated = new Argument("2", "Abortion", new String[]{"Every woman has the right to decide", "Every life counts", "Abortion is murder"});
 
-        argumentRepository.update(argumentInitial,argumentUpdated);
+        argumentRepository.replace(argumentInitial,argumentUpdated);
 
-        Assert.assertEquals(argumentInitial.id,argumentUpdated.id);
+        Assert.assertNotEquals(argumentInitial.id,argumentUpdated.id);
     }
 
     @Test
-    public void testDelete() {
+    public void test_E_UpdatePagerank(){
+        ArgumentRepository argumentRepository = new ArgumentRepository();
+        Argument argumentInitial = argumentRepository.readById("2");
+
+        double value = 3.0;
+
+        argumentRepository.updatePageRank(argumentInitial,value);
+
+        Assert.assertEquals(argumentInitial.pageRank,value,3.0);
+    }
+
+    @Test
+    public void test_F_UpdateRelevance(){
+        ArgumentRepository argumentRepository = new ArgumentRepository();
+        Argument argumentInitial = argumentRepository.readById("2");
+
+        double value = 5.0;
+
+        argumentRepository.updateRelevance(argumentInitial,value);
+
+        Assert.assertEquals(argumentInitial.relevance,value,5.0);
+    }
+
+    @Test
+    public void test_G_Delete() {
 
         ArgumentRepository argumentRepository = new ArgumentRepository();
 
-        Argument argument = argumentRepository.readById("1");
+        Argument argument = argumentRepository.readById("2");
 
         Argument argumentDelete= argumentRepository.delete(argument);
 
         Assert.assertEquals(argumentDelete.id,argument.id);
     }
+
 }
 
