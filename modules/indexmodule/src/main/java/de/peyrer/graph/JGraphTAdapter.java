@@ -8,16 +8,16 @@ import java.util.LinkedList;
 import java.util.Map;
 
 class JGraphTAdapter extends AbstractDirectedGraph {
-    private SimpleDirectedGraph<String, DefaultEdge> graph;
+    private SimpleDirectedGraph<String, DefaultEdgeWithPremiseNumber> graph;
 
     JGraphTAdapter()
     {
-        this.graph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+        this.graph = new SimpleDirectedGraph<String, DefaultEdgeWithPremiseNumber>(DefaultEdgeWithPremiseNumber.class);
     }
 
     @Override
     public Map<String, Double> computePageRank() {
-        PageRank<String, DefaultEdge> pageRanker = new PageRank<>(graph, dampingFactor);
+        PageRank<String, DefaultEdgeWithPremiseNumber> pageRanker = new PageRank<>(graph, dampingFactor);
 
         return pageRanker.getScores();
     }
@@ -30,19 +30,20 @@ class JGraphTAdapter extends AbstractDirectedGraph {
     }
 
     @Override
-    String[] addEdge(String sourceVertex, String targetVertex) {
-        DefaultEdge edge = graph.addEdge(sourceVertex, targetVertex);
+    String[] addEdge(String sourceVertex, String targetVertex, String premiseId) {
+        boolean success = graph.addEdge(sourceVertex, targetVertex, new DefaultEdgeWithPremiseNumber(premiseId));
 
-        return edge == null ? null : new String[]{graph.getEdgeSource(edge), graph.getEdgeTarget(edge)};
+        return success ? null : new String[]{sourceVertex, targetVertex, premiseId};
     }
 
     @Override
     public Iterable<String[]> getEdges() {
         LinkedList<String[]> edges = new LinkedList<String[]>();
-        for(DefaultEdge edge : this.graph.edgeSet()){
-            String[] edgeAsArray = new String[2];
+        for(DefaultEdgeWithPremiseNumber edge : this.graph.edgeSet()){
+            String[] edgeAsArray = new String[3];
             edgeAsArray[0] = graph.getEdgeSource(edge);
             edgeAsArray[1] = graph.getEdgeTarget(edge);
+            edgeAsArray[2] = edge.getPremiseNumber();
             edges.add(edgeAsArray);
         }
 
