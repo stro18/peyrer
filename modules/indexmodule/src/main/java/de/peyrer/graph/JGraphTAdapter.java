@@ -10,8 +10,6 @@ import java.util.Map;
 class JGraphTAdapter extends AbstractDirectedGraph {
     private SimpleDirectedGraph<String, DefaultEdge> graph;
 
-    private static final double dampingFactor = 0.85;
-
     JGraphTAdapter()
     {
         this.graph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
