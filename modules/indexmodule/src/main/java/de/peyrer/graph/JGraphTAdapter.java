@@ -49,4 +49,11 @@ class JGraphTAdapter extends AbstractDirectedGraph {
 
         return edges;
     }
+    
+    @Override
+    //THIS IS A PLACEHOLDER!! STEPHAN DO SOMETHING!! HALP!!
+    public Iterable<String[]> getEdges(String vertex){
+    	LinkedList<String[]> result = new LinkedList<>();
+    	return result;
+    }
 }
