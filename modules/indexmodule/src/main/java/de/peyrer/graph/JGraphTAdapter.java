@@ -49,4 +49,18 @@ class JGraphTAdapter extends AbstractDirectedGraph {
 
         return edges;
     }
+
+    @Override
+    public Iterable<String[]> getOutgoingEdges(String vertex) {
+        LinkedList<String[]> edges = new LinkedList<String[]>();
+        for(DefaultEdgeWithPremiseNumber edge : this.graph.outgoingEdgesOf(vertex)){
+            String[] edgeAsArray = new String[3];
+            edgeAsArray[0] = graph.getEdgeSource(edge);
+            edgeAsArray[1] = graph.getEdgeTarget(edge);
+            edgeAsArray[2] = edge.getPremiseNumber();
+            edges.add(edgeAsArray);
+        }
+
+        return edges;
+    }
 }
