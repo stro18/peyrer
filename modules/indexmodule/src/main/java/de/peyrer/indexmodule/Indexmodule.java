@@ -28,10 +28,10 @@ public class Indexmodule implements IIndexmodule {
 
         IDirectedGraph graph = graphBuilder.build();
 
-        Map<String,Double> pageRank = graph.computePageRank();
+        Map<String,Double> pageRank = graph.computeAndSavePageRank();
 
         relevanceComputer.setGraph(graph);
-        relevanceComputer.setPageRank(graph.computePageRank());
+        relevanceComputer.setPageRank(pageRank);
         Map<String,Double> relevance = relevanceComputer.computeRelevance();
 
         graphBuilder.saveToDatabase(graph, pageRank, relevance);

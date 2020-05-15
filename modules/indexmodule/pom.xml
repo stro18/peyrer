@@ -21,7 +21,7 @@
             <version>4.13</version>
         </dependency>
         <dependency>
-            <groupId>com.peyrer</groupId>
+            <groupId>de.peyrer</groupId>
             <artifactId>databasemodule</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

@@ -14,7 +14,7 @@ public class JGraphTAdapterTest {
 
         IDirectedGraph graph = builder.build();
 
-        Map<String, Double> scores = graph.computePageRank();
+        Map<String, Double> scores = graph.computeAndSavePageRank();
 
         for(Map.Entry<String,Double> entry : scores.entrySet()){
             Assert.assertTrue(entry.getValue() > 0);
