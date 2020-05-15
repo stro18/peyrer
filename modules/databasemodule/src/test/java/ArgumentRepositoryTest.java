@@ -63,25 +63,25 @@ public class ArgumentRepositoryTest {
     @Test
     public void test_E_UpdatePagerank(){
         ArgumentRepository argumentRepository = new ArgumentRepository();
-        Argument argumentInitial = argumentRepository.readById("2");
+        String id = "2";
 
         double value = 3.0;
 
-        argumentRepository.updatePageRank(argumentInitial,value);
+        argumentRepository.updatePageRank(id,value);
 
-        Assert.assertEquals(argumentInitial.pageRank,value,3.0);
+        Assert.assertEquals(argumentRepository.readById(id).pageRank,value,3.0);
     }
 
     @Test
     public void test_F_UpdateRelevance(){
         ArgumentRepository argumentRepository = new ArgumentRepository();
-        Argument argumentInitial = argumentRepository.readById("2");
+        String id = "2";
 
         double value = 5.0;
 
-        argumentRepository.updateRelevance(argumentInitial,value);
+        argumentRepository.updateRelevance(id,value);
 
-        Assert.assertEquals(argumentInitial.relevance,value,5.0);
+        Assert.assertEquals(argumentRepository.readById(id).relevance,value,5.0);
     }
 
     @Test
