@@ -10,7 +10,6 @@ public interface IRelevanceComputer {
 
     public Map<String,Double> setPageRank(Map<String,Double> pageRank);
 
-    public Map<String,Double> computeRelevance();
-    
-    public Map<String,Double> computeRelevanceRecursion(Iterable<String[]> neighbors, double relevanceEnd);
+    public Map<String,Double> computeAndSaveRelevance();
+
 }

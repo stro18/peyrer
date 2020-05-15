@@ -1,8 +1,11 @@
 package de.peyrer.relevance;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import de.peyrer.graph.AbstractDirectedGraph;
 import de.peyrer.graph.IDirectedGraph;
+import de.peyrer.repository.ArgumentRepository;
 
 public class SumComputer implements IRelevanceComputer{
 	
@@ -23,75 +26,48 @@ public class SumComputer implements IRelevanceComputer{
     }
 
 	@Override
-    public Map<String,Double> computeRelevance() {
-		boolean wasComputed = false;
-		double relevanceEnd;
-		double relevanceChildren;
+	public Map<String,Double> computeAndSaveRelevance(){
+		double relevance;
+		double relevanceChild;
+		double relevanceSum;
 		
 		Map<String,Double> relevanceMap = pageRank;
-		relevanceMap.clear();	//hacky way of creating an empty map
+		relevanceMap.clear();    //hacky way of creating empty Map
+		Map<String,Double> uniqueChildren = null;
 		
-	    	for(Map.Entry<String, Double> node : pageRank.entrySet()) {
-	    		relevanceEnd = 0.0;
-	    		Iterable<String[]> neighbors = graph.getEdges(node.getKey());
-	    		if(neighbors == null) {
-	    			relevanceEnd = pageRank.get(node.getKey());
-	    			if(relevanceEnd == 0) {
-	    				relevanceEnd = 0.15;
-	    			}
-	    			relevanceMap.put(node.getKey(), relevanceEnd);
-	    			wasComputed = true;
-	    		}
-	    		else{
-	    			for(String[] neighbor : neighbors) {
-	    				relevanceChildren = 0.0;
-	    				Iterable<String[]> children = graph.getEdges(neighbor[0]);
-	    				if(children == null) {
-	    					relevanceChildren = pageRank.get(neighbor[0]) + relevanceEnd;
-	    					if(relevanceChildren == 0) {
-	    						relevanceChildren = 0.15 + relevanceEnd;
-	    					}
-	    					relevanceMap.put(neighbor[0], relevanceChildren);
-	    					wasComputed = true;
-	    				}
-	    				else {
-	    					neighbors = children;
-	    					relevanceMap.putAll(computeRelevanceRecursion(neighbors, relevanceChildren));
-	    				}
-	    			}
-	    		}
-	    	}
-	    	return relevanceMap;
-		}
-	
-	@Override
-	public Map<String,Double> computeRelevanceRecursion(Iterable<String[]> neighbors, double relevanceEnd) {
-		Map<String,Double> relevanceMap = pageRank;
-		boolean wasComputed;
-		double relevanceChildren;
-		relevanceMap.clear();	//hacky way of creating an empty map
-		if(wasComputed = true) {
-			//do nothing
-		}
-		else {
-			for(String[] neighbor : neighbors) {
-				relevanceChildren = 0.0;
-				Iterable<String[]> children = graph.getEdges(neighbor[0]);
-				if(children == null) {
-					relevanceChildren = pageRank.get(neighbor[0]) + relevanceEnd;
-					if(relevanceChildren == 0) {
-							relevanceChildren = 0.15 + relevanceEnd;
-					}
-					relevanceMap.put(neighbor[0], relevanceChildren);
-					wasComputed = true;
-				}
-				else {
-					neighbors = children;
-					computeRelevanceRecursion(neighbors, relevanceChildren);
-				}
+		for(Map.Entry<String, Double> node : pageRank.entrySet()) {
+			Iterable<String[]> children = graph.getEdges(node.getKey());
+			//If argument has no premises
+			if(children == null) {
+				relevance = Double.MIN_VALUE;
+				relevanceMap.put(node.getKey(), relevance);
 			}
+			else {
+				relevanceSum = 0.0;		//iterate over children -> put uniques in new map
+				for(String[] child : children) {
+					uniqueChildren = new HashMap<>();
+					if(!uniqueChildren.containsKey(child[2])) {
+						uniqueChildren.put(child[2], pageRank.get(child[0]));
+					}
+					else {
+						// do nothing
+					}
+				}
+				for(Map.Entry<String, Double> uniqueNodes : uniqueChildren.entrySet()) {
+					relevanceChild = 0.0;
+					relevanceChild = uniqueNodes.getValue();	//grab page rank for each child
+					if(relevanceChild == 0.0){
+						relevanceChild = 1 - AbstractDirectedGraph.dampingFactor;
+					}
+					relevanceSum += relevanceChild;
+				}
+				relevanceMap.put(node.getKey(), relevanceSum);
+			}
+		}
+		for(Map.Entry<String, Double> rvMap : relevanceMap.entrySet()){
+			ArgumentRepository repo = new ArgumentRepository();
+			repo.updateRelevance(rvMap.getKey(), rvMap.getValue());
 		}
 		return relevanceMap;
 	}
 }
-//TODO Stop possible infinite loops caused by circles in graph
