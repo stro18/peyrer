@@ -3,6 +3,7 @@ package de.peyrer.indexer;
 import de.peyrer.graph.AbstractDirectedGraph;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
+import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 public class RelevanceIndexer extends AbstractIndexer {
 
-    ArgumentRepository argumentRepository;
+    IArgumentRepository argumentRepository;
 
     IndexWriterConfig config;
 
@@ -49,7 +50,7 @@ public class RelevanceIndexer extends AbstractIndexer {
             doc.add(new FeatureField("feature", "relevance", argument.relevance == 0 ?
                     (float) (1-AbstractDirectedGraph.dampingFactor) : (float) argument.relevance));
 
-            // A field that is indexed, tokenized and stored, without term vectors.
+            // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusion", argument.conclusion, Field.Store.YES));
 
             indexWriter.addDocument(doc);

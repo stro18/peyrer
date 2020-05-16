@@ -16,13 +16,12 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 
-public class PremiseIndexer extends AbstractIndexer {
-
+public class ConclusionIndexer extends AbstractIndexer {
     IArgumentRepository argumentRepository;
 
     IndexWriterConfig config;
 
-    PremiseIndexer(String directoryName) throws IOException {
+    ConclusionIndexer(String directoryName) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
         this.indexPath = this.createIndexDirectory("src", "main", "resources", directoryName);
@@ -39,21 +38,15 @@ public class PremiseIndexer extends AbstractIndexer {
         Iterable<Argument> arguments = argumentRepository.readAll();
 
         for(Argument argument : arguments){
-            int premiseId = 0;
-            for(String premise : argument.premises){
-                Document doc = new Document();
+            Document doc = new Document();
 
-                // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
-                doc.add(new StoredField("argumentId", argument.id));
-                doc.add(new StoredField("premiseId", Integer.toString(premiseId)));
+            // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
+            doc.add(new StoredField("argumentId", argument.id));
 
-                // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
-                doc.add(new TextField("premiseText", premise, Field.Store.YES));
+            // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
+            doc.add(new TextField("conclusionText", argument.conclusion, Field.Store.YES));
 
-                indexWriter.addDocument(doc);
-
-                premiseId++;
-            }
+            indexWriter.addDocument(doc);
         }
 
         indexWriter.close();
