@@ -47,7 +47,7 @@ public class PremiseIndexer extends AbstractIndexer {
                 doc.add(new StoredField("argumentId", argument.id));
                 doc.add(new StoredField("premiseId", Integer.toString(premiseId)));
 
-                // A field that is indexed and tokenized, without term vectors.
+                // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
                 doc.add(new TextField("premiseText", premise, Field.Store.YES));
 
                 indexWriter.addDocument(doc);

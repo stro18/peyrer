@@ -43,7 +43,7 @@ public class ConclusionIndexer extends AbstractIndexer {
             // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
             doc.add(new StoredField("argumentId", argument.id));
 
-            // A field that is indexed and tokenized, without term vectors.
+            // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusionText", argument.conclusion, Field.Store.YES));
 
             indexWriter.addDocument(doc);

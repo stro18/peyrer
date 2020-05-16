@@ -50,7 +50,7 @@ public class RelevanceIndexer extends AbstractIndexer {
             doc.add(new FeatureField("feature", "relevance", argument.relevance == 0 ?
                     (float) (1-AbstractDirectedGraph.dampingFactor) : (float) argument.relevance));
 
-            // A field that is indexed, tokenized and stored, without term vectors.
+            // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusion", argument.conclusion, Field.Store.YES));
 
             indexWriter.addDocument(doc);
