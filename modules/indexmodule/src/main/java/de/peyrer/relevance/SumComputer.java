@@ -13,7 +13,11 @@ public class SumComputer implements IRelevanceComputer{
 	
 	public Map<String, Double> pageRank;
 	
-	ArgumentRepository repo = new ArgumentRepository();
+	private ArgumentRepository repo;
+	
+	public SumComputer(){
+		this.repo = new ArgumentRepository();
+	}
 
 	@Override
 	public IDirectedGraph setGraph(IDirectedGraph graph) {
@@ -44,6 +48,7 @@ public class SumComputer implements IRelevanceComputer{
 				relevance = Double.MIN_VALUE;
 				relevanceMap.put(node.getKey(), relevance);
 			}
+			int numberOfPremises = ArgumentRepository.getNumberofPremises(node.getKey());
 			else {
 				relevanceSum = 0.0;		//iterate over children -> put uniques in new map
 				for(String[] child : children) {
@@ -58,16 +63,13 @@ public class SumComputer implements IRelevanceComputer{
 				for(Map.Entry<String, Double> uniqueNodes : uniqueChildren.entrySet()) {
 					pageRankChild = 0.0;
 					pageRankChild = uniqueNodes.getValue();	//grab page rank for each child
-					if(getNumberofPremises(uniqueNodes) == 0){		//TODO link properly, this function is a placeholder
-						pageRankChild = 1 - AbstractDirectedGraph.dampingFactor;
-					}
 					relevanceSum += pageRankChild;
 				}
+				relevanceSum += (numberOfPremises - uniqueChildren.size()) * (1 - AbstractDirectedGraph.dampingFactor);
 				relevanceMap.put(node.getKey(), relevanceSum);
 			}
 		}
 		for(Map.Entry<String, Double> rvMap : relevanceMap.entrySet()){
-			repo = new ArgumentRepository();
 			repo.updateRelevance(rvMap.getKey(), rvMap.getValue());
 		}
 		return relevanceMap;
