@@ -14,6 +14,8 @@ public class Indexmodule implements IIndexmodule {
 
     private IIndexer premiseIndexer;
 
+    private IIndexer conclusionIndexer;
+
     private IIndexer relevanceIndexer;
 
     private IRelevanceComputer relevanceComputer;
@@ -22,6 +24,7 @@ public class Indexmodule implements IIndexmodule {
     public void indexWithRelevance() {
         try {
             premiseIndexer.index();
+            conclusionIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }

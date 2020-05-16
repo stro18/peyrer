@@ -2,6 +2,7 @@ package de.peyrer.indexer;
 
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
+import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -14,11 +15,10 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class PremiseIndexer extends AbstractIndexer {
 
-    ArgumentRepository argumentRepository;
+    IArgumentRepository argumentRepository;
 
     IndexWriterConfig config;
 
