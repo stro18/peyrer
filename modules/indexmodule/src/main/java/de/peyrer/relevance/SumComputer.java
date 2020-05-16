@@ -12,6 +12,8 @@ public class SumComputer implements IRelevanceComputer{
 	public IDirectedGraph graph;
 	
 	public Map<String, Double> pageRank;
+	
+	ArgumentRepository repo = new ArgumentRepository();
 
 	@Override
 	public IDirectedGraph setGraph(IDirectedGraph graph) {
@@ -28,7 +30,7 @@ public class SumComputer implements IRelevanceComputer{
 	@Override
 	public Map<String,Double> computeAndSaveRelevance(){
 		double relevance;
-		double relevanceChild;
+		double pageRankChild;
 		double relevanceSum;
 		
 		Map<String,Double> relevanceMap = pageRank;
@@ -47,25 +49,25 @@ public class SumComputer implements IRelevanceComputer{
 				for(String[] child : children) {
 					uniqueChildren = new HashMap<>();
 					if(!uniqueChildren.containsKey(child[2])) {
-						uniqueChildren.put(child[2], pageRank.get(child[0]));
+						uniqueChildren.put(child[2], pageRank.get(child[1]));
 					}
 					else {
 						// do nothing
 					}
 				}
 				for(Map.Entry<String, Double> uniqueNodes : uniqueChildren.entrySet()) {
-					relevanceChild = 0.0;
-					relevanceChild = uniqueNodes.getValue();	//grab page rank for each child
-					if(relevanceChild == 0.0){
-						relevanceChild = 1 - AbstractDirectedGraph.dampingFactor;
+					pageRankChild = 0.0;
+					pageRankChild = uniqueNodes.getValue();	//grab page rank for each child
+					if(getNumberofPremises(uniqueNodes) == 0){		//TODO link properly, this function is a placeholder
+						pageRankChild = 1 - AbstractDirectedGraph.dampingFactor;
 					}
-					relevanceSum += relevanceChild;
+					relevanceSum += pageRankChild;
 				}
 				relevanceMap.put(node.getKey(), relevanceSum);
 			}
 		}
 		for(Map.Entry<String, Double> rvMap : relevanceMap.entrySet()){
-			ArgumentRepository repo = new ArgumentRepository();
+			repo = new ArgumentRepository();
 			repo.updateRelevance(rvMap.getKey(), rvMap.getValue());
 		}
 		return relevanceMap;
