@@ -52,15 +52,15 @@ public class ArgumentRepository implements IArgumentRepository {
     }
 
     @Override
-    public Argument updatePageRank(Argument entity, double value) {
-        BsonDocument bsonEntity = entity.toBson();
-        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()),set("pageRank",value)).wasAcknowledged() ? entity : null;
+    public double updatePageRank(String id, double value) {
+        BsonDocument bsonEntity = new BsonDocument("id",new BsonString(id));
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()),set("pageRank",value)).wasAcknowledged() ? value : null;
     }
 
     @Override
-    public Argument updateRelevance(Argument entity, double value) {
-        BsonDocument bsonEntity = entity.toBson();
-        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()), set("relevance", value)).wasAcknowledged() ? entity : null;
+    public double updateRelevance(String id, double value) {
+        BsonDocument bsonEntity = new BsonDocument("id",new BsonString(id));
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()), set("relevance", value)).wasAcknowledged() ? value : null;
     }
 
     @Override
