@@ -1,10 +1,10 @@
 # 2-stage-build
 # first stage
-FROM maven:3.5-jdk-8 AS build
-COPY ../modules /usr/src/modules
-COPY ../pom.xml /usr/src/pom.xml
+FROM maven:3.6-openjdk-11 AS build
+COPY modules /usr/src/modules
+COPY pom.xml /usr/src/pom.xml
 # clean target directory and build jars
-RUN mvn -f /usr/src/pom.xml clean package
+RUN mvn -f /usr/src/pom.xml clean install
 
 # second stage
 FROM openjdk:11-alpine
