@@ -1,7 +1,5 @@
 package de.peyrer.repository;
 
-import java.util.Iterator;
-
 public interface IRepository<T> {
 
     Iterable<T> readAll();
@@ -12,4 +10,5 @@ public interface IRepository<T> {
     T delete(T entity);
     T updatePageRank (T entity, double value);
     T updateRelevance(T entity, double value);
+    int getNumberofPremises(String id);
 }

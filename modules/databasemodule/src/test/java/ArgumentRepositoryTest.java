@@ -85,7 +85,17 @@ public class ArgumentRepositoryTest {
     }
 
     @Test
-    public void test_G_Delete() {
+    public void test_G_GetNumberOfPremises(){
+        ArgumentRepository argumentRepository = new ArgumentRepository();
+        String id = "2";
+
+        int returnedValue = argumentRepository.getNumberofPremises(id);
+
+        Assert.assertEquals(returnedValue,3);
+    }
+
+    @Test
+    public void test_F_Delete() {
 
         ArgumentRepository argumentRepository = new ArgumentRepository();
 
@@ -95,6 +105,5 @@ public class ArgumentRepositoryTest {
 
         Assert.assertEquals(argumentDelete.id,argument.id);
     }
-
 }
 
