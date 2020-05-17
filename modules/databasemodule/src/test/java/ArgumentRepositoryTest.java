@@ -1,5 +1,6 @@
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
+import org.bson.BsonDocument;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -67,9 +68,9 @@ public class ArgumentRepositoryTest {
 
         double value = 3.0;
 
-        argumentRepository.updatePageRank(id,value);
+        double returnedValue = argumentRepository.updatePageRank(id,value);
 
-        Assert.assertEquals(argumentRepository.readById(id).pageRank,value,3.0);
+        Assert.assertEquals(returnedValue,value,3.0);
     }
 
     @Test
@@ -79,9 +80,9 @@ public class ArgumentRepositoryTest {
 
         double value = 5.0;
 
-        argumentRepository.updateRelevance(id,value);
+        double returnedValue = argumentRepository.updateRelevance(id,value);
 
-        Assert.assertEquals(argumentRepository.readById(id).relevance,value,5.0);
+        Assert.assertEquals(returnedValue,value,5.0);
     }
 
     @Test
@@ -95,6 +96,5 @@ public class ArgumentRepositoryTest {
 
         Assert.assertEquals(argumentDelete.id,argument.id);
     }
-
 }
 
