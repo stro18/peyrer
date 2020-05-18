@@ -14,6 +14,8 @@ public class Indexmodule implements IIndexmodule {
 
     private IIndexer premiseIndexer;
 
+    private IIndexer conclusionIndexer;
+
     private IIndexer relevanceIndexer;
 
     private IRelevanceComputer relevanceComputer;
@@ -22,16 +24,17 @@ public class Indexmodule implements IIndexmodule {
     public void indexWithRelevance() {
         try {
             premiseIndexer.index();
+            conclusionIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         IDirectedGraph graph = graphBuilder.build();
 
-        Map<String,Double> pageRank = graph.computePageRank();
+        Map<String,Double> pageRank = graph.computeAndSavePageRank();
 
         relevanceComputer.setGraph(graph);
-        relevanceComputer.setPageRank(graph.computePageRank());
+        relevanceComputer.setPageRank(pageRank);
         Map<String,Double> relevance = relevanceComputer.computeRelevance();
 
         graphBuilder.saveToDatabase(graph, pageRank, relevance);

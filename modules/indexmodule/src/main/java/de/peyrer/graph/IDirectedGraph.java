@@ -4,9 +4,9 @@ import java.util.Map;
 
 public interface IDirectedGraph {
 
-    Map<String,Double> computePageRank();
+    Map<String,Double> computeAndSavePageRank();
 
     Iterable<String[]> getEdges();
-    
-    Iterable<String[]> getEdges(String vertex);
+
+    Iterable<String[]> getOutgoingEdges(String vertex);
 }
