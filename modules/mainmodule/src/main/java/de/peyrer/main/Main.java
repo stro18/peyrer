@@ -20,7 +20,7 @@ public class Main {
     {
         String[] titles;
         try {
-            titles = Main.readTitlesFromXml("/modules/mainmodule/src/main/resources/topicsTest.xml");
+            titles = Main.readTitlesFromXml("topicsTest.xml");
         } catch (Exception e) {
             e.printStackTrace();
             return;
