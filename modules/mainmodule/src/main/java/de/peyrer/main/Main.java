@@ -23,7 +23,7 @@ public class Main {
 
         String[] titles;
         try {
-            titles = Main.readTitlesFromXml("topicsTest.xml");
+            titles = Main.readTitlesFromXml("topics/topicsTest.xml");
         } catch (Exception e) {
             e.printStackTrace();
             return;
