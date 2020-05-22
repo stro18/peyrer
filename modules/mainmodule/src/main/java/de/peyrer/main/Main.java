@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import de.peyrer.indexmodule.Indexmodule;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -18,6 +19,8 @@ public class Main {
 
     public static void main (String[] args)
     {
+        Indexmodule indexmodule = new Indexmodule();
+
         String[] titles;
         try {
             titles = Main.readTitlesFromXml("topicsTest.xml");
