@@ -31,7 +31,7 @@ public abstract class AbstractIndexer implements IIndexer {
                     .forEach(File::delete);
         }
 
-        return Files.createDirectory(wantedIndexPath);
+        return Files.createDirectories(wantedIndexPath);
     }
 
     @Override
