@@ -1,6 +1,7 @@
 /.idea
 *.iml
 **/target
+argument_ndjson/*
 raw_data/*
 **/index
 **/conclusionindex

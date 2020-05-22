@@ -7,7 +7,7 @@ services:
     image: mongo:4.2
     restart: always
     volumes:
-      - ../raw_data:/raw_data
+      - ../argument_ndjson:/argument_ndjson
     networks:
       - bridge_network
     ports:
@@ -27,10 +27,10 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
 
-  searchengine:
-    build:
-      context: ..
-      dockerfile: Docker/Dockerfile
+  #searchengine:
+    #build:
+      #context: ..
+      #dockerfile: Docker/Dockerfile
 
 networks:
   bridge_network:

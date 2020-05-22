@@ -20,6 +20,10 @@ public class Indexmodule implements IIndexmodule {
 
     private IRelevanceComputer relevanceComputer;
 
+    public Indexmodule(){
+        this.graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
+    }
+
     @Override
     public void indexWithRelevance() {
         try {
