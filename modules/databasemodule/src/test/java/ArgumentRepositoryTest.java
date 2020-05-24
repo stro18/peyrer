@@ -86,7 +86,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_G_GetNumberOfPremises(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
         String id = "2";
 
         int returnedValue = argumentRepository.getNumberofPremises(id);

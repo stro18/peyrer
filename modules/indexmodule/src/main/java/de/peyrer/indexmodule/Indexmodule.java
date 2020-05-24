@@ -7,6 +7,7 @@ import de.peyrer.indexer.IIndexer;
 import de.peyrer.indexer.PremiseIndexer;
 import de.peyrer.indexer.RelevanceIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
+import de.peyrer.relevance.SumComputer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,10 +38,10 @@ public class Indexmodule implements IIndexmodule {
 
         Map<String,Double> pageRank = graph.computeAndSavePageRank();
 
-        //IRelevanceComputer relevanceComputer = new RelevanceComputer();
-        //relevanceComputer.setGraph(graph);
-        //relevanceComputer.setPageRank(pageRank);
-        //Map<String,Double> relevance = relevanceComputer.computeAndSaveRelevance();
+        IRelevanceComputer relevanceComputer = new SumComputer();
+        relevanceComputer.setGraph(graph);
+        relevanceComputer.setPageRank(pageRank);
+        relevanceComputer.computeAndSaveRelevance();
 
         try {
             relevanceIndexer.index();
