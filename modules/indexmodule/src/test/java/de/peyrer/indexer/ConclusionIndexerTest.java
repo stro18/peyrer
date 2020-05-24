@@ -13,25 +13,38 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
 public class ConclusionIndexerTest {
+    @Mock(name = "argumentRepository")
+    ArgumentRepository argumentRepository;
 
-    @Test
-    public void testIndex(){
-        ConclusionIndexer indexer = null;
-
+    @InjectMocks
+    ConclusionIndexer indexer;
+    {
         try {
             indexer = new ConclusionIndexer("src", "main", "resources", "conclusionindex");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    @Before
+    public void setUp(){
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testIndex(){
         // Mocking of argumentRepository
         Argument argument = new Argument("1", "Abortion is good", new String[]{"Every woman has the right to decide for herself"});
         Argument argument2 = new Argument("2", "Abortion is bad", new String[]{"Abortion is murder"});
@@ -43,8 +56,7 @@ public class ConclusionIndexerTest {
         Iterable<Argument> iterable = (Iterable<Argument>) Mockito.mock(Iterable.class);
         Mockito.when(iterable.iterator()).thenReturn(iterator);
 
-        indexer.argumentRepository = Mockito.mock(IArgumentRepository.class);
-        Mockito.when(indexer.argumentRepository.readAll()).thenReturn(iterable);
+        Mockito.when(argumentRepository.readAll()).thenReturn(iterable);
 
         try {
             indexer.index();
