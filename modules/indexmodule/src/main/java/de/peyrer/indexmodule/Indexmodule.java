@@ -18,23 +18,13 @@ import java.util.Map;
 
 public class Indexmodule implements IIndexmodule {
 
-    private GraphBuilder graphBuilder;
-
-    private IIndexer premiseIndexer;
-
-    private IIndexer conclusionIndexer;
-
-    private IIndexer relevanceIndexer;
-
-    private IRelevanceComputer relevanceComputer;
-
     @Override
     public void indexWithRelevance() throws IOException {
-        this.graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
+        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
 
-        this.premiseIndexer = new PremiseIndexer("temp", "premiseindex");
-        this.conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
-        this.relevanceIndexer = new RelevanceIndexer("index");
+        IIndexer premiseIndexer = new PremiseIndexer("temp", "premiseindex");
+        IIndexer conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
+        IIndexer relevanceIndexer = new RelevanceIndexer("index");
 
         try {
             premiseIndexer.index();
@@ -47,9 +37,10 @@ public class Indexmodule implements IIndexmodule {
 
         Map<String,Double> pageRank = graph.computeAndSavePageRank();
 
+        //IRelevanceComputer relevanceComputer = new RelevanceComputer();
         //relevanceComputer.setGraph(graph);
         //relevanceComputer.setPageRank(pageRank);
-        //Map<String,Double> relevance = relevanceComputer.computeRelevance();
+        //Map<String,Double> relevance = relevanceComputer.computeAndSaveRelevance();
 
         try {
             relevanceIndexer.index();
