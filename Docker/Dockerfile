@@ -4,7 +4,7 @@ FROM maven:3.6-openjdk-11 AS build
 COPY modules /usr/src/modules
 COPY pom.xml /usr/src/pom.xml
 # clean target directory and build jars
-RUN mvn -f /usr/src/pom.xml -DskipTests clean install
+RUN mvn -f /usr/src/pom.xml -P SKIP_DATABASEMODULE_TESTS clean install
 
 # second stage
 # no official openjdk11 alpine image available

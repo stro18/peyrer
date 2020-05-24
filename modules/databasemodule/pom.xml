@@ -32,4 +32,30 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <skipTests>${skip.databasemodule.tests}</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <skip.databasemodule.tests>false</skip.databasemodule.tests>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>SKIP_DATABASEMODULE_TESTS</id>
+            <properties>
+                <skip.databasemodule.tests>true</skip.databasemodule.tests>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
