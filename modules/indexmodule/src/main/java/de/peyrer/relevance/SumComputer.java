@@ -42,13 +42,13 @@ public class SumComputer implements IRelevanceComputer{
 		Map<String,Double> uniqueChildren = null;
 		
 		for(Map.Entry<String, Double> node : pageRank.entrySet()) {
-			Iterable<String[]> children = graph.getEdges(node.getKey());
+			Iterable<String[]> children = graph.getOutgoingEdges(node.getKey());
+			int numberOfPremises = ArgumentRepository.getNumberofPremises(node.getKey());
 			//If argument has no premises
 			if(children == null) {
 				relevance = Double.MIN_VALUE;
 				relevanceMap.put(node.getKey(), relevance);
 			}
-			int numberOfPremises = ArgumentRepository.getNumberofPremises(node.getKey());
 			else {
 				relevanceSum = 0.0;		//iterate over children -> put uniques in new map
 				for(String[] child : children) {
