@@ -27,10 +27,10 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
 
-  #searchengine:
-    #build:
-      #context: ..
-      #dockerfile: Docker/Dockerfile
+  searchengine:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
 
 networks:
   bridge_network:
