@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class Indexmodule implements IIndexmodule {
@@ -26,16 +28,14 @@ public class Indexmodule implements IIndexmodule {
 
     private IRelevanceComputer relevanceComputer;
 
-    public Indexmodule() throws IOException {
+    @Override
+    public void indexWithRelevance() throws IOException {
         this.graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
 
         this.premiseIndexer = new PremiseIndexer("temp", "premiseindex");
         this.conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
         this.relevanceIndexer = new RelevanceIndexer("index");
-    }
 
-    @Override
-    public void indexWithRelevance() {
         try {
             premiseIndexer.index();
             conclusionIndexer.index();
@@ -58,6 +58,7 @@ public class Indexmodule implements IIndexmodule {
         }
     }
 
+    @Override
     public String getIndexPath(){
         Path path = Paths.get(System.getProperty("user.dir"), "index");
         if(Files.exists(path)){
@@ -65,5 +66,15 @@ public class Indexmodule implements IIndexmodule {
         }else{
             return null;
         }
+    }
+
+    @Override
+    public List<String> getStopwords() {
+        return Arrays.asList(
+                "a", "an", "and", "are", "as", "at", "be", "but", "by",
+                "for", "if", "in", "into", "is", "it", "of", "on", "or", "such",
+                "that", "the", "their", "then", "there", "these",
+                "they", "this", "to", "was", "will", "with"
+        );
     }
 }

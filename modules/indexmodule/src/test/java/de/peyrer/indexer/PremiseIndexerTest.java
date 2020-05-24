@@ -1,9 +1,11 @@
 package de.peyrer.indexer;
 
+import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -79,7 +81,8 @@ public class PremiseIndexerTest {
         IndexSearcher isearcher = new IndexSearcher(ireader);
 
         // Creates a boolean query that searches for "regulated militia":
-        Analyzer analyzer = new StandardAnalyzer();
+        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
+        Analyzer analyzer = new StandardAnalyzer(stopSet);
         QueryParser parser = new QueryParser("premiseText", analyzer);
         Query query = parser.createBooleanQuery("premiseText", "Abortion is murder", BooleanClause.Occur.MUST);
 
