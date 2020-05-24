@@ -11,7 +11,7 @@ public class PremiseIndexerTest {
     public void testIndex(){
         PremiseIndexer indexer = null;
         try {
-            indexer = new PremiseIndexer("index");
+            indexer = new PremiseIndexer("src", "main", "resources", "premiseindex");
             indexer.index();
         } catch (IOException e) {
             e.printStackTrace();

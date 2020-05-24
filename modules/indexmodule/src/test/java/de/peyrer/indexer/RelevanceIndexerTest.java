@@ -20,7 +20,7 @@ public class RelevanceIndexerTest {
     public void testIndex() {
         RelevanceIndexer indexer = null;
         try {
-            indexer = new RelevanceIndexer("index");
+            indexer = new RelevanceIndexer("..", "..", "index");
             indexer.index();
         } catch (IOException e) {
             e.printStackTrace();

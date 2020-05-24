@@ -2,6 +2,7 @@ import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import org.bson.BsonDocument;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -10,11 +11,15 @@ import org.junit.runners.MethodSorters;
 
 public class ArgumentRepositoryTest {
 
+    private ArgumentRepository argumentRepository;
+
+    @Before
+    public void setup(){
+        this.argumentRepository = new ArgumentRepository("localhost");
+    }
+
     @Test
-
     public void test_A_ReadById(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
-
         Argument argument = argumentRepository.readById("S96f2396e-A2f68e3d2");
 
         Assert.assertEquals(argument.id, "S96f2396e-A2f68e3d2");
@@ -22,7 +27,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_B_Create(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
         Argument argumentWrite = new Argument("1", "Abortion", new String[]{"Every woman has the right to decide", "Every life counts"});
 
         argumentRepository.create(argumentWrite);
@@ -34,8 +38,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_C_FindAll(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
-
         Argument[] arguments = new Argument[2];
         int count = 0;
         for(Argument argument: argumentRepository.readAll()){
@@ -52,7 +54,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_D_Replace(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
         Argument argumentInitial = argumentRepository.readById("1");
         Argument argumentUpdated = new Argument("2", "Abortion", new String[]{"Every woman has the right to decide", "Every life counts", "Abortion is murder"});
 
@@ -63,7 +64,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_E_UpdatePagerank(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
         String id = "2";
 
         double value = 3.0;
@@ -75,7 +75,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_F_UpdateRelevance(){
-        ArgumentRepository argumentRepository = new ArgumentRepository();
         String id = "2";
 
         double value = 5.0;
@@ -87,9 +86,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_G_Delete() {
-
-        ArgumentRepository argumentRepository = new ArgumentRepository();
-
         Argument argument = argumentRepository.readById("2");
 
         Argument argumentDelete= argumentRepository.delete(argument);

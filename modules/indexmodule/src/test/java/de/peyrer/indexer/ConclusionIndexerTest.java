@@ -27,7 +27,7 @@ public class ConclusionIndexerTest {
         ConclusionIndexer indexer = null;
 
         try {
-            indexer = new ConclusionIndexer("conclusionindex");
+            indexer = new ConclusionIndexer("src", "main", "resources", "conclusionindex");
         } catch (IOException e) {
             e.printStackTrace();
         }

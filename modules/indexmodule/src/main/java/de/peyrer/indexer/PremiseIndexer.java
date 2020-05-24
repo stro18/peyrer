@@ -22,10 +22,10 @@ public class PremiseIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
-    PremiseIndexer(String directoryName) throws IOException {
+    public PremiseIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        this.indexPath = this.createIndexDirectory("src", "main", "resources", directoryName);
+        this.indexPath = this.createIndexDirectory(directory);
 
         Analyzer analyzer = new StandardAnalyzer();
         this.config = new IndexWriterConfig(analyzer);

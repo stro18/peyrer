@@ -19,7 +19,16 @@ public class Main {
 
     public static void main (String[] args)
     {
-        Indexmodule indexmodule = new Indexmodule();
+        try {
+            Indexmodule indexmodule = new Indexmodule();
+            String indexPath = indexmodule.getIndexPath();
+            if(indexPath == null){
+                indexmodule.indexWithRelevance();
+                indexmodule.getIndexPath();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         String[] titles;
         try {
