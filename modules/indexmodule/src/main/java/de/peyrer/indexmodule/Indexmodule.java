@@ -35,7 +35,7 @@ public class Indexmodule implements IIndexmodule {
 
         relevanceComputer.setGraph(graph);
         relevanceComputer.setPageRank(pageRank);
-        Map<String,Double> relevance = relevanceComputer.computeRelevance();
+        Map<String,Double> relevance = relevanceComputer.computeAndSaveRelevance();
 
         graphBuilder.saveToDatabase(graph, pageRank, relevance);
 

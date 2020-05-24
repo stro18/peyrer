@@ -36,14 +36,13 @@ public class SumComputer implements IRelevanceComputer{
 		double relevance;
 		double pageRankChild;
 		double relevanceSum;
-		
-		Map<String,Double> relevanceMap = pageRank;
-		relevanceMap.clear();    //hacky way of creating empty Map
+
+		Map<String,Double> relevanceMap = new HashMap<>();
 		Map<String,Double> uniqueChildren = null;
 		
 		for(Map.Entry<String, Double> node : pageRank.entrySet()) {
 			Iterable<String[]> children = graph.getOutgoingEdges(node.getKey());
-			int numberOfPremises = ArgumentRepository.getNumberofPremises(node.getKey());
+			int numberOfPremises = repo.getNumberofPremises(node.getKey());
 			//If argument has no premises
 			if(children == null) {
 				relevance = Double.MIN_VALUE;
@@ -51,8 +50,8 @@ public class SumComputer implements IRelevanceComputer{
 			}
 			else {
 				relevanceSum = 0.0;		//iterate over children -> put uniques in new map
+				uniqueChildren = new HashMap<>();
 				for(String[] child : children) {
-					uniqueChildren = new HashMap<>();
 					if(!uniqueChildren.containsKey(child[2])) {
 						uniqueChildren.put(child[2], pageRank.get(child[1]));
 					}
