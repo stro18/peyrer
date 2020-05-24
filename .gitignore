@@ -6,3 +6,5 @@ raw_data/*
 **/index
 **/premiseindex
 **/conclusionindex
+
+!argument_ndjson/MongoSeed.Dockerfile
