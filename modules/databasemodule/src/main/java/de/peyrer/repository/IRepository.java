@@ -1,7 +1,5 @@
 package de.peyrer.repository;
 
-import java.util.Iterator;
-
 public interface IRepository<T> {
 
     Iterable<T> readAll();

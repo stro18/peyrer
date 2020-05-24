@@ -4,9 +4,11 @@ import com.mongodb.client.MongoCollection;
 import de.peyrer.connection.MongoConnector;
 import de.peyrer.model.Argument;
 import de.peyrer.model.ArgumentIterable;
+import org.bson.BsonArray;
 import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
 import org.bson.BsonString;
+import org.bson.conversions.Bson;
 
 import java.util.Objects;
 
@@ -70,5 +72,15 @@ public class ArgumentRepository implements IArgumentRepository {
     @Override
     public Argument delete(Argument entity) {
         return collection.deleteOne(entity.toBson()).wasAcknowledged() ? entity : null;
+    }
+
+    @Override
+    public int getNumberofPremises(String id){
+        int NumberofPremises = 0;
+        BsonDocument bsonEntity = new BsonDocument("id",new BsonString(id));
+        BsonDocument bsonArgument = collection.find(bsonEntity).first();
+        BsonArray premises  = bsonArgument.get("premises").asArray();
+        NumberofPremises = premises.size();
+        return NumberofPremises;
     }
 }

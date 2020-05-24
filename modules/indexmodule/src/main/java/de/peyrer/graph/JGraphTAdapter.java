@@ -8,12 +8,12 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import java.util.LinkedList;
 import java.util.Map;
 
-class JGraphTAdapter extends AbstractDirectedGraph {
+public class JGraphTAdapter extends AbstractDirectedGraph {
     private SimpleDirectedGraph<String, DefaultEdgeWithPremiseNumber> graph;
 
     private IArgumentRepository argumentRepository;
 
-    JGraphTAdapter()
+    public JGraphTAdapter()
     {
         this.graph = new SimpleDirectedGraph<String, DefaultEdgeWithPremiseNumber>(DefaultEdgeWithPremiseNumber.class);
         this.argumentRepository = new ArgumentRepository();
@@ -32,14 +32,14 @@ class JGraphTAdapter extends AbstractDirectedGraph {
     }
 
     @Override
-    String addVertex(String vertex) {
+    public String addVertex(String vertex) {
         boolean added = graph.addVertex(vertex);
 
         return added ? vertex : null;
     }
 
     @Override
-    String[] addEdge(String sourceVertex, String targetVertex, String premiseId) {
+    public String[] addEdge(String sourceVertex, String targetVertex, String premiseId) {
         boolean success = graph.addEdge(sourceVertex, targetVertex, new DefaultEdgeWithPremiseNumber(premiseId));
 
         return success ? null : new String[]{sourceVertex, targetVertex, premiseId};
