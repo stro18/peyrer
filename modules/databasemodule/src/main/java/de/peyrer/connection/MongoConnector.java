@@ -18,17 +18,27 @@ public class MongoConnector {
     private MongoDatabase database;
 
     public MongoConnector() {
+        MongoClient mongoClient = this.configureConnection("mongo");
+
+        this.database = mongoClient.getDatabase("peyrer");
+    }
+
+    public MongoConnector(String host){
+        MongoClient mongoClient = this.configureConnection(host);
+
+        this.database = mongoClient.getDatabase("peyrer");
+    }
+
+    private MongoClient configureConnection(String host){
         MongoCredential credential = MongoCredential.createCredential("root", "admin", "example".toCharArray());
 
         MongoClientSettings settings = MongoClientSettings.builder()
                 .credential(credential)
                 .applyToClusterSettings(builder ->
-                        builder.hosts(Arrays.asList(new ServerAddress("localhost", 27017))))
+                        builder.hosts(Arrays.asList(new ServerAddress(host, 27017))))
                 .build();
 
-        MongoClient mongoClient = MongoClients.create(settings);
-
-        this.database = mongoClient.getDatabase("peyrer");
+        return MongoClients.create(settings);
     }
 
     public MongoCollection<BsonDocument> getCollection(String collection){

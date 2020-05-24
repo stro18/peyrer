@@ -21,10 +21,10 @@ public class ConclusionIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
-    ConclusionIndexer(String directoryName) throws IOException {
+    public ConclusionIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        this.indexPath = this.createIndexDirectory("src", "main", "resources", directoryName);
+        this.indexPath = this.createIndexDirectory(directory);
 
         Analyzer analyzer = new StandardAnalyzer();
         this.config = new IndexWriterConfig(analyzer);

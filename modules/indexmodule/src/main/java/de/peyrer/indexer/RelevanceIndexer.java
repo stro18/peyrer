@@ -20,10 +20,10 @@ public class RelevanceIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
-    RelevanceIndexer(String directoryName) throws IOException {
+    public RelevanceIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        this.indexPath = this.createIndexDirectory("..", "..", directoryName);
+        this.indexPath = this.createIndexDirectory(directory);
 
         Analyzer analyzer = new StandardAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
