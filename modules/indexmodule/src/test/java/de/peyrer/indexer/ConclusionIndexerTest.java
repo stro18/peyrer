@@ -1,10 +1,12 @@
 package de.peyrer.indexer;
 
+import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.model.ArgumentIterable;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -76,7 +78,8 @@ public class ConclusionIndexerTest {
         IndexSearcher isearcher = new IndexSearcher(ireader);
 
         // Creates a boolean query that searches for "regulated militia":
-        Analyzer analyzer = new StandardAnalyzer();
+        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
+        Analyzer analyzer = new StandardAnalyzer(stopSet);
         QueryParser parser = new QueryParser("conclusionText", analyzer);
         Query query = parser.createBooleanQuery("conclusionText", "Abortion is bad", BooleanClause.Occur.MUST);
 

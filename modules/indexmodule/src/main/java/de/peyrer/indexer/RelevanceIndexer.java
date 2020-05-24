@@ -1,10 +1,13 @@
 package de.peyrer.indexer;
 
 import de.peyrer.graph.AbstractDirectedGraph;
+import de.peyrer.indexmodule.IIndexmodule;
+import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
@@ -12,6 +15,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+import java.io.CharArrayReader;
 import java.io.IOException;
 
 public class RelevanceIndexer extends AbstractIndexer {
@@ -25,7 +29,8 @@ public class RelevanceIndexer extends AbstractIndexer {
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = new StandardAnalyzer();
+        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
+        Analyzer analyzer = new StandardAnalyzer(stopSet);
         this.config = new IndexWriterConfig(analyzer);
     }
 
