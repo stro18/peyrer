@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<root>
+    <topic>
+        <number>1</number>
+        <title>Is climate change real?</title>
+        <description>You read an opinion piece on how climate change is a hoax and disagree. Now you are looking for arguments supporting the claim that climate change is in fact real.</description>
+        <narrative>Relevant arguments will support the given stance that climate change is real or attack a hoax side's argument.</narrative>
+    </topic>
+    <topic>
+        <number>2</number>
+        <title>Abortion</title>
+        <description>You want to collect argument for a discussion on abortion</description>
+        <narrative>Relevant arguments can be both pro or con and will be convincing</narrative>
+    </topic>
+</root>

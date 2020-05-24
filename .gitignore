@@ -1,6 +1,10 @@
 /.idea
 *.iml
 **/target
+argument_ndjson/*
 raw_data/*
 **/index
+**/premiseindex
 **/conclusionindex
+
+!argument_ndjson/MongoSeed.Dockerfile

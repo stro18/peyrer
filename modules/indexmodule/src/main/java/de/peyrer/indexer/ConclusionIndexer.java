@@ -1,9 +1,11 @@
 package de.peyrer.indexer;
 
+import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -21,12 +23,13 @@ public class ConclusionIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
-    ConclusionIndexer(String directoryName) throws IOException {
+    public ConclusionIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        this.indexPath = this.createIndexDirectory("src", "main", "resources", directoryName);
+        this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = new StandardAnalyzer();
+        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
+        Analyzer analyzer = new StandardAnalyzer(stopSet);
         this.config = new IndexWriterConfig(analyzer);
     }
 

@@ -1,10 +1,12 @@
 package de.peyrer.indexer;
 
+import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.model.ArgumentIterable;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -13,25 +15,38 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
 public class ConclusionIndexerTest {
+    @Mock(name = "argumentRepository")
+    ArgumentRepository argumentRepository;
 
-    @Test
-    public void testIndex(){
-        ConclusionIndexer indexer = null;
-
+    @InjectMocks
+    ConclusionIndexer indexer;
+    {
         try {
-            indexer = new ConclusionIndexer("conclusionindex");
+            indexer = new ConclusionIndexer("src", "main", "resources", "conclusionindex");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    @Before
+    public void setUp(){
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testIndex(){
         // Mocking of argumentRepository
         Argument argument = new Argument("1", "Abortion is good", new String[]{"Every woman has the right to decide for herself"});
         Argument argument2 = new Argument("2", "Abortion is bad", new String[]{"Abortion is murder"});
@@ -43,8 +58,7 @@ public class ConclusionIndexerTest {
         Iterable<Argument> iterable = (Iterable<Argument>) Mockito.mock(Iterable.class);
         Mockito.when(iterable.iterator()).thenReturn(iterator);
 
-        indexer.argumentRepository = Mockito.mock(IArgumentRepository.class);
-        Mockito.when(indexer.argumentRepository.readAll()).thenReturn(iterable);
+        Mockito.when(argumentRepository.readAll()).thenReturn(iterable);
 
         try {
             indexer.index();
@@ -64,7 +78,8 @@ public class ConclusionIndexerTest {
         IndexSearcher isearcher = new IndexSearcher(ireader);
 
         // Creates a boolean query that searches for "regulated militia":
-        Analyzer analyzer = new StandardAnalyzer();
+        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
+        Analyzer analyzer = new StandardAnalyzer(stopSet);
         QueryParser parser = new QueryParser("conclusionText", analyzer);
         Query query = parser.createBooleanQuery("conclusionText", "Abortion is bad", BooleanClause.Occur.MUST);
 

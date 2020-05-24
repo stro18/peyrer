@@ -23,6 +23,10 @@ public class ArgumentRepository implements IArgumentRepository {
         this.collection = (new MongoConnector()).getCollection("args");
     }
 
+    public ArgumentRepository(String host){
+        this.collection = (new MongoConnector(host)).getCollection("args");
+    }
+
     @Override
     public Iterable<Argument> readAll() {
         return new ArgumentIterable(collection.find());
