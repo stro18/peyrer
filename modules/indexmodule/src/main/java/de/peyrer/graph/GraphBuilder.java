@@ -53,6 +53,7 @@ public class GraphBuilder {
             graph.addVertex(argument.id);
 
             matcher.setStringToMatch(argument.conclusion);
+            matcher.setArgumentId(argument.id);
             Iterable<Map<String,String>> matches = matcher.match();
 
             for(Map<String,String> match : matches){

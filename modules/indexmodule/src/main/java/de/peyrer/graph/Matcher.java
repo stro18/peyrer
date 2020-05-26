@@ -8,4 +8,10 @@ public interface Matcher {
     Iterable<Map<String,String>> match();
 
     String setStringToMatch(String stringToMatch);
+
+    String setArgumentId(String id);
+
+    String setDirectoryName_Conclusions(String directoryName_conclusions);
+
+    String setDirectoryName(String directoryName);
 }

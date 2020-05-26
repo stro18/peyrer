@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class PremiseIndexer extends AbstractIndexer {
 
-    IArgumentRepository argumentRepository;
+    public IArgumentRepository argumentRepository;
 
     IndexWriterConfig config;
 
