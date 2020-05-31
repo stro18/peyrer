@@ -19,7 +19,7 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.IOException;
 
 public class ConclusionIndexer extends AbstractIndexer {
-    IArgumentRepository argumentRepository;
+    public IArgumentRepository argumentRepository;
 
     IndexWriterConfig config;
 
