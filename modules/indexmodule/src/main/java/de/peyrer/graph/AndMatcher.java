@@ -1,6 +1,7 @@
 package de.peyrer.graph;
 
 import de.peyrer.indexer.ConclusionIndexer;
+import de.peyrer.indexmodule.Indexmodule;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -39,7 +40,7 @@ class AndMatcher extends AbstractMatcher {
 
         IndexSearcher searcher = new IndexSearcher(iReader);
         IndexSearcher searcher_Conclusions = new IndexSearcher(iReader_Conclusions);
-        Analyzer analyzer = new StandardAnalyzer();
+        Analyzer analyzer = (new Indexmodule()).getAnalyzer();
 
         QueryParser parser = new QueryParser("premiseText", analyzer);
         Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.MUST);
