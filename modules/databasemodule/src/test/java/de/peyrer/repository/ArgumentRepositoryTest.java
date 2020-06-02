@@ -1,3 +1,5 @@
+package de.peyrer.repository;
+
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import org.bson.BsonDocument;
@@ -95,9 +97,6 @@ public class ArgumentRepositoryTest {
 
     @Test
     public void test_H_Delete() {
-
-        ArgumentRepository argumentRepository = new ArgumentRepository();
-
         Argument argument = argumentRepository.readById("2");
 
         Argument argumentDelete= argumentRepository.delete(argument);

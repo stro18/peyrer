@@ -1,3 +1,5 @@
+package de.peyrer.connection;
+
 import com.mongodb.client.MongoCollection;
 import de.peyrer.connection.MongoConnector;
 import org.bson.BsonDocument;
