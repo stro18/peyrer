@@ -55,9 +55,6 @@ public class SumComputer implements IRelevanceComputer{
 					if(!uniqueChildren.containsKey(child[2])) {
 						uniqueChildren.put(child[2], pageRank.get(child[1]));
 					}
-					else {
-						// do nothing
-					}
 				}
 				for(Map.Entry<String, Double> uniqueNodes : uniqueChildren.entrySet()) {
 					pageRankChild = 0.0;

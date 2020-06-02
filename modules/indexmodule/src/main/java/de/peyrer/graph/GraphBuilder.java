@@ -42,10 +42,6 @@ public class GraphBuilder {
         return null;
     };
 
-    public void saveToDatabase(IDirectedGraph graph, Map<String,Double> pageRank, Map<String,Double> relevance){
-        return;
-    };
-
     private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex){
         Iterable<Argument> arguments = repository.readAll();
 
