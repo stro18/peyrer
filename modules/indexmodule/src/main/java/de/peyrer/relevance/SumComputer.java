@@ -1,5 +1,6 @@
 package de.peyrer.relevance;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,21 +33,22 @@ public class SumComputer implements IRelevanceComputer{
     }
 
 	@Override
-	public Map<String,Double> computeAndSaveRelevance(){
-		double relevance;
-		double pageRankChild;
-		double relevanceSum;
+	public Map<String,Double> computeAndSaveRelevance()
+	{
+		Double[] pageRankValues = pageRank.values().toArray(new Double[0]);
+		Arrays.sort(pageRankValues);
+		double pageRankMedian = pageRankValues[pageRankValues.length/2];
 
 		Map<String,Double> relevanceMap = new HashMap<>();
 		Map<String,Double> uniqueChildren = null;
 		
 		for(Map.Entry<String, Double> node : pageRank.entrySet()) {
+			double relevanceSum = 0;
 			Iterable<String[]> children = graph.getOutgoingEdges(node.getKey());
-			int numberOfPremises = repo.getNumberofPremises(node.getKey());
 			//If argument has no premises
 			if(children == null) {
-				relevance = Double.MIN_VALUE;
-				relevanceMap.put(node.getKey(), relevance);
+				relevanceSum = Double.MIN_VALUE;
+				relevanceMap.put(node.getKey(), relevanceSum);
 			}
 			else {
 				relevanceSum = 0.0;		//iterate over children -> put uniques in new map
@@ -57,11 +59,10 @@ public class SumComputer implements IRelevanceComputer{
 					}
 				}
 				for(Map.Entry<String, Double> uniqueNodes : uniqueChildren.entrySet()) {
-					pageRankChild = 0.0;
-					pageRankChild = uniqueNodes.getValue();	//grab page rank for each child
-					relevanceSum += pageRankChild;
+					relevanceSum += uniqueNodes.getValue();	//grab page rank for each child
 				}
-				relevanceSum += (numberOfPremises - uniqueChildren.size()) * (1 - AbstractDirectedGraph.dampingFactor);
+				int numberOfPremises = repo.getNumberofPremises(node.getKey());
+				relevanceSum += (numberOfPremises - uniqueChildren.size()) * pageRankMedian;
 				relevanceMap.put(node.getKey(), relevanceSum);
 			}
 		}
