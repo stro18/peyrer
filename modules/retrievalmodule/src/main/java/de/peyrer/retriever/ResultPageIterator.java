@@ -1,8 +1,6 @@
 package de.peyrer.retriever;
 
 import java.io.IOException;
-import java.util.Iterator;
-
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 

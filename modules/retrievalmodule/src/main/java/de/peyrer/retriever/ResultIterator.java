@@ -1,15 +1,12 @@
 package de.peyrer.retriever;
 
 import java.io.IOException;
-import java.util.Iterator;
-
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
 import de.peyrer.model.Argument;
-import de.peyrer.repository.ArgumentRepository;
 
 public class ResultIterator extends AbstractResultIterator {
     
@@ -17,8 +14,6 @@ public class ResultIterator extends AbstractResultIterator {
     private int pageSize = 10;
     private ScoreDoc after = null;
     private ResultPageIterator resultPageIterator;
-    private ArgumentRepository argRepo = new ArgumentRepository();
-
     public ResultIterator(IndexSearcher indexSearcher, Query query) {
     	super(indexSearcher);
     	this.query = query;
