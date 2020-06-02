@@ -6,7 +6,7 @@ public interface IDirectedGraph {
 
     Map<String,Double> computeAndSavePageRank();
 
-    Iterable<String[]> getEdges();
+    int getNumberOfEdges();
 
     Iterable<String[]> getOutgoingEdges(String vertex);
 }

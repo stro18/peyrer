@@ -18,6 +18,7 @@ import java.util.Objects;
 
 public class AndMatcherTest {
 
+    /*
     @Test
     public void MatchingTest(){
         PremiseIndexer indexer = null;
@@ -74,5 +75,6 @@ public class AndMatcherTest {
         Map<String,String> firstMap = indexIterator.next();
         Assert.assertEquals(firstMap.get("argumentId"),"2");
     }
+    */
 }
 

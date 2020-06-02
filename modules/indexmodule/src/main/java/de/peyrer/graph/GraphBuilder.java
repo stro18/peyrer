@@ -35,9 +35,9 @@ public class GraphBuilder {
         }
     }
 
-    public IDirectedGraph build(){
+    public IDirectedGraph build(String premiseIndex, String conclusionIndex){
         if(graph instanceof JGraphTAdapter){
-            return buildJGraphT();
+            return buildJGraphT(premiseIndex, conclusionIndex);
         }
         return null;
     };
@@ -46,7 +46,7 @@ public class GraphBuilder {
         return;
     };
 
-    private IDirectedGraph buildJGraphT(){
+    private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex){
         Iterable<Argument> arguments = repository.readAll();
 
         for(Argument argument : arguments){
@@ -54,6 +54,8 @@ public class GraphBuilder {
 
             matcher.setStringToMatch(argument.conclusion);
             matcher.setArgumentId(argument.id);
+            matcher.setDirectoryName(premiseIndex);
+            matcher.setDirectoryName_Conclusions(conclusionIndex);
             Iterable<Map<String,String>> matches = matcher.match();
 
             for(Map<String,String> match : matches){
@@ -61,6 +63,8 @@ public class GraphBuilder {
                 graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"));
             }
         }
+
+        System.out.println("Number of edges: " + graph.getNumberOfEdges());
 
         return graph;
     }

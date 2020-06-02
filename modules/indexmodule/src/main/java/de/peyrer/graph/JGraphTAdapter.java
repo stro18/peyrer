@@ -3,19 +3,20 @@ package de.peyrer.graph;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.jgrapht.alg.scoring.PageRank;
+import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import java.util.LinkedList;
 import java.util.Map;
 
 public class JGraphTAdapter extends AbstractDirectedGraph {
-    private SimpleDirectedGraph<String, DefaultEdgeWithPremiseNumber> graph;
+    private DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber> graph;
 
     private IArgumentRepository argumentRepository;
 
     public JGraphTAdapter()
     {
-        this.graph = new SimpleDirectedGraph<String, DefaultEdgeWithPremiseNumber>(DefaultEdgeWithPremiseNumber.class);
+        this.graph = new DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber>(DefaultEdgeWithPremiseNumber.class);
         this.argumentRepository = new ArgumentRepository();
     }
 
@@ -46,17 +47,12 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
     }
 
     @Override
-    public Iterable<String[]> getEdges() {
-        LinkedList<String[]> edges = new LinkedList<String[]>();
+    public int getNumberOfEdges() {
+        int count = 0;
         for(DefaultEdgeWithPremiseNumber edge : this.graph.edgeSet()){
-            String[] edgeAsArray = new String[3];
-            edgeAsArray[0] = graph.getEdgeSource(edge);
-            edgeAsArray[1] = graph.getEdgeTarget(edge);
-            edgeAsArray[2] = edge.getPremiseNumber();
-            edges.add(edgeAsArray);
+            count++;
         }
-
-        return edges;
+        return count;
     }
 
     @Override

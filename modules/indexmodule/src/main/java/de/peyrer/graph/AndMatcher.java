@@ -16,16 +16,10 @@ import java.util.*;
 
 class AndMatcher extends AbstractMatcher {
 
-    LinkedList<Map<String,String>> result;
-    Map<String,String> match;
-
-    public AndMatcher(){
-        result = new LinkedList<>();
-        match = new HashMap<>();
-    }
-
     @Override
     public Iterable<Map<String,String>> match() {
+        LinkedList<Map<String,String>> result = new LinkedList<>();
+
         //directory for premise index
         Directory directory = null;
         DirectoryReader iReader = null;
@@ -54,12 +48,13 @@ class AndMatcher extends AbstractMatcher {
         ScoreDoc[] conclusions = null;
 
         try {
-            hits = searcher.search(query, searcher.count(query)).scoreDocs;
+            int matchNumber = searcher.count(query);
+            hits = matchNumber==0 ? null : searcher.search(query, matchNumber).scoreDocs;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < hits.length; i++) {
+        for (int i = 0; i < (hits == null ? 0 : hits.length); i++) {
             try {
                 Document doc = searcher.doc(hits[i].doc);
                 //make a query to find if premise is equals conclusion
@@ -67,29 +62,23 @@ class AndMatcher extends AbstractMatcher {
                 Query query_conclusion = parser_Conclusions.createBooleanQuery("conclusionText",doc.get("premiseText").toString(),BooleanClause.Occur.MUST);
                 //Searcher will throw exception if ScoreDoc = 0 when searching for a premise that is not in the conclusion index -> ignore the exception
                 try{
-                    conclusions = searcher_Conclusions.search(query_conclusion, searcher_Conclusions.count(query_conclusion)).scoreDocs;
+                    int matchNumber = searcher_Conclusions.count(query_conclusion);
+                    conclusions = matchNumber==0 ? null : searcher_Conclusions.search(query_conclusion, matchNumber).scoreDocs;
                 } catch(IllegalArgumentException e){
                     continue;
                 }
                 //if a premise can be found in the conclusionIndex then add it to the current map if it equals the value of the setArgumentId
-                if(conclusions != null) {
-                    for (int j = 0; j < conclusions.length; j++) {
-                        Document concs = searcher_Conclusions.doc(conclusions[j].doc);
-                        if (concs.get("argumentId").equals(argumentId)) {
-                            match.put("argumentId", doc.get("argumentId"));
-                            match.put("premiseId", doc.get("premiseId"));
-                            if(!result.contains(match)){
-                                result.add(match);
-                            }
+                for (int j = 0; j < (conclusions == null ? 0 : conclusions.length); j++) {
+                    Document concs = searcher_Conclusions.doc(conclusions[j].doc);
+                    if (concs.get("argumentId").equals(argumentId)) {
+                        Map<String,String> match = new HashMap<>();
+                        match.put("argumentId", doc.get("argumentId"));
+                        match.put("premiseId", doc.get("premiseId"));
+                        if(!result.contains(match)){
+                            result.add(match);
                         }
                     }
                 }
-                else{
-                    continue;
-                }
-                // set the new map to add to the iterable
-                Map<String,String> newMap = new HashMap<>();
-                match = newMap;
             } catch (IOException e) {
                 e.printStackTrace();
             }

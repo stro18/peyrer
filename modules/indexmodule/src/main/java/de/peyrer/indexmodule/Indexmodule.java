@@ -8,6 +8,9 @@ import de.peyrer.indexer.PremiseIndexer;
 import de.peyrer.indexer.RelevanceIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
 import de.peyrer.relevance.SumComputer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,27 +30,37 @@ public class Indexmodule implements IIndexmodule {
         IIndexer conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
         IIndexer relevanceIndexer = new RelevanceIndexer("index");
 
+        System.out.println("Indexing of premises and indexing started at : " + java.time.ZonedDateTime.now());
         try {
             premiseIndexer.index();
             conclusionIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Indexing of premises and indexing ended at : " + java.time.ZonedDateTime.now());
 
-        IDirectedGraph graph = graphBuilder.build();
+        System.out.println("Building of graph started at : " + java.time.ZonedDateTime.now());
+        IDirectedGraph graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());
+        System.out.println("Building of graph ended at : " + java.time.ZonedDateTime.now());
 
+        System.out.println("Computing and saving of pageRank started at : " + java.time.ZonedDateTime.now());
         Map<String,Double> pageRank = graph.computeAndSavePageRank();
+        System.out.println("Computing and saving of pageRank ended at : " + java.time.ZonedDateTime.now());
 
+        System.out.println("Computing and saving of relevance started at : " + java.time.ZonedDateTime.now());
         IRelevanceComputer relevanceComputer = new SumComputer();
         relevanceComputer.setGraph(graph);
         relevanceComputer.setPageRank(pageRank);
         relevanceComputer.computeAndSaveRelevance();
+        System.out.println("Computing and saving of relevance ended at : " + java.time.ZonedDateTime.now());
 
+        System.out.println("Indexing of relevance started at : " + java.time.ZonedDateTime.now());
         try {
             relevanceIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Indexing of relevance ended at : " + java.time.ZonedDateTime.now());
     }
 
     @Override
@@ -58,6 +71,11 @@ public class Indexmodule implements IIndexmodule {
         }else{
             return null;
         }
+    }
+
+    public Analyzer getAnalyzer(){
+        CharArraySet stopSet = new CharArraySet(getStopwords(), true);
+        return new StandardAnalyzer(stopSet);
     }
 
     @Override
