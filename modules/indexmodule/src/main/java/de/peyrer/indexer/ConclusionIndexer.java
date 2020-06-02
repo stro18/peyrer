@@ -28,8 +28,7 @@ public class ConclusionIndexer extends AbstractIndexer {
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
-        Analyzer analyzer = new StandardAnalyzer(stopSet);
+        Analyzer analyzer = (new Indexmodule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 
