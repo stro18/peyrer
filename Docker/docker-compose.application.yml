@@ -7,3 +7,5 @@ services:
             dockerfile: Docker/Dockerfile
         networks:
             - bridge_network
+        depends_on:
+          - mongo

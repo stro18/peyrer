@@ -6,6 +6,7 @@ import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -22,9 +23,23 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
 
     @Override
     public Map<String, Double> computeAndSavePageRank() {
-        PageRank<String, DefaultEdgeWithPremiseNumber> pageRanker = new PageRank<>(graph, dampingFactor);
+        PageRank<String, DefaultEdgeWithPremiseNumber> pageRanker = new PageRank<String, DefaultEdgeWithPremiseNumber>(graph, dampingFactor, maxIterations, toleranceDefault);
 
         Map<String,Double> pageRankScores = pageRanker.getScores();
+
+        Double[] pageRankValues = pageRankScores.values().toArray(new Double[0]);
+        Arrays.sort(pageRankValues);
+        Double current = 0d;
+        int count = 0;
+        for(Double pageRank : pageRankValues){
+            if(pageRank.equals(current)){
+                count++;
+            }else{
+                System.out.println("Pagerank " + current + " occurs " + count + " times.");
+                current = pageRank;
+                count = 1;
+            }
+        }
 
         /*
         System.out.println("Saving of pageRank started at : " + java.time.ZonedDateTime.now());
@@ -64,6 +79,19 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
     public Iterable<String[]> getOutgoingEdges(String vertex) {
         LinkedList<String[]> edges = new LinkedList<String[]>();
         for(DefaultEdgeWithPremiseNumber edge : this.graph.outgoingEdgesOf(vertex)){
+            String[] edgeAsArray = new String[3];
+            edgeAsArray[0] = graph.getEdgeSource(edge);
+            edgeAsArray[1] = graph.getEdgeTarget(edge);
+            edgeAsArray[2] = edge.getPremiseNumber();
+            edges.add(edgeAsArray);
+        }
+
+        return edges;
+    }
+
+    public Iterable<String[]> getIncomingEdges(String vertex) {
+        LinkedList<String[]> edges = new LinkedList<String[]>();
+        for(DefaultEdgeWithPremiseNumber edge : this.graph.incomingEdgesOf(vertex)){
             String[] edgeAsArray = new String[3];
             edgeAsArray[0] = graph.getEdgeSource(edge);
             edgeAsArray[1] = graph.getEdgeTarget(edge);
