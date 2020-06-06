@@ -55,8 +55,14 @@ public class SumComputerTest {
 
 		Mockito.when(argumentRepository.updateRelevance(Mockito.anyString(), Mockito.anyDouble()))
 				.thenAnswer(i -> i.getArgument(1));
-		Mockito.when(argumentRepository.getNumberofPremises("1")).thenReturn(1);
-		Mockito.when(argumentRepository.getNumberofPremises("2")).thenReturn(2);
+
+		Map<String,Integer> numberOfPremises = new HashMap<>();
+		numberOfPremises.put("1", 1);
+		numberOfPremises.put("2", 2);
+		numberOfPremises.put("3", 1);
+		numberOfPremises.put("4", 1);
+		numberOfPremises.put("5", 1);
+		Mockito.when(argumentRepository.getNumberOfPremises()).thenReturn(numberOfPremises);
 
 		sumComputer.setGraph(jGraphTAdapter);
 		sumComputer.setPageRank(pageRank);
@@ -66,6 +72,5 @@ public class SumComputerTest {
 		Assert.assertEquals(0.5, relevance.get("1"), 0.0);
 		Assert.assertEquals(0.7, relevance.get("2"), 0.0);
 	}
-
 }
 

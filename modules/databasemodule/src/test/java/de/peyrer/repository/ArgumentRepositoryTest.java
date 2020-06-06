@@ -9,6 +9,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.util.Map;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 
 public class ArgumentRepositoryTest {
@@ -96,7 +98,14 @@ public class ArgumentRepositoryTest {
     }
 
     @Test
-    public void test_H_Delete() {
+    public void test_H_GetNumberOfPremisesByNoArguments(){
+        Map<String,Integer> result = argumentRepository.getNumberOfPremises();
+
+        Assert.assertEquals(Integer.valueOf(3), result.get("2"));
+    }
+
+    @Test
+    public void test_I_Delete() {
         Argument argument = argumentRepository.readById("2");
 
         Argument argumentDelete= argumentRepository.delete(argument);

@@ -26,9 +26,14 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
 
         Map<String,Double> pageRankScores = pageRanker.getScores();
 
+        /*
+        System.out.println("Saving of pageRank started at : " + java.time.ZonedDateTime.now());
         for(Map.Entry<String,Double> entry : pageRankScores.entrySet()){
             this.argumentRepository.updatePageRank(entry.getKey(), entry.getValue());
         }
+        System.out.println("Saving of pageRank ended at : " + java.time.ZonedDateTime.now());
+        */
+
         return pageRankScores;
     }
 

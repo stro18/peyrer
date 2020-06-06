@@ -10,6 +10,8 @@ import org.bson.BsonObjectId;
 import org.bson.BsonString;
 import org.bson.conversions.Bson;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.mongodb.client.model.Updates.combine;
@@ -82,5 +84,17 @@ public class ArgumentRepository implements IArgumentRepository {
         BsonArray premises  = bsonArgument.get("premises").asArray();
         NumberofPremises = premises.size();
         return NumberofPremises;
+    }
+
+    @Override
+    public Map<String,Integer> getNumberOfPremises(){
+        Iterable<Argument> iterable = this.readAll();
+
+        Map<String,Integer> premiseNumber = new HashMap<>();
+        for(Argument argument : iterable){
+            premiseNumber.put(argument.id, argument.premises.length);
+        }
+
+        return premiseNumber;
     }
 }
