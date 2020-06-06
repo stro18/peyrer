@@ -1,0 +1,9 @@
+version: '3.1'
+
+services:
+    searchengine:
+        build:
+            context: ..
+            dockerfile: Docker/Dockerfile
+        networks:
+            - bridge_network

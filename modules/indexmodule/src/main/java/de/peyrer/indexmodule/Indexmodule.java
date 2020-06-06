@@ -30,14 +30,14 @@ public class Indexmodule implements IIndexmodule {
         IIndexer conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
         IIndexer relevanceIndexer = new RelevanceIndexer("index");
 
-        System.out.println("Indexing of premises and indexing started at : " + java.time.ZonedDateTime.now());
+        System.out.println("Indexing of premises and conclusions started at : " + java.time.ZonedDateTime.now());
         try {
             premiseIndexer.index();
             conclusionIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Indexing of premises and indexing ended at : " + java.time.ZonedDateTime.now());
+        System.out.println("Indexing of premises and conclusions ended at : " + java.time.ZonedDateTime.now());
 
         System.out.println("Building of graph started at : " + java.time.ZonedDateTime.now());
         IDirectedGraph graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());

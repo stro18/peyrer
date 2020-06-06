@@ -40,11 +40,12 @@ public class SumComputer implements IRelevanceComputer{
 		double pageRankMedian = pageRankValues[pageRankValues.length/2];
 
 		Map<String,Double> relevanceMap = new HashMap<>();
-		Map<String,Double> uniqueChildren = null;
-		
+		Map<String,Integer> numberOfPremises = repo.getNumberOfPremises();
+
 		for(Map.Entry<String, Double> node : pageRank.entrySet()) {
 			double relevanceSum = 0;
 			Iterable<String[]> children = graph.getOutgoingEdges(node.getKey());
+
 			//If argument has no premises
 			if(children == null) {
 				relevanceSum = Double.MIN_VALUE;
@@ -52,7 +53,7 @@ public class SumComputer implements IRelevanceComputer{
 			}
 			else {
 				relevanceSum = 0.0;		//iterate over children -> put uniques in new map
-				uniqueChildren = new HashMap<>();
+				Map<String,Double> uniqueChildren = new HashMap<>();
 				for(String[] child : children) {
 					if(!uniqueChildren.containsKey(child[2])) {
 						uniqueChildren.put(child[2], pageRank.get(child[1]));
@@ -61,14 +62,24 @@ public class SumComputer implements IRelevanceComputer{
 				for(Map.Entry<String, Double> uniqueNodes : uniqueChildren.entrySet()) {
 					relevanceSum += uniqueNodes.getValue();	//grab page rank for each child
 				}
-				int numberOfPremises = repo.getNumberofPremises(node.getKey());
-				relevanceSum += (numberOfPremises - uniqueChildren.size()) * pageRankMedian;
+
+				relevanceSum += (numberOfPremises.get(node.getKey()) - uniqueChildren.size()) * pageRankMedian;
 				relevanceMap.put(node.getKey(), relevanceSum);
 			}
 		}
+
+		System.out.println("Saving of relevance started at : " + java.time.ZonedDateTime.now());
+		int count = 0;
 		for(Map.Entry<String, Double> rvMap : relevanceMap.entrySet()){
 			repo.updateRelevance(rvMap.getKey(), rvMap.getValue());
+
+			count++;
+			if(count % 1000 == 0){
+				System.out.println("Progress: Relevance of " + count + " arguments saved at: " + java.time.ZonedDateTime.now());
+			}
 		}
+		System.out.println("Saving of relevance ended at : " + java.time.ZonedDateTime.now());
+
 		return relevanceMap;
 	}
 }
