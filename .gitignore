@@ -8,4 +8,5 @@ raw_data/*
 **/conclusionindex
 /Docker/docker-compose.debug.yml
 
-!argument_ndjson/MongoSeed.Dockerfile
+!argument_ndjson/mongoseed.dev.Dockerfile
+!argument_ndjson/mongoseed.prod.Dockerfile
