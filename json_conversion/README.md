@@ -6,11 +6,11 @@ Dependencies:
   - Jackson JSON Parser (https://github.com/FasterXML/jackson)
 
 Compilation:
-  - javac -cp /path/to/jackson-core-2.x.x.jar:/path/to/jackson-databind-2.x.x.jar:/path/to/jackson-annotations-2.x.x.jar ParseArgumentJson.java
+  - `javac -cp /path/to/jackson-core-2.x.x.jar:/path/to/jackson-databind-2.x.x.jar:/path/to/jackson-annotations-2.x.x.jar ParseArgumentJson.java`
 
 Usage:
-  - java -cp /path/to/jackson-core-2.x.x.jar:/path/to/jackson-databind-2.x.x.jar:/path/to/jackson-annotations-2.x.x.jar ParseArgumentJson /path/to/file.json
-  - this will create a file /path/to/file.ndjson containing all argument
+  - `java -cp /path/to/jackson-core-2.x.x.jar:/path/to/jackson-databind-2.x.x.jar:/path/to/jackson-annotations-2.x.x.jar ParseArgumentJson /path/to/file.json`
+  - This will create a file /path/to/file.ndjson containing all argument
     objects from the input file without the surrounding JSON object and
     seperated by newlines
 
