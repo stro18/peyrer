@@ -2,11 +2,9 @@
 *.iml
 **/target
 argument_ndjson/*
+argument_ndjson
 raw_data/*
 **/index
 **/premiseindex
 **/conclusionindex
 /Docker/docker-compose.debug.yml
-
-!argument_ndjson/mongoseed.dev.Dockerfile
-!argument_ndjson/mongoseed.prod.Dockerfile
