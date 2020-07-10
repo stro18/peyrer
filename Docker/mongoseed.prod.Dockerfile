@@ -2,5 +2,5 @@ FROM mongo:4.2
 
 COPY ./ /
 
-RUN chmod +x ./mongoseed-entrypoint.sh
-ENTRYPOINT ["./mongoseed-entrypoint.sh"]
+RUN chmod +x ./mongoseed-entrypoint.prod.sh
+ENTRYPOINT ["./mongoseed-entrypoint.prod.sh"]
