@@ -11,4 +11,6 @@ Show logs:
 `docker logs -f docker_searchengine_1`
 
 Quit database server and application:  
-`docker-compose -f docker-compose.base.dev.yml -f docker-compose.application.yml down`
+`docker-compose -f docker-compose.base.dev.yml -f docker-compose.application.yml down`  
+
+Please pay attention to your runtime environment. There are duplicate docker files for production environment.
