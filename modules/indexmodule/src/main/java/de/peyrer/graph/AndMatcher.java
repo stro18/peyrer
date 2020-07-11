@@ -60,7 +60,15 @@ class AndMatcher extends AbstractMatcher {
                 Document doc = searcher.doc(hits[i].doc);
                 //make a query to find if premise is equals conclusion
                 QueryParser parser_Conclusions = new QueryParser("conclusionText",analyzer);
-                Query query_conclusion = parser_Conclusions.createBooleanQuery("conclusionText",doc.get("premiseText").toString(),BooleanClause.Occur.MUST);
+                Query query_conclusion;
+                try {
+                    query_conclusion = parser_Conclusions.createBooleanQuery("conclusionText", doc.get("premiseText").toString(), BooleanClause.Occur.MUST);
+                }catch(BooleanQuery.TooManyClauses e){
+                    System.out.println(doc.get("premiseText"));
+                    System.out.println(doc.get("premiseText").split(" ").length);
+                    BooleanQuery.setMaxClauseCount(4096);
+                    query_conclusion = parser_Conclusions.createBooleanQuery("conclusionText", doc.get("premiseText").toString(), BooleanClause.Occur.MUST);
+                }
                 //Searcher will throw exception if ScoreDoc = 0 when searching for a premise that is not in the conclusion index -> ignore the exception
                 try{
                     int matchNumber = searcher_Conclusions.count(query_conclusion);
