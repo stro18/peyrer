@@ -18,7 +18,7 @@ import java.util.*;
 class AndMatcher extends AbstractMatcher {
 
     @Override
-    public Iterable<Map<String,String>> match() {
+    public Iterable<Map<String,String>> match() throws IOException {
         LinkedList<Map<String,String>> result = new LinkedList<>();
 
         //directory for premise index
@@ -48,40 +48,40 @@ class AndMatcher extends AbstractMatcher {
         ScoreDoc[] hits = null;
         ScoreDoc[] conclusions = null;
 
-        try {
-            int matchNumber = searcher.count(query);
-            hits = matchNumber==0 ? null : searcher.search(query, matchNumber).scoreDocs;
-        } catch (IOException e) {
-            e.printStackTrace();
+        int matchNumber = searcher.count(query);
+        if(matchNumber == 0) {
+            return result;
         }
+        hits = searcher.search(query, matchNumber).scoreDocs;
 
-        for (int i = 0; i < (hits == null ? 0 : hits.length); i++) {
+        for (int i = 0; i < hits.length; i++) {
+            Document doc = searcher.doc(hits[i].doc);
+            //make a query to find if premise is equals conclusion
+            QueryParser parser_Conclusions = new QueryParser("conclusionText",analyzer);
+            Query query_conclusion;
             try {
-                Document doc = searcher.doc(hits[i].doc);
-                //make a query to find if premise is equals conclusion
-                QueryParser parser_Conclusions = new QueryParser("conclusionText",analyzer);
-                Query query_conclusion = parser_Conclusions.createBooleanQuery("conclusionText",doc.get("premiseText").toString(),BooleanClause.Occur.MUST);
-                //Searcher will throw exception if ScoreDoc = 0 when searching for a premise that is not in the conclusion index -> ignore the exception
-                try{
-                    int matchNumber = searcher_Conclusions.count(query_conclusion);
-                    conclusions = matchNumber==0 ? null : searcher_Conclusions.search(query_conclusion, matchNumber).scoreDocs;
-                } catch(IllegalArgumentException e){
-                    continue;
-                }
-                //if a premise can be found in the conclusionIndex then add it to the current map if it equals the value of the setArgumentId
-                for (int j = 0; j < (conclusions == null ? 0 : conclusions.length); j++) {
-                    Document concs = searcher_Conclusions.doc(conclusions[j].doc);
-                    if (concs.get("argumentId").equals(argumentId)) {
-                        Map<String,String> match = new HashMap<>();
-                        match.put("argumentId", doc.get("argumentId"));
-                        match.put("premiseId", doc.get("premiseId"));
-                        if(!result.contains(match)){
-                            result.add(match);
-                        }
+                query_conclusion = parser_Conclusions.createBooleanQuery("conclusionText", doc.get("premiseText").toString(), BooleanClause.Occur.MUST);
+            }catch(BooleanQuery.TooManyClauses e){
+                continue;
+            }
+
+            int matchNumberConclusion = searcher_Conclusions.count(query_conclusion);
+            if(matchNumberConclusion == 0) {
+                continue;
+            }
+            conclusions = searcher_Conclusions.search(query_conclusion, matchNumberConclusion).scoreDocs;
+
+            //if a premise can be found in the conclusionIndex then add it to the current map if it equals the value of the setArgumentId
+            for (int j = 0; j < conclusions.length; j++) {
+                Document concs = searcher_Conclusions.doc(conclusions[j].doc);
+                if (concs.get("argumentId").equals(argumentId)) {
+                    Map<String,String> match = new HashMap<>();
+                    match.put("argumentId", doc.get("argumentId"));
+                    match.put("premiseId", doc.get("premiseId"));
+                    if(!result.contains(match)){
+                        result.add(match);
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
         return result;

@@ -1,11 +1,12 @@
 package de.peyrer.graph;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface Matcher {
 
     // Returns array of ids of matching arguments
-    Iterable<Map<String,String>> match();
+    Iterable<Map<String,String>> match() throws IOException;
 
     String setStringToMatch(String stringToMatch);
 
