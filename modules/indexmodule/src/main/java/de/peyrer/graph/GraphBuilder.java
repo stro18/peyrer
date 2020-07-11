@@ -46,6 +46,7 @@ public class GraphBuilder {
     private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex) throws IOException {
         Iterable<Argument> arguments = repository.readAll();
 
+        int counter = 0;
         for(Argument argument : arguments){
             graph.addVertex(argument.id);
 
@@ -58,6 +59,11 @@ public class GraphBuilder {
             for(Map<String,String> match : matches){
                 graph.addVertex(match.get("argumentId"));
                 graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"));
+            }
+
+            counter++;
+            if (counter % 1000 == 0) {
+                System.out.println("Processed arguments during graph building: " + counter);
             }
         }
 
