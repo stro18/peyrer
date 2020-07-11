@@ -45,6 +45,8 @@ public class GraphBuilder {
 
     private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex) throws IOException {
         Iterable<Argument> arguments = repository.readAll();
+        matcher.setDirectoryName(premiseIndex);
+        matcher.setDirectoryName_Conclusions(conclusionIndex);
 
         int counter = 0;
         for(Argument argument : arguments){
@@ -52,8 +54,6 @@ public class GraphBuilder {
 
             matcher.setStringToMatch(argument.conclusion);
             matcher.setArgumentId(argument.id);
-            matcher.setDirectoryName(premiseIndex);
-            matcher.setDirectoryName_Conclusions(conclusionIndex);
             Iterable<Map<String,String>> matches = matcher.match();
 
             for(Map<String,String> match : matches){
@@ -63,7 +63,7 @@ public class GraphBuilder {
 
             counter++;
             if (counter % 1000 == 0) {
-                System.out.println("Processed arguments during graph building: " + counter);
+                System.out.println("Progress of graph building: " + counter + " arguments were processed at " + java.time.ZonedDateTime.now());
             }
         }
 
