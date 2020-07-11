@@ -3,6 +3,7 @@ package de.peyrer.graph;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class GraphBuilder {
@@ -35,14 +36,14 @@ public class GraphBuilder {
         }
     }
 
-    public IDirectedGraph build(String premiseIndex, String conclusionIndex){
+    public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex, conclusionIndex);
         }
         return null;
     };
 
-    private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex){
+    private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex) throws IOException {
         Iterable<Argument> arguments = repository.readAll();
 
         for(Argument argument : arguments){
