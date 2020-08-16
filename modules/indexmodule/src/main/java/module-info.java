@@ -1,5 +1,6 @@
 module indexmodule {
     requires databasemodule;
+    requires analyzermodule;
     requires org.jgrapht.core;
     requires lucene.core;
     requires lucene.queries;

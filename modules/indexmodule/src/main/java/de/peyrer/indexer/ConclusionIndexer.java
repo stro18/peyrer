@@ -1,12 +1,11 @@
 package de.peyrer.indexer;
 
+import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
@@ -28,7 +27,7 @@ public class ConclusionIndexer extends AbstractIndexer {
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = (new Indexmodule()).getAnalyzer();
+        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 
@@ -47,6 +46,10 @@ public class ConclusionIndexer extends AbstractIndexer {
 
             // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusionText", argument.conclusion, Field.Store.YES));
+
+            /*AnalyzerModule analyzerModule = new AnalyzerModule();
+            String resultString = analyzerModule.analyze("conclusionText", argument.conclusion);
+            argumentRepository.updateConclusionNormalized(argument.id, resultString);*/
 
             indexWriter.addDocument(doc);
         }

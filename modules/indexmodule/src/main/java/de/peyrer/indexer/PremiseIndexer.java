@@ -1,5 +1,6 @@
 package de.peyrer.indexer;
 
+import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
@@ -29,7 +30,7 @@ public class PremiseIndexer extends AbstractIndexer {
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = (new Indexmodule()).getAnalyzer();
+        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 

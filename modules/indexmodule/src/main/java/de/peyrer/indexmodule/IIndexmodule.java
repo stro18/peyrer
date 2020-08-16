@@ -8,6 +8,4 @@ public interface IIndexmodule {
     public void indexWithRelevance() throws IOException;
 
     public String getIndexPath();
-
-    public List<String> getStopwords();
 }

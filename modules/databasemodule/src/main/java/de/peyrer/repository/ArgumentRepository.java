@@ -72,6 +72,18 @@ public class ArgumentRepository implements IArgumentRepository {
     }
 
     @Override
+    public String updateConclusionNormalized(String id, String value) {
+        BsonDocument bsonEntity = new BsonDocument("id",new BsonString(id));
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()),set("conclusionAnalyzed",value)).wasAcknowledged() ? value : null;
+    }
+
+    /*@Override
+    public double updatePremiseNormalized(String id, double value) {
+        BsonDocument bsonEntity = new BsonDocument("id",new BsonString(id));
+        return collection.updateOne(Objects.requireNonNull(collection.find(bsonEntity).first()), set("relevance", value)).wasAcknowledged() ? value : null;
+    }*/
+
+    @Override
     public Argument delete(Argument entity) {
         return collection.deleteOne(entity.toBson()).wasAcknowledged() ? entity : null;
     }
