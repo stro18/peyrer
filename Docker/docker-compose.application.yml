@@ -9,3 +9,5 @@ services:
             - bridge_network
         depends_on:
             - mongo
+        env_file:
+            - ../.env
