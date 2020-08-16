@@ -22,14 +22,12 @@ public class ConclusionIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
-    private final Analyzer analyzer;
-
     public ConclusionIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        this.analyzer = (new AnalyzerModule()).getAnalyzer();
+        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 
