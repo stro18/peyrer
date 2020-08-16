@@ -13,4 +13,5 @@ Show logs:
 Quit database server and application:  
 `docker-compose -f docker-compose.base.dev.yml -f docker-compose.application.yml down`  
 
-Please pay attention to your runtime environment. There are duplicate docker files for production environment.
+Please pay attention to your runtime environment. There are duplicate docker files for production environment, and you
+have to set `DEBUG=0` in .env file in production environment.
