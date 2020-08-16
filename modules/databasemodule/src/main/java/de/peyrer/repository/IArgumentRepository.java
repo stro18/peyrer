@@ -9,6 +9,8 @@ public interface IArgumentRepository extends IRepository<Argument> {
 
     public double updateRelevance(String id, double value);
 
+    public String updateConclusionNormalized(String id, String value);
+
     public int getNumberofPremises(String id);
 
     public Map<String,Integer> getNumberOfPremises();
