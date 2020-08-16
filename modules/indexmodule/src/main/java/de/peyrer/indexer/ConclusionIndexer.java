@@ -29,7 +29,7 @@ public class ConclusionIndexer extends AbstractIndexer {
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        this.analyzer = (new Indexmodule()).getAnalyzer();
+        this.analyzer = (new AnalyzerModule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 

@@ -1,5 +1,6 @@
 package de.peyrer.indexer;
 
+import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.model.ArgumentIterable;
@@ -78,7 +79,7 @@ public class ConclusionIndexerTest {
         IndexSearcher isearcher = new IndexSearcher(ireader);
 
         // Creates a boolean query that searches for "regulated militia":
-        CharArraySet stopSet = new CharArraySet(new Indexmodule().getStopwords(), true);
+        CharArraySet stopSet = new CharArraySet(new AnalyzerModule().getStopwords(), true);
         Analyzer analyzer = new StandardAnalyzer(stopSet);
         QueryParser parser = new QueryParser("conclusionText", analyzer);
         Query query = parser.createBooleanQuery("conclusionText", "Abortion is bad", BooleanClause.Occur.MUST);
