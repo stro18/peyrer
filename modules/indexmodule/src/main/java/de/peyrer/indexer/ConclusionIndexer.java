@@ -47,9 +47,11 @@ public class ConclusionIndexer extends AbstractIndexer {
             // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusionText", argument.conclusion, Field.Store.YES));
 
-            /*AnalyzerModule analyzerModule = new AnalyzerModule();
-            String resultString = analyzerModule.analyze("conclusionText", argument.conclusion);
-            argumentRepository.updateConclusionNormalized(argument.id, resultString);*/
+            if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")){
+                AnalyzerModule analyzerModule = new AnalyzerModule();
+                String resultString = analyzerModule.analyze("conclusionText", argument.conclusion);
+                argumentRepository.updateConclusionNormalized(argument.id, resultString);
+            }
 
             indexWriter.addDocument(doc);
         }
