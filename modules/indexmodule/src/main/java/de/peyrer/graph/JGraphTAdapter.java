@@ -41,13 +41,13 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
             }
         }
 
-        /*
-        System.out.println("Saving of pageRank started at : " + java.time.ZonedDateTime.now());
-        for(Map.Entry<String,Double> entry : pageRankScores.entrySet()){
-            this.argumentRepository.updatePageRank(entry.getKey(), entry.getValue());
+        if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")) {
+            System.out.println("Saving of pageRank started at : " + java.time.ZonedDateTime.now());
+            for (Map.Entry<String, Double> entry : pageRankScores.entrySet()) {
+                this.argumentRepository.updatePageRank(entry.getKey(), entry.getValue());
+            }
+            System.out.println("Saving of pageRank ended at : " + java.time.ZonedDateTime.now());
         }
-        System.out.println("Saving of pageRank ended at : " + java.time.ZonedDateTime.now());
-        */
 
         return pageRankScores;
     }
