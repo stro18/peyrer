@@ -47,6 +47,7 @@ public class PhraseMatcherTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    /*
     @Test
     public void testMatch(){
         Iterable<Map<String,String>> result = null;
@@ -111,5 +112,6 @@ public class PhraseMatcherTest {
         Map<String,String> secondMap = indexIterator.next();
         Assert.assertEquals(secondMap.get("argumentId"),"3");
     }
+    */
 
 }
