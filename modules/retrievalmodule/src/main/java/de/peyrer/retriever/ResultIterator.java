@@ -29,8 +29,12 @@ public class ResultIterator extends AbstractResultIterator {
 
     private TopDocs nextPage() {
 		try {
-			if(after != null) return this.searcher.searchAfter(this.after, this.query, this.pageSize);
-			else return this.searcher.search(this.query, this.pageSize);
+			if(this.after != null) return this.searcher.searchAfter(this.after, this.query, this.pageSize);
+			else {
+				TopDocs topDocs = this.searcher.search(this.query, this.pageSize);
+				this.after = topDocs.scoreDocs[(int) topDocs.totalHits.value - 1];
+				return topDocs;
+			}
 		} catch(IOException e) {
 			e.printStackTrace();
 			return null;
