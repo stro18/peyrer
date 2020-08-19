@@ -13,6 +13,7 @@
         <module>modules/indexmodule</module>
         <module>modules/databasemodule</module>
         <module>modules/mainmodule</module>
+        <module>modules/analyzermodule</module>
     </modules>
 
     <properties>

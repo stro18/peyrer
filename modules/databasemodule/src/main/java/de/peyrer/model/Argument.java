@@ -55,4 +55,12 @@ public class Argument {
 
         return bson;
     }
+
+    public void setPageRank(double pageRank) {
+        this.pageRank = pageRank;
+    }
+
+    public void setRelevance(double relevance) {
+        this.relevance = relevance;
+    }
 }

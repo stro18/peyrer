@@ -2,7 +2,13 @@ package de.peyrer.graph;
 
 public abstract class AbstractDirectedGraph implements IDirectedGraph {
 
-    abstract String addVertex(String vertex);
+    public static final double dampingFactor = 0.85;
 
-    abstract String[] addEdge(String sourceVertex, String targetVertex);
+    public static final int maxIterations = 100;
+
+    public static final double toleranceDefault = 0.000001;
+
+    public abstract String addVertex(String vertex);
+
+    public abstract String[] addEdge(String sourceVertex, String targetVertex, String premiseId);
 }

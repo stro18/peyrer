@@ -1,3 +1,5 @@
+package de.peyrer.connection;
+
 import com.mongodb.client.MongoCollection;
 import de.peyrer.connection.MongoConnector;
 import org.bson.BsonDocument;
@@ -8,7 +10,7 @@ public class ConnectorTest {
 
     @Test
     public void testGetCollection(){
-        MongoConnector connector = new MongoConnector();
+        MongoConnector connector = new MongoConnector("localhost");
         MongoCollection<BsonDocument> collection = connector.getCollection("args");
 
         BsonDocument document = collection.find().first();

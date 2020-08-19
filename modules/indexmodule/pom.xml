@@ -21,8 +21,13 @@
             <version>4.13</version>
         </dependency>
         <dependency>
-            <groupId>com.peyrer</groupId>
+            <groupId>de.peyrer</groupId>
             <artifactId>databasemodule</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.peyrer</groupId>
+            <artifactId>analyzermodule</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -39,6 +44,12 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
             <version>8.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.3.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

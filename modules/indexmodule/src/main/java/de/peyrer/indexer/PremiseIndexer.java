@@ -1,8 +1,12 @@
 package de.peyrer.indexer;
 
+import de.peyrer.analyzermodule.AnalyzerModule;
+import de.peyrer.indexmodule.Indexmodule;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
+import de.peyrer.repository.IArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -14,20 +18,19 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class PremiseIndexer extends AbstractIndexer {
 
-    ArgumentRepository argumentRepository;
+    public IArgumentRepository argumentRepository;
 
     IndexWriterConfig config;
 
-    PremiseIndexer(String directoryName) throws IOException {
+    public PremiseIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
-        this.indexPath = this.createIndexDirectory("src", "main", "resources", directoryName);
+        this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = new StandardAnalyzer();
+        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 
@@ -39,16 +42,20 @@ public class PremiseIndexer extends AbstractIndexer {
         Iterable<Argument> arguments = argumentRepository.readAll();
 
         for(Argument argument : arguments){
+            int premiseId = 0;
             for(String premise : argument.premises){
                 Document doc = new Document();
 
                 // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
                 doc.add(new StoredField("argumentId", argument.id));
+                doc.add(new StoredField("premiseId", Integer.toString(premiseId)));
 
-                // A field that is indexed and tokenized, without term vectors.
+                // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
                 doc.add(new TextField("premiseText", premise, Field.Store.YES));
 
                 indexWriter.addDocument(doc);
+
+                premiseId++;
             }
         }
 

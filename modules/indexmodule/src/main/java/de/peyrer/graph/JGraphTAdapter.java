@@ -1,50 +1,101 @@
 package de.peyrer.graph;
 
+import de.peyrer.repository.ArgumentRepository;
+import de.peyrer.repository.IArgumentRepository;
 import org.jgrapht.alg.scoring.PageRank;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
-class JGraphTAdapter extends AbstractDirectedGraph {
-    private SimpleDirectedGraph<String, DefaultEdge> graph;
+public class JGraphTAdapter extends AbstractDirectedGraph {
+    private DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber> graph;
 
-    private static final double dampingFactor = 0.85;
+    private IArgumentRepository argumentRepository;
 
-    JGraphTAdapter()
+    public JGraphTAdapter()
     {
-        this.graph = new SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+        this.graph = new DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber>(DefaultEdgeWithPremiseNumber.class);
+        this.argumentRepository = new ArgumentRepository();
     }
 
     @Override
-    public Map<String, Double> computePageRank() {
-        PageRank<String, DefaultEdge> pageRanker = new PageRank<>(graph, dampingFactor);
+    public Map<String, Double> computeAndSavePageRank() {
+        PageRank<String, DefaultEdgeWithPremiseNumber> pageRanker = new PageRank<String, DefaultEdgeWithPremiseNumber>(graph, dampingFactor, maxIterations, toleranceDefault);
 
-        return pageRanker.getScores();
+        Map<String,Double> pageRankScores = pageRanker.getScores();
+
+        Double[] pageRankValues = pageRankScores.values().toArray(new Double[0]);
+        Arrays.sort(pageRankValues);
+        Double current = 0d;
+        int count = 0;
+        for(Double pageRank : pageRankValues){
+            if(pageRank.equals(current)){
+                count++;
+            }else{
+                System.out.println("Pagerank " + current + " occurs " + count + " times.");
+                current = pageRank;
+                count = 1;
+            }
+        }
+
+        if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")) {
+            System.out.println("Saving of pageRank started at : " + java.time.ZonedDateTime.now());
+            for (Map.Entry<String, Double> entry : pageRankScores.entrySet()) {
+                this.argumentRepository.updatePageRank(entry.getKey(), entry.getValue());
+            }
+            System.out.println("Saving of pageRank ended at : " + java.time.ZonedDateTime.now());
+        }
+
+        return pageRankScores;
     }
 
     @Override
-    String addVertex(String vertex) {
+    public String addVertex(String vertex) {
         boolean added = graph.addVertex(vertex);
 
         return added ? vertex : null;
     }
 
     @Override
-    String[] addEdge(String sourceVertex, String targetVertex) {
-        DefaultEdge edge = graph.addEdge(sourceVertex, targetVertex);
+    public String[] addEdge(String sourceVertex, String targetVertex, String premiseId) {
+        boolean success = graph.addEdge(sourceVertex, targetVertex, new DefaultEdgeWithPremiseNumber(premiseId));
 
-        return edge == null ? null : new String[]{graph.getEdgeSource(edge), graph.getEdgeTarget(edge)};
+        return success ? null : new String[]{sourceVertex, targetVertex, premiseId};
     }
 
     @Override
-    public Iterable<String[]> getEdges() {
+    public int getNumberOfEdges() {
+        int count = 0;
+        for(DefaultEdgeWithPremiseNumber edge : this.graph.edgeSet()){
+            count++;
+        }
+        return count;
+    }
+
+    @Override
+    public Iterable<String[]> getOutgoingEdges(String vertex) {
         LinkedList<String[]> edges = new LinkedList<String[]>();
-        for(DefaultEdge edge : this.graph.edgeSet()){
-            String[] edgeAsArray = new String[2];
+        for(DefaultEdgeWithPremiseNumber edge : this.graph.outgoingEdgesOf(vertex)){
+            String[] edgeAsArray = new String[3];
             edgeAsArray[0] = graph.getEdgeSource(edge);
             edgeAsArray[1] = graph.getEdgeTarget(edge);
+            edgeAsArray[2] = edge.getPremiseNumber();
+            edges.add(edgeAsArray);
+        }
+
+        return edges;
+    }
+
+    public Iterable<String[]> getIncomingEdges(String vertex) {
+        LinkedList<String[]> edges = new LinkedList<String[]>();
+        for(DefaultEdgeWithPremiseNumber edge : this.graph.incomingEdgesOf(vertex)){
+            String[] edgeAsArray = new String[3];
+            edgeAsArray[0] = graph.getEdgeSource(edge);
+            edgeAsArray[1] = graph.getEdgeTarget(edge);
+            edgeAsArray[2] = edge.getPremiseNumber();
             edges.add(edgeAsArray);
         }
 
