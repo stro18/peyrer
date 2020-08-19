@@ -47,12 +47,10 @@ public class PhraseMatcherTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    /*
     @Test
     public void testMatch(){
         Iterable<Map<String,String>> result = null;
         IndexWriter iw = null;
-        IndexSearcher searcher = null;
         Map<String,String> premise = new HashMap<String,String>();
         premise.put("1","Abortion is not murder");
         premise.put("2","Abortion is Murder");
@@ -61,41 +59,45 @@ public class PhraseMatcherTest {
         matcher.setArgumentId("4");
         matcher.setStringToMatch("Abortion is murder");
 
-        TopDocs topDocs = new TopDocs(null,null);
-        topDocs.scoreDocs = new ScoreDoc[3];
-        topDocs.scoreDocs[0] = new ScoreDoc(1,1.0f);
-        topDocs.scoreDocs[1] = new ScoreDoc(2,1.0f);
-        topDocs.scoreDocs[2] = new ScoreDoc(3,1.0f);
-
         Document doc1 = new Document();
         doc1.add(new StoredField("argumentId", 1));
         doc1.add(new StoredField("premiseId", Integer.toString(1)));
-        doc1.add(new TextField("premiseText", premise.get("1"), Field.Store.YES));
+        try {
+            doc1.add(new TextField("premiseText", new AnalyzerModule().analyze("premiseText",premise.get("1")), Field.Store.YES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Document doc2 = new Document();
         doc2.add(new StoredField("argumentId", 2));
         doc2.add(new StoredField("premiseId", Integer.toString(2)));
-        doc2.add(new TextField("premiseText", premise.get("2"), Field.Store.YES));
+        try {
+            doc2.add(new TextField("premiseText", new AnalyzerModule().analyze("premiseText",premise.get("2")), Field.Store.YES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Document doc3 = new Document();
         doc3.add(new StoredField("argumentId", 3));
         doc3.add(new StoredField("premiseId", Integer.toString(3)));
-        doc3.add(new TextField("premiseText", premise.get("3"), Field.Store.YES));
+        try {
+            doc3.add(new TextField("premiseText", new AnalyzerModule().analyze("premiseText",premise.get("3")), Field.Store.YES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         try {
-            Directory dir = FSDirectory.open(Paths.get("testPath"));
+            Directory dir = FSDirectory.open(Paths.get(System.getProperty("user.dir") + "/src/main/resources/testindex"));
             Analyzer analyzer = (new AnalyzerModule().getAnalyzer());
             iw = new IndexWriter(dir, new IndexWriterConfig(analyzer));
             iw.addDocument(doc1);
             iw.addDocument(doc2);
             iw.addDocument(doc3);
             iw.close();
-            DirectoryReader iReader = DirectoryReader.open(dir);
-            searcher = new IndexSearcher(iReader);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
-            matcher.setDirectoryName("testPath");
+            matcher.setDirectoryName(System.getProperty("user.dir") + "/src/main/resources/testindex");
             result = matcher.match();
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,7 +113,15 @@ public class PhraseMatcherTest {
         Assert.assertEquals(indexIterator.hasNext(),true);
         Map<String,String> secondMap = indexIterator.next();
         Assert.assertEquals(secondMap.get("argumentId"),"3");
+        try {
+            Directory dir = FSDirectory.open(Paths.get(System.getProperty("user.dir") + "/src/main/resources/testindex"));
+            Analyzer analyzer = (new AnalyzerModule().getAnalyzer());
+            iw = new IndexWriter(dir, new IndexWriterConfig(analyzer));
+            iw.deleteAll();
+            iw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    */
 
 }
