@@ -5,6 +5,9 @@ argument_ndjson/*
 argument_ndjson
 raw_data/*
 **/index
+**/.settings
+**/.project
+**/.classpath
 **/premiseindex
 **/conclusionindex
 /Docker/docker-compose.debug.yml
