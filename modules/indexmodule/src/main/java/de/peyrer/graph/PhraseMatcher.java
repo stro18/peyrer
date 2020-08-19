@@ -33,7 +33,7 @@ public class PhraseMatcher extends AbstractMatcher {
         this.searcher = new IndexSearcher(iReader);
         Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.parser = new QueryParser("premiseText", analyzer);
-        Query query = this.parser.createPhraseQuery("premiseText", stringToMatch);
+        Query query = this.parser.createPhraseQuery("premiseText", new AnalyzerModule().analyze("premiseText",stringToMatch));
 
         ScoreDoc[] hits = null;
 
