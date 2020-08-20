@@ -1,14 +1,22 @@
 package de.peyrer.main;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Comparator;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import de.peyrer.indexmodule.Indexmodule;
+import de.peyrer.model.Argument;
+import de.peyrer.querybuilder.DocValueFieldQueryBuilder;
+import de.peyrer.querybuilder.FeatureFieldQueryBuilder;
+import de.peyrer.querybuilder.IQueryBuilder;
+import de.peyrer.retrievalmodule.RetrievalModule;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -17,33 +25,114 @@ import org.xml.sax.SAXException;
 
 public class Main {
 
+    private static final boolean FEATURE_FIELD_QUERY = false;
+    private static final float QUERY_COEFFICIENT = 1.0f;
+    private static final String OUTPUT_FILE_PATH = "./out.trec";
+    private static final String OUTPUT_TAG = "peyrer";
+    private static final int RESULT_AMOUNT = 1000;
+
     public static void main (String[] args)
     {
+        String indexPath;
         try {
             Indexmodule indexmodule = new Indexmodule();
-            String indexPath = indexmodule.getIndexPath();
+            indexPath = indexmodule.getIndexPath();
             if(indexPath == null){
                 indexmodule.indexWithRelevance();
                 indexmodule.getIndexPath();
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        String[] titles;
-        try {
-            titles = Main.readTitlesFromXml("topics/topicsTest.xml");
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.exit(-1);
             return;
         }
 
-        for(String title : titles){
-            System.out.println(title);
+        IQueryBuilder queryBuilder = (FEATURE_FIELD_QUERY) ? new FeatureFieldQueryBuilder(QUERY_COEFFICIENT) : new DocValueFieldQueryBuilder(QUERY_COEFFICIENT);
+        RetrievalModule retrievalModule = null;
+        try {
+            retrievalModule = new RetrievalModule(queryBuilder, indexPath);
+        } catch (IOException e) {
+            System.err.println(String.format("Cannot open index: %s", e.getMessage()));
+            System.exit(-1);
+            return;
         }
+
+        NodeList topics;
+        try {
+            topics = Main.readTopicsFromXml("topics/topicsTest.xml");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(-1);
+            return;
+        }
+
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(OUTPUT_FILE_PATH);
+        } catch (IOException e) {
+            System.err.println(String.format("Cannot open output file ('%s') for writing: %s", OUTPUT_FILE_PATH, e.getMessage()));
+            System.exit(-1);
+            return;
+        }
+
+        for(int i = 0; i < topics.getLength(); i++) {
+            Element topic;
+            if(topics.item(i) instanceof Element){
+                topic = (Element) topics.item(i);
+            } else {
+                System.err.println("Input file has wrong format!");
+                System.exit(-1);
+                return;
+            }
+            if(topic.getElementsByTagName("title").getLength() != 1 || topic.getElementsByTagName("number").getLength() != 1) {
+                System.err.println("Input file has wrong format!");
+                System.exit(-1);
+                return;
+            }
+
+            TopDocs results = null;
+            try {
+                results = retrievalModule.getResults(topic.getElementsByTagName("title").item(0).getTextContent(), RESULT_AMOUNT);
+            } catch (ParseException e) {
+                System.err.println(e.getMessage());
+                System.exit(-1);
+                return;
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                System.exit(-1);
+                return;
+            }
+            ScoreDoc[] sortedResults = results.scoreDocs;
+            Arrays.sort(sortedResults, new CompareScoreDocs());
+            int topicId;
+            try {
+                topicId = Integer.parseInt(topic.getElementsByTagName("number").item(0).getTextContent());
+            } catch (NumberFormatException e) {
+                System.err.println("Input file has wrong format!");
+                System.exit(-1);
+                return;
+            }
+
+            for(int j = 0; j < sortedResults.length; j++) {
+                try {
+                    writeResultToOutputFile(writer,
+                            topicId,
+                            retrievalModule.getArgument(sortedResults[j].doc),
+                            j,
+                            sortedResults[j].score,
+                            OUTPUT_TAG);
+                } catch (IOException e) {
+                    System.err.println(String.format("An error occurred while writing to the output file: %s", e.getMessage()));
+                    writer.close();
+                    System.exit(-1);
+                    return;
+                }
+            }
+        }
+        writer.close();
     }
 
-    private static String[] readTitlesFromXml(String ... directory) throws Exception {
+    private static NodeList readTopicsFromXml(String ... directory) throws Exception {
         String path = Main.buildSourcePath(directory);
 
         File inputFile = new File(path);
@@ -55,22 +144,7 @@ public class Main {
         doc.getDocumentElement().normalize();
         NodeList topicList = doc.getElementsByTagName("topic");
 
-        String[] titles = new String[topicList.getLength()];
-        for (int temp = 0; temp < topicList.getLength(); temp++) {
-            Element topic;
-
-            if(topicList.item(temp) instanceof Element){
-                topic = (Element) topicList.item(temp);
-            }else{
-                throw new Exception("Input file has wrong format!");
-            }
-
-            NodeList titleList = topic.getElementsByTagName("title");
-
-            titles[temp] = titleList.item(0).getTextContent();
-        }
-
-        return titles;
+        return topicList;
     }
 
     private static String buildSourcePath(String ... directory){
@@ -82,5 +156,23 @@ public class Main {
         }
 
         return Paths.get(wantedIndexPath.toString(), directory).toString();
+    }
+
+    private static void writeResultToOutputFile(PrintWriter writer, int topicId, String argId, int rank, float score, String tag) throws IOException {
+        writer.printf("%d Q0 %s %d %f %s",
+                topicId,
+                argId,
+                rank,
+                score,
+                tag);
+    }
+
+    private static class CompareScoreDocs implements Comparator<ScoreDoc> {
+        @Override
+        public int compare(ScoreDoc doc1, ScoreDoc doc2) {
+            if(doc1.score > doc2.score) return -1;
+            else if(doc1.score < doc2.score) return 1;
+            else return 0;
+        }
     }
 }
