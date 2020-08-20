@@ -7,4 +7,5 @@ module retrievalmodule {
 	requires analyzermodule;
 
 	exports de.peyrer.retrievalmodule;
+	exports de.peyrer.querybuilder;
 }

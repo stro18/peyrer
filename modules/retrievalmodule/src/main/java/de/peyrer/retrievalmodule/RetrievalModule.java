@@ -6,49 +6,41 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 
-import de.peyrer.model.Argument;
 import de.peyrer.querybuilder.IQueryBuilder;
-import de.peyrer.retriever.Retriever;
 
 public class RetrievalModule implements IRetrievalModule{
 
 	private String indexPath = "./index";
-	private Retriever retriever;
+	private IndexSearcher indexSearcher;
 	private IQueryBuilder queryBuilder;
 
-	public RetrievalModule(IQueryBuilder queryBuilder) {
-		this.retriever = createRetriever(this.indexPath);
+	public RetrievalModule(IQueryBuilder queryBuilder, String indexPath) throws IOException {
+		this.indexPath = indexPath;
+		this.indexSearcher = createIndexSearcher(indexPath);
 		this.queryBuilder = queryBuilder;
 	}
 
-	public void setIndexPath(String indexPath) {
+	public void setIndexPath(String indexPath) throws IOException {
 		this.indexPath = indexPath;
-		this.retriever = createRetriever(this.indexPath);
+		this.indexSearcher = createIndexSearcher(this.indexPath);
 	}
 
-	public Iterable<Argument> getArguments(String query) {
-		try {
-			return this.retriever.retrieve(this.queryBuilder.getQuery(query));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+	public String getArgument(int doc) throws IOException {
+		return this.indexSearcher.doc(doc).get("argumentId");
+	}
+
+	public TopDocs getResults(String query, int amt) throws ParseException, IOException {
+		return this.indexSearcher.search(this.queryBuilder.getQuery(query), amt);
 	}
 	
-	private static Retriever createRetriever(String indexPath) {
+	private static IndexSearcher createIndexSearcher(String indexPath) throws IOException {
 		IndexReader indexReader;
-		try {
-			indexReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		indexReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
 		IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-		return new Retriever(indexSearcher);
+		return indexSearcher;
 	}
 
 }
