@@ -3,6 +3,4 @@ module mainmodule {
     requires indexmodule;
     requires retrievalmodule;
     requires databasemodule;
-    requires lucene.core;
-    requires lucene.queryparser;
 }

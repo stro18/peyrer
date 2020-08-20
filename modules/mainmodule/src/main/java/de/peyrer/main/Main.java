@@ -1,27 +1,24 @@
 package de.peyrer.main;
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Comparator;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 import de.peyrer.indexmodule.Indexmodule;
-import de.peyrer.model.Argument;
 import de.peyrer.querybuilder.DocValueFieldQueryBuilder;
 import de.peyrer.querybuilder.FeatureFieldQueryBuilder;
 import de.peyrer.querybuilder.IQueryBuilder;
+import de.peyrer.retrievalmodule.Result;
+import de.peyrer.retrievalmodule.Results;
 import de.peyrer.retrievalmodule.RetrievalModule;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class Main {
 
@@ -90,20 +87,15 @@ public class Main {
                 return;
             }
 
-            TopDocs results = null;
+            Results results;
             try {
                 results = retrievalModule.getResults(topic.getElementsByTagName("title").item(0).getTextContent(), RESULT_AMOUNT);
-            } catch (ParseException e) {
-                System.err.println(e.getMessage());
-                System.exit(-1);
-                return;
             } catch (IOException e) {
                 System.err.println(e.getMessage());
                 System.exit(-1);
                 return;
             }
-            ScoreDoc[] sortedResults = results.scoreDocs;
-            Arrays.sort(sortedResults, new CompareScoreDocs());
+
             int topicId;
             try {
                 topicId = Integer.parseInt(topic.getElementsByTagName("number").item(0).getTextContent());
@@ -113,21 +105,7 @@ public class Main {
                 return;
             }
 
-            for(int j = 0; j < sortedResults.length; j++) {
-                try {
-                    writeResultToOutputFile(writer,
-                            topicId,
-                            retrievalModule.getArgument(sortedResults[j].doc),
-                            j,
-                            sortedResults[j].score,
-                            OUTPUT_TAG);
-                } catch (IOException e) {
-                    System.err.println(String.format("An error occurred while writing to the output file: %s", e.getMessage()));
-                    writer.close();
-                    System.exit(-1);
-                    return;
-                }
-            }
+            writeResultsToOutputFile(writer, topicId, results);
         }
         writer.close();
     }
@@ -158,21 +136,28 @@ public class Main {
         return Paths.get(wantedIndexPath.toString(), directory).toString();
     }
 
-    private static void writeResultToOutputFile(PrintWriter writer, int topicId, String argId, int rank, float score, String tag) throws IOException {
-        writer.printf("%d Q0 %s %d %f %s",
-                topicId,
-                argId,
-                rank,
-                score,
-                tag);
+    private static void writeResultsToOutputFile(PrintWriter writer, int topicId, Results results) {
+        for(Result result : results) {
+            try {
+                writeResultToOutputFile(writer,
+                        topicId,
+                        result,
+                        OUTPUT_TAG);
+            } catch (IOException e) {
+                System.err.println(String.format("An error occurred while writing to the output file: %s", e.getMessage()));
+                writer.close();
+                System.exit(-1);
+                return;
+            }
+        }
     }
 
-    private static class CompareScoreDocs implements Comparator<ScoreDoc> {
-        @Override
-        public int compare(ScoreDoc doc1, ScoreDoc doc2) {
-            if(doc1.score > doc2.score) return -1;
-            else if(doc1.score < doc2.score) return 1;
-            else return 0;
-        }
+    private static void writeResultToOutputFile(PrintWriter writer, int topicId, Result result, String tag) throws IOException {
+        writer.printf("%d Q0 %s %d %f %s",
+                topicId,
+                result.getArgument().id,
+                result.getRank(),
+                result.getScore(),
+                tag);
     }
 }
