@@ -6,7 +6,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 
 import de.peyrer.querybuilder.IQueryBuilder;
@@ -28,12 +27,14 @@ public class RetrievalModule implements IRetrievalModule{
 		this.indexSearcher = createIndexSearcher(this.indexPath);
 	}
 
-	public String getArgument(int doc) throws IOException {
-		return this.indexSearcher.doc(doc).get("argumentId");
-	}
-
-	public TopDocs getResults(String query, int amt) throws ParseException, IOException {
-		return this.indexSearcher.search(this.queryBuilder.getQuery(query), amt);
+	public Results getResults(String query, int amt) throws IOException {
+		try {
+			return new Results(this.indexSearcher.search(this.queryBuilder.getQuery(query), amt), this.indexSearcher);
+		} catch (ParseException e) {
+			System.err.printf("Query could not be parsed: %s\n", e.getMessage());
+			System.exit(-1);
+			return null;
+		}
 	}
 	
 	private static IndexSearcher createIndexSearcher(String indexPath) throws IOException {
