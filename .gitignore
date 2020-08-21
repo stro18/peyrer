@@ -11,3 +11,4 @@ raw_data/*
 **/premiseindex
 **/conclusionindex
 /Docker/docker-compose.debug.yml
+/out/

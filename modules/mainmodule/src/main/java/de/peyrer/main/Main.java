@@ -18,15 +18,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 public class Main {
 
-    private static final boolean FEATURE_FIELD_QUERY = false;
+    private static final boolean FEATURE_FIELD_QUERY = true;
     private static final float QUERY_COEFFICIENT = 1.0f;
-    private static final String OUTPUT_FILE_PATH = "./out.trec";
+    private static final String OUTPUT_FILE_PATH = String.format("/out/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     private static final String OUTPUT_TAG = "peyrer";
     private static final int RESULT_AMOUNT = 1000;
+    private static final boolean INDEX_ARGUMENTS = true;
 
     public static void main (String[] args)
     {
@@ -34,9 +36,9 @@ public class Main {
         try {
             Indexmodule indexmodule = new Indexmodule();
             indexPath = indexmodule.getIndexPath();
-            if(indexPath == null){
+            if (indexPath == null || INDEX_ARGUMENTS) {
                 indexmodule.indexWithRelevance();
-                indexmodule.getIndexPath();
+                indexPath = indexmodule.getIndexPath();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -153,7 +155,7 @@ public class Main {
     }
 
     private static void writeResultToOutputFile(PrintWriter writer, int topicId, Result result, String tag) throws IOException {
-        writer.printf("%d Q0 %s %d %f %s",
+        writer.printf("%d Q0 %s %d %f %s\n",
                 topicId,
                 result.getArgument().id,
                 result.getRank(),
