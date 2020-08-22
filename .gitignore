@@ -12,3 +12,4 @@ raw_data/*
 **/conclusionindex
 **/testindex
 /Docker/docker-compose.debug.yml
+/out/
