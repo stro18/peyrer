@@ -90,8 +90,6 @@ public class Indexmodule implements IIndexmodule {
 
         System.out.println("Indexing of premises ended at : " + java.time.ZonedDateTime.now());
 
-        System.out.println("Indexing of conclusions started at : " + java.time.ZonedDateTime.now());
-
         if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
             System.out.println("Indexing of conclusions started at : " + java.time.ZonedDateTime.now());
 
