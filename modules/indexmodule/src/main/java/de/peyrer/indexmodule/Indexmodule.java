@@ -83,14 +83,20 @@ public class Indexmodule implements IIndexmodule {
     }
 
     private void prepareIndexForMatching() throws IOException {
-        System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
+        if (!this.indexExist("temp", "premiseIndex")){
+            System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
 
-        this.premiseIndexer = new PremiseIndexer("temp", "premiseindex");
-        premiseIndexer.index();
+            this.premiseIndexer = new PremiseIndexer("temp", "premiseindex");
+            premiseIndexer.index();
 
-        System.out.println("Indexing of premises ended at : " + java.time.ZonedDateTime.now());
+            System.out.println("Indexing of premises ended at : " + java.time.ZonedDateTime.now());
+        }
 
-        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+        if (
+                System.getenv().get("MATCHING") != null
+                && System.getenv().get("MATCHING").equals("AND")
+                && !this.indexExist("temp", "conclusionIndex")
+        ) {
             System.out.println("Indexing of conclusions started at : " + java.time.ZonedDateTime.now());
 
             this.conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
@@ -98,5 +104,10 @@ public class Indexmodule implements IIndexmodule {
 
             System.out.println("Indexing of conclusions ended at : " + java.time.ZonedDateTime.now());
         }
+    }
+
+    private boolean indexExist(String ... path){
+        Path pathObject = Paths.get(System.getProperty("user.dir"), path);
+        return Files.exists(pathObject);
     }
 }
