@@ -10,4 +10,5 @@ raw_data/*
 **/.classpath
 **/premiseindex
 **/conclusionindex
+**/testindex
 /Docker/docker-compose.debug.yml

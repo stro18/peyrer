@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import de.peyrer.indexmodule.Indexmodule;
+import de.peyrer.indexmodule.InvalidSettingValueException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -23,7 +24,11 @@ public class Main {
             Indexmodule indexmodule = new Indexmodule();
             String indexPath = indexmodule.getIndexPath();
             if(indexPath == null){
-                indexmodule.indexWithRelevance();
+                try {
+                    indexmodule.indexWithRelevance();
+                } catch (InvalidSettingValueException e) {
+                    e.printStackTrace();
+                }
                 indexmodule.getIndexPath();
             }
         } catch (IOException e) {

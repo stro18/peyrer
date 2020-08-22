@@ -1,6 +1,7 @@
 package de.peyrer.graph;
 
 import de.peyrer.indexer.RelevanceIndexer;
+import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import org.junit.Assert;
@@ -20,7 +21,15 @@ public class GraphBuilderTest {
     ArgumentRepository argumentRepository;
 
     @InjectMocks
-    GraphBuilder builder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
+    GraphBuilder builder;
+
+    {
+        try {
+            builder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT);
+        } catch (InvalidSettingValueException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Before
     public void setUp(){

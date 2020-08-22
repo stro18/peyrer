@@ -25,10 +25,10 @@ import java.util.Map;
 public class Indexmodule implements IIndexmodule {
 
     @Override
-    public void indexWithRelevance() throws IOException {
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException {
         Instant start = Instant.now();
 
-        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
+        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT);
 
         IIndexer premiseIndexer = new PremiseIndexer("temp", "premiseindex");
         IIndexer conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
