@@ -43,6 +43,13 @@ public class GraphBuilder {
         }
     }
 
+    public IDirectedGraph build(String premiseIndex) throws IOException {
+        if(graph instanceof JGraphTAdapter){
+            return buildJGraphT(premiseIndex, "");
+        }
+        return null;
+    }
+
     public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex, conclusionIndex);

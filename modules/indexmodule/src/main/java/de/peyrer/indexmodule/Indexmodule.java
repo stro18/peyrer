@@ -31,20 +31,34 @@ public class Indexmodule implements IIndexmodule {
         GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT);
 
         IIndexer premiseIndexer = new PremiseIndexer("temp", "premiseindex");
-        IIndexer conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
+
+        IIndexer conclusionIndexer = null;
+        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+            conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
+        }
+
         IIndexer relevanceIndexer = new RelevanceIndexer("index");
 
         System.out.println("Indexing of premises and conclusions started at : " + java.time.ZonedDateTime.now());
         try {
             premiseIndexer.index();
-            conclusionIndexer.index();
+            if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+                conclusionIndexer.index();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("Indexing of premises and conclusions ended at : " + java.time.ZonedDateTime.now());
 
         System.out.println("Building of graph started at : " + java.time.ZonedDateTime.now());
-        IDirectedGraph graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());
+
+        IDirectedGraph graph = null;
+        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+            graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());
+        } else {
+            graph = graphBuilder.build(premiseIndexer.getIndexPath());
+        }
+
         System.out.println("Building of graph ended at : " + java.time.ZonedDateTime.now());
 
         System.out.println("Computing and saving of pageRank started at : " + java.time.ZonedDateTime.now());
