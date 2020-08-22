@@ -1,8 +1,10 @@
 package de.peyrer.retrievalmodule;
 
-import de.peyrer.model.Argument;
+import org.apache.lucene.queryparser.classic.ParseException;
+
+import java.io.IOException;
 
 public interface IRetrievalModule {
-    public Iterable<Argument> getArguments(String query);
-    public void setIndexPath(String indexPath);
+    public Results getResults(String query, int amt) throws ParseException, IOException;
+    public void setIndexPath(String indexPath) throws IOException;
 }

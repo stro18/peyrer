@@ -11,3 +11,6 @@ services:
             - mongo
         env_file:
             - ../.env
+        volumes:
+            - ../out:/out
+            - /usr/peyrer/index
