@@ -27,6 +27,9 @@ public class Indexmodule implements IIndexmodule {
     private IIndexer premiseIndexer;
     private IIndexer conclusionIndexer;
 
+    private static final String[] premiseIndexPath = new String[]{"tempIndex", "premiseIndex"};
+    private static final String[] conclusionIndexPath = new String[]{"tempIndex", "conclusionIndex"};
+
     @Override
     public String getIndexPath(){
         Path path = Paths.get(System.getProperty("user.dir"), "index");
@@ -53,9 +56,12 @@ public class Indexmodule implements IIndexmodule {
 
         IDirectedGraph graph = null;
         if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
-            graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());
+            graph = graphBuilder.build(
+                    Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString(),
+                    Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
+            );
         } else {
-            graph = graphBuilder.build(premiseIndexer.getIndexPath());
+            graph = graphBuilder.build(Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString());
         }
 
         System.out.println("Building of graph ended at : " + java.time.ZonedDateTime.now());
@@ -83,20 +89,36 @@ public class Indexmodule implements IIndexmodule {
     }
 
     private void prepareIndexForMatching() throws IOException {
-        System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
+        if (
+                (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
+                        || !this.indexExist(premiseIndexPath)
+        ){
+            System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
 
-        this.premiseIndexer = new PremiseIndexer("temp", "premiseindex");
-        premiseIndexer.index();
+            this.premiseIndexer = new PremiseIndexer(premiseIndexPath);
+            premiseIndexer.index();
 
-        System.out.println("Indexing of premises ended at : " + java.time.ZonedDateTime.now());
+            System.out.println("Indexing of premises ended at : " + java.time.ZonedDateTime.now());
+        }
 
-        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+        if (
+                System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")
+                && (
+                        (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
+                        || !this.indexExist(conclusionIndexPath)
+                )
+        ) {
             System.out.println("Indexing of conclusions started at : " + java.time.ZonedDateTime.now());
 
-            this.conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
+            this.conclusionIndexer = new ConclusionIndexer(conclusionIndexPath);
             conclusionIndexer.index();
 
             System.out.println("Indexing of conclusions ended at : " + java.time.ZonedDateTime.now());
         }
+    }
+
+    private boolean indexExist(String ... path){
+        Path pathObject = Paths.get(System.getProperty("user.dir"), path);
+        return Files.exists(pathObject);
     }
 }
