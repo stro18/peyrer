@@ -23,12 +23,12 @@ import java.util.Arrays;
 
 public class Main {
 
-    private static final boolean FEATURE_FIELD_QUERY = true;
-    private static final float QUERY_COEFFICIENT = 1.0f;
+    private static final boolean FEATURE_FIELD_QUERY = Boolean.parseBoolean(System.getenv("FEATURE_FIELD_QUERY"));
+    private static final float QUERY_COEFFICIENT = Float.parseFloat(System.getenv("QUERY_COEFFICIENT"));
     private static final String OUTPUT_FILE_PATH = String.format("/out/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-    private static final String OUTPUT_TAG = "peyrer";
-    private static final int RESULT_AMOUNT = 1000;
-    private static final boolean INDEX_ARGUMENTS = true;
+    private static final String OUTPUT_TAG = System.getenv("OUTPUT_TAG");
+    private static final int RESULT_AMOUNT = Integer.parseInt(System.getenv("RESULT_AMOUNT"));
+    private static final boolean INDEX_ARGUMENTS = Boolean.parseBoolean(System.getenv("INDEX_ARGUMENTS"));
 
     public static void main (String[] args)
     {
