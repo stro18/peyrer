@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import de.peyrer.indexmodule.InvalidSettingValueException;
 
 public class Main {
 
@@ -36,11 +37,11 @@ public class Main {
         try {
             Indexmodule indexmodule = new Indexmodule();
             indexPath = indexmodule.getIndexPath();
-            if (indexPath == null || INDEX_ARGUMENTS) {
+            if(indexPath == null || INDEX_ARGUMENTS){
                 indexmodule.indexWithRelevance();
                 indexPath = indexmodule.getIndexPath();
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidSettingValueException e) {
             e.printStackTrace();
             System.exit(-1);
             return;

@@ -24,27 +24,40 @@ import java.util.Map;
 
 public class Indexmodule implements IIndexmodule {
 
+    private IIndexer premiseIndexer;
+    private IIndexer conclusionIndexer;
+
     @Override
-    public void indexWithRelevance() throws IOException {
+    public String getIndexPath(){
+        Path path = Paths.get(System.getProperty("user.dir"), "index");
+        if(Files.exists(path)){
+            return path.toString();
+        }else{
+            return null;
+        }
+    }
+
+    @Override
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException {
         Instant start = Instant.now();
 
-        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT, GraphBuilder.MatcherType.AND);
+        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT);
 
-        IIndexer premiseIndexer = new PremiseIndexer("temp", "premiseindex");
-        IIndexer conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
+        IRelevanceComputer relevanceComputer = new SumComputer();
+
         IIndexer relevanceIndexer = new RelevanceIndexer("index");
 
-        System.out.println("Indexing of premises and conclusions started at : " + java.time.ZonedDateTime.now());
-        try {
-            premiseIndexer.index();
-            conclusionIndexer.index();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Indexing of premises and conclusions ended at : " + java.time.ZonedDateTime.now());
+        this.prepareIndexForMatching();
 
         System.out.println("Building of graph started at : " + java.time.ZonedDateTime.now());
-        IDirectedGraph graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());
+
+        IDirectedGraph graph = null;
+        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+            graph = graphBuilder.build(premiseIndexer.getIndexPath(), conclusionIndexer.getIndexPath());
+        } else {
+            graph = graphBuilder.build(premiseIndexer.getIndexPath());
+        }
+
         System.out.println("Building of graph ended at : " + java.time.ZonedDateTime.now());
 
         System.out.println("Computing and saving of pageRank started at : " + java.time.ZonedDateTime.now());
@@ -52,7 +65,6 @@ public class Indexmodule implements IIndexmodule {
         System.out.println("Computing and saving of pageRank ended at : " + java.time.ZonedDateTime.now());
 
         System.out.println("Computing and saving of relevance started at : " + java.time.ZonedDateTime.now());
-        IRelevanceComputer relevanceComputer = new SumComputer();
         relevanceComputer.setGraph(graph);
         relevanceComputer.setPageRank(pageRank);
         relevanceComputer.computeAndSaveRelevance();
@@ -70,13 +82,21 @@ public class Indexmodule implements IIndexmodule {
         System.out.println("Total duration of index process: " + Duration.between(start, end));
     }
 
-    @Override
-    public String getIndexPath(){
-        Path path = Paths.get(System.getProperty("user.dir"), "index");
-        if(Files.exists(path)){
-            return path.toString();
-        }else{
-            return null;
+    private void prepareIndexForMatching() throws IOException {
+        System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
+
+        this.premiseIndexer = new PremiseIndexer("temp", "premiseindex");
+        premiseIndexer.index();
+
+        System.out.println("Indexing of premises ended at : " + java.time.ZonedDateTime.now());
+
+        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
+            System.out.println("Indexing of conclusions started at : " + java.time.ZonedDateTime.now());
+
+            this.conclusionIndexer = new ConclusionIndexer("temp", "conclusionindex");
+            conclusionIndexer.index();
+
+            System.out.println("Indexing of conclusions ended at : " + java.time.ZonedDateTime.now());
         }
     }
 }

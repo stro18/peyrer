@@ -1,5 +1,6 @@
 package de.peyrer.graph;
 
+import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 
@@ -14,26 +15,39 @@ public class GraphBuilder {
 
     private Matcher matcher;
 
+    private static final String AND = "AND";
+    private static final String PHRASE = "PHRASE";
+
     public enum GraphType {
         JGRAPHT
     }
 
-    public enum MatcherType {
-        AND
-    }
-
-    public GraphBuilder(GraphType graphType, MatcherType matcherType){
+    public GraphBuilder(GraphType graphType) throws InvalidSettingValueException {
         this.repository = new ArgumentRepository();
 
+        String matcherType = System.getenv().get("MATCHING");
         switch(matcherType){
             case AND:
                 this.matcher = new AndMatcher();
+                break;
+            case PHRASE:
+                this.matcher = new PhraseMatcher();
+                break;
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  "is not allowed!");
         }
 
         switch(graphType){
             case JGRAPHT:
                 this.graph = new JGraphTAdapter();
         }
+    }
+
+    public IDirectedGraph build(String premiseIndex) throws IOException {
+        if(graph instanceof JGraphTAdapter){
+            return buildJGraphT(premiseIndex, "");
+        }
+        return null;
     }
 
     public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException {
