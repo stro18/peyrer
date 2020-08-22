@@ -89,7 +89,10 @@ public class Indexmodule implements IIndexmodule {
     }
 
     private void prepareIndexForMatching() throws IOException {
-        if (!this.indexExist(premiseIndexPath)){
+        if (
+                (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
+                        || !this.indexExist(premiseIndexPath)
+        ){
             System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
 
             this.premiseIndexer = new PremiseIndexer(premiseIndexPath);
@@ -99,9 +102,11 @@ public class Indexmodule implements IIndexmodule {
         }
 
         if (
-                System.getenv().get("MATCHING") != null
-                && System.getenv().get("MATCHING").equals("AND")
-                && !this.indexExist(conclusionIndexPath)
+                System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")
+                && (
+                        (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
+                        || !this.indexExist(conclusionIndexPath)
+                )
         ) {
             System.out.println("Indexing of conclusions started at : " + java.time.ZonedDateTime.now());
 
