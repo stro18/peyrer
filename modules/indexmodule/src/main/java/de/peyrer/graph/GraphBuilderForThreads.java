@@ -55,7 +55,8 @@ public class GraphBuilderForThreads {
     private IDirectedGraph buildJGraphT(String premiseIndex) throws IOException {
         Iterable<Argument> arguments = repository.readAll();
 
-        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
+        int threadPoolSize = Integer.parseInt(System.getenv().get("THREAD_POOL_SIZE"));
+        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
 
         int counter = 0;
         for(Argument argument : arguments){
