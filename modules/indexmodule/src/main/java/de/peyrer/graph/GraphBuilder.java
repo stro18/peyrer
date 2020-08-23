@@ -7,7 +7,7 @@ import de.peyrer.repository.ArgumentRepository;
 import java.io.IOException;
 import java.util.Map;
 
-public class GraphBuilder {
+public class GraphBuilder implements IGraphBuilder {
 
     private AbstractDirectedGraph graph;
 
@@ -18,11 +18,7 @@ public class GraphBuilder {
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
 
-    public enum GraphType {
-        JGRAPHT
-    }
-
-    public GraphBuilder(GraphType graphType) throws InvalidSettingValueException {
+    public GraphBuilder(IGraphBuilder.GraphType graphType) throws InvalidSettingValueException {
         this.repository = new ArgumentRepository();
 
         String matcherType = System.getenv().get("MATCHING");

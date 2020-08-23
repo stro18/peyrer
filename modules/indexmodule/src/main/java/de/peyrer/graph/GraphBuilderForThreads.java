@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class GraphBuilderForThreads {
+public class GraphBuilderForThreads implements IGraphBuilder {
 
     private AbstractDirectedGraph graph;
 
@@ -20,29 +20,18 @@ public class GraphBuilderForThreads {
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
 
-    public enum GraphType {
-        JGRAPHT
-    }
-
-    public GraphBuilderForThreads(GraphBuilder.GraphType graphType) throws InvalidSettingValueException {
+    public GraphBuilderForThreads(IGraphBuilder.GraphType graphType) throws InvalidSettingValueException {
         this.repository = new ArgumentRepository();
-
-        String matcherType = System.getenv().get("MATCHING");
-        switch(matcherType){
-            case AND:
-                this.matcher = new AndMatcher();
-                break;
-            case PHRASE:
-                this.matcher = new PhraseMatcher();
-                break;
-            default:
-                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  "is not allowed!");
-        }
 
         switch(graphType){
             case JGRAPHT:
                 this.graph = new JGraphTAdapter();
         }
+    }
+
+    @Override
+    public IDirectedGraph build(String premiseIndex, String conclusionIndex) {
+        return null;
     }
 
     public IDirectedGraph build(String premiseIndex) throws InterruptedException {

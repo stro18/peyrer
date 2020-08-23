@@ -12,9 +12,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 public class JGraphTAdapter extends AbstractDirectedGraph {
-    private AsSynchronizedGraph<String, DefaultEdgeWithPremiseNumber> graph;
+    private final AsSynchronizedGraph<String, DefaultEdgeWithPremiseNumber> graph;
 
-    private IArgumentRepository argumentRepository;
+    private final IArgumentRepository argumentRepository;
 
     public JGraphTAdapter()
     {

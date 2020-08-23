@@ -1,17 +1,12 @@
 package de.peyrer.indexmodule;
 
-import de.peyrer.graph.GraphBuilder;
-import de.peyrer.graph.GraphBuilderForThreads;
-import de.peyrer.graph.IDirectedGraph;
+import de.peyrer.graph.*;
 import de.peyrer.indexer.ConclusionIndexer;
 import de.peyrer.indexer.IIndexer;
 import de.peyrer.indexer.PremiseIndexer;
 import de.peyrer.indexer.RelevanceIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
 import de.peyrer.relevance.SumComputer;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,8 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class Indexmodule implements IIndexmodule {
@@ -30,6 +23,10 @@ public class Indexmodule implements IIndexmodule {
 
     private static final String[] premiseIndexPath = new String[]{"tempIndex", "premiseIndex"};
     private static final String[] conclusionIndexPath = new String[]{"tempIndex", "conclusionIndex"};
+
+    private static final String AND = "AND";
+    private static final String PHRASE = "PHRASE";
+    private static final String PHRASE_THREAD = "PHRASE_THREAD";
 
     @Override
     public String getIndexPath(){
@@ -45,7 +42,7 @@ public class Indexmodule implements IIndexmodule {
     public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException {
         Instant start = Instant.now();
 
-        GraphBuilderForThreads graphBuilder = new GraphBuilderForThreads(GraphBuilder.GraphType.JGRAPHT);
+        IGraphBuilder graphBuilder = this.getGraphBuilder();
 
         IRelevanceComputer relevanceComputer = new SumComputer();
 
@@ -58,7 +55,8 @@ public class Indexmodule implements IIndexmodule {
         IDirectedGraph graph = null;
         if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
             graph = graphBuilder.build(
-                    Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
+                    Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString(),
+                    Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
             );
         } else {
             graph = graphBuilder.build(Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString());
@@ -114,6 +112,19 @@ public class Indexmodule implements IIndexmodule {
             conclusionIndexer.index();
 
             System.out.println("Indexing of conclusions ended at : " + java.time.ZonedDateTime.now());
+        }
+    }
+
+    private IGraphBuilder getGraphBuilder() throws InvalidSettingValueException {
+        String matcherType = System.getenv().get("MATCHING");
+        switch(matcherType){
+            case AND:
+            case PHRASE:
+                return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
+            case PHRASE_THREAD:
+                return new GraphBuilderForThreads(IGraphBuilder.GraphType.JGRAPHT);
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
         }
     }
 
