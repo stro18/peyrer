@@ -1,6 +1,7 @@
 package de.peyrer.indexmodule;
 
 import de.peyrer.graph.GraphBuilder;
+import de.peyrer.graph.GraphBuilderForThreads;
 import de.peyrer.graph.IDirectedGraph;
 import de.peyrer.indexer.ConclusionIndexer;
 import de.peyrer.indexer.IIndexer;
@@ -44,7 +45,7 @@ public class Indexmodule implements IIndexmodule {
     public void indexWithRelevance() throws IOException, InvalidSettingValueException {
         Instant start = Instant.now();
 
-        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT);
+        GraphBuilderForThreads graphBuilder = new GraphBuilderForThreads(GraphBuilder.GraphType.JGRAPHT);
 
         IRelevanceComputer relevanceComputer = new SumComputer();
 
@@ -57,8 +58,7 @@ public class Indexmodule implements IIndexmodule {
         IDirectedGraph graph = null;
         if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
             graph = graphBuilder.build(
-                    Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString(),
-                    Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
+                    Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
             );
         } else {
             graph = graphBuilder.build(Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString());
