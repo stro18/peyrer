@@ -58,19 +58,18 @@ public class GraphBuilderForThreads {
         int threadPoolSize = Integer.parseInt(System.getenv().get("THREAD_POOL_SIZE"));
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
 
+        ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(1);
+        scheduledExecutor.schedule(() -> {
+            System.out.println("Progress of graph building at " + java.time.ZonedDateTime.now() + " : "
+                    + threadPoolExecutor.getCompletedTaskCount() + " arguments have already been processed, at least "
+                    + threadPoolExecutor.getQueue().size() + " arguments remain.");
+        }, 30, TimeUnit.SECONDS);
+
         for(Argument argument : arguments){
             threadPoolExecutor.submit(new MatchThread(graph, argument, premiseIndex));
         }
 
         threadPoolExecutor.shutdown();
-
-        ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(5);
-        scheduledExecutor.schedule(() -> {
-            System.out.println("Progress of graph building at " + java.time.ZonedDateTime.now() + " : "
-                    + threadPoolExecutor.getCompletedTaskCount() + " arguments have already been processed, "
-                    + threadPoolExecutor.getQueue().size() + " arguments remain.");
-        }, 30, TimeUnit.SECONDS);
-
         threadPoolExecutor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
 
         scheduledExecutor.shutdownNow();
