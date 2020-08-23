@@ -41,7 +41,7 @@ public class Main {
                 indexmodule.indexWithRelevance();
                 indexPath = indexmodule.getIndexPath();
             }
-        } catch (IOException | InvalidSettingValueException e) {
+        } catch (IOException | InvalidSettingValueException | InterruptedException e) {
             e.printStackTrace();
             System.exit(-1);
             return;

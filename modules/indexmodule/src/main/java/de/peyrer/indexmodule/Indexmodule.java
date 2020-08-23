@@ -42,7 +42,7 @@ public class Indexmodule implements IIndexmodule {
     }
 
     @Override
-    public void indexWithRelevance() throws IOException, InvalidSettingValueException {
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException {
         Instant start = Instant.now();
 
         GraphBuilderForThreads graphBuilder = new GraphBuilderForThreads(GraphBuilder.GraphType.JGRAPHT);

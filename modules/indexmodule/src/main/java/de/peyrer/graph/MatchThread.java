@@ -35,10 +35,16 @@ public class MatchThread implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws IOException {
-        graph.addVertex(argument.id);
+    public Integer call() {
+        Iterable<Map<String,String>> matches;
+        try {
+            matches = this.match();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 1;
+        }
 
-        Iterable<Map<String,String>> matches = this.match();
+        graph.addVertex(argument.id);
 
         for(Map<String,String> match : matches){
             graph.addVertex(match.get("argumentId"));

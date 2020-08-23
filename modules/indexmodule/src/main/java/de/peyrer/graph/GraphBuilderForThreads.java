@@ -4,8 +4,8 @@ import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -45,39 +45,35 @@ public class GraphBuilderForThreads {
         }
     }
 
-    public IDirectedGraph build(String premiseIndex) throws IOException {
+    public IDirectedGraph build(String premiseIndex) throws InterruptedException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex);
         }
         return null;
     }
 
-    private IDirectedGraph buildJGraphT(String premiseIndex) throws IOException {
+    private IDirectedGraph buildJGraphT(String premiseIndex) throws InterruptedException {
         Iterable<Argument> arguments = repository.readAll();
 
         int threadPoolSize = Integer.parseInt(System.getenv().get("THREAD_POOL_SIZE"));
-        ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
 
-        int counter = 0;
         for(Argument argument : arguments){
-            executorService.submit(new MatchThread(graph, argument, premiseIndex));
-
-            counter++;
-            if (counter % 1000 == 0) {
-                System.out.println("Progress of graph building: " + counter + " arguments were processed at " + java.time.ZonedDateTime.now());
-                System.out.println("Pool size: " + executorService.getPoolSize());
-                System.out.println("Task queue size: " + executorService.getQueue().size());
-            }
+            threadPoolExecutor.submit(new MatchThread(graph, argument, premiseIndex));
         }
 
-        executorService.shutdown();
-        System.out.println("Shutdown at " + java.time.ZonedDateTime.now());
-        try {
-            executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Terminated at " + java.time.ZonedDateTime.now());
+        threadPoolExecutor.shutdown();
+
+        ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(5);
+        scheduledExecutor.schedule(() -> {
+            System.out.println("Progress of graph building at " + java.time.ZonedDateTime.now() + " : "
+                    + threadPoolExecutor.getCompletedTaskCount() + " arguments have already been processed, "
+                    + threadPoolExecutor.getQueue().size() + " arguments remain.");
+        }, 30, TimeUnit.SECONDS);
+
+        threadPoolExecutor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+
+        scheduledExecutor.shutdownNow();
 
         System.out.println("Number of edges: " + graph.getNumberOfEdges());
 
