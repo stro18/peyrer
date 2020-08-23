@@ -11,11 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 public class GraphBuilderForThreads implements IGraphBuilder {
 
-    private AbstractDirectedGraph graph;
+    private final AbstractDirectedGraph graph;
 
-    private ArgumentRepository repository;
-
-    private Matcher matcher;
+    private final ArgumentRepository repository;
 
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
@@ -26,6 +24,9 @@ public class GraphBuilderForThreads implements IGraphBuilder {
         switch(graphType){
             case JGRAPHT:
                 this.graph = new JGraphTAdapter();
+                break;
+            default:
+                throw new InvalidSettingValueException("The setting GRAPH_TYPE=" + graphType + " is not allowed!");
         }
     }
 
@@ -34,14 +35,14 @@ public class GraphBuilderForThreads implements IGraphBuilder {
         return null;
     }
 
-    public IDirectedGraph build(String premiseIndex) throws InterruptedException {
+    public IDirectedGraph build(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex);
         }
         return null;
     }
 
-    private IDirectedGraph buildJGraphT(String premiseIndex) throws InterruptedException {
+    private IDirectedGraph buildJGraphT(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
         Iterable<Argument> arguments = repository.readAll();
 
         int threadPoolSize = Integer.parseInt(System.getenv().get("THREAD_POOL_SIZE"));
