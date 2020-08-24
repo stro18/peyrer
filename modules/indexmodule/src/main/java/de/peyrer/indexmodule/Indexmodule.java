@@ -24,6 +24,10 @@ public class Indexmodule implements IIndexmodule {
     private static final String[] premiseIndexPath = new String[]{"tempIndex", "premiseIndex"};
     private static final String[] conclusionIndexPath = new String[]{"tempIndex", "conclusionIndex"};
 
+    private static final String AND = "AND";
+    private static final String PHRASE = "PHRASE";
+    private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
+
     @Override
     public String getIndexPath(){
         Path path = Paths.get(System.getProperty("user.dir"), "index");
@@ -38,8 +42,6 @@ public class Indexmodule implements IIndexmodule {
     public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException {
         Instant start = Instant.now();
 
-        IGraphBuilder graphBuilder = this.getGraphBuilder();
-
         IRelevanceComputer relevanceComputer = new SumComputer();
 
         IIndexer relevanceIndexer = new RelevanceIndexer("index");
@@ -48,15 +50,7 @@ public class Indexmodule implements IIndexmodule {
 
         System.out.println("Building of graph started at : " + java.time.ZonedDateTime.now());
 
-        IDirectedGraph graph = null;
-        if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")) {
-            graph = graphBuilder.build(
-                    Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString(),
-                    Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
-            );
-        } else {
-            graph = graphBuilder.build(Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString());
-        }
+        IDirectedGraph graph = this.buildGraph();
 
         System.out.println("Building of graph ended at : " + java.time.ZonedDateTime.now());
 
@@ -82,10 +76,34 @@ public class Indexmodule implements IIndexmodule {
         System.out.println("Total duration of index process: " + Duration.between(start, end));
     }
 
-    private void prepareIndexForMatching() throws IOException {
+    private void prepareIndexForMatching() throws IOException, InvalidSettingValueException {
+        boolean premiseIndexRequired;
+        boolean conclusionIndexRequired;
+
+        String matcherType = System.getenv().get("MATCHING");
+        switch(matcherType){
+            case AND:
+                premiseIndexRequired = true;
+                conclusionIndexRequired = true;
+                break;
+            case PHRASE:
+                premiseIndexRequired = true;
+                conclusionIndexRequired = false;
+                break;
+            case PHRASE_PREMISE:
+                premiseIndexRequired = false;
+                conclusionIndexRequired = true;
+                break;
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
+        }
+
         if (
-                (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
+                premiseIndexRequired
+                && (
+                        (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
                         || !this.indexExist(premiseIndexPath)
+                )
         ){
             System.out.println("Indexing of premises started at : " + java.time.ZonedDateTime.now());
 
@@ -96,7 +114,7 @@ public class Indexmodule implements IIndexmodule {
         }
 
         if (
-                System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("AND")
+                conclusionIndexRequired
                 && (
                         (System.getenv().get("NEW_MATCHING_INDEX") != null && System.getenv().get("NEW_MATCHING_INDEX").equals("true"))
                         || !this.indexExist(conclusionIndexPath)
@@ -120,6 +138,29 @@ public class Indexmodule implements IIndexmodule {
                 return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + threading +  " is not allowed!");
+        }
+    }
+
+    private IDirectedGraph buildGraph() throws InvalidSettingValueException, IOException, InterruptedException {
+        IGraphBuilder graphBuilder = this.getGraphBuilder();
+
+        String matcherType = System.getenv().get("MATCHING");
+        switch(matcherType){
+            case AND:
+                return graphBuilder.build(
+                        Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString(),
+                        Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
+                );
+            case PHRASE:
+                return graphBuilder.buildWithPremiseIndex(
+                        Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
+                );
+            case PHRASE_PREMISE:
+                return graphBuilder.buildWithConclusionIndex(
+                        Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
+                );
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
         }
     }
 

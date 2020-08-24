@@ -10,7 +10,11 @@ public interface IGraphBuilder {
         JGRAPHT
     }
 
-    IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException, InterruptedException;
+    IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException, InterruptedException, InvalidSettingValueException;
 
-    IDirectedGraph build(String premiseIndex) throws IOException, InterruptedException, InvalidSettingValueException;
+    IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws IOException, InterruptedException, InvalidSettingValueException;
+
+    IDirectedGraph buildWithConclusionIndex(String conclusionIndex) throws IOException, InterruptedException, InvalidSettingValueException;
+
+
 }

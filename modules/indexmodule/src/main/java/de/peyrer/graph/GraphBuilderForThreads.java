@@ -31,18 +31,25 @@ public class GraphBuilderForThreads implements IGraphBuilder {
     }
 
     @Override
-    public IDirectedGraph build(String premiseIndex, String conclusionIndex) {
-        return null;
-    }
-
-    public IDirectedGraph build(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
+    public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws InvalidSettingValueException, InterruptedException {
         if(graph instanceof JGraphTAdapter){
-            return buildJGraphT(premiseIndex);
+            return buildJGraphT(premiseIndex, conclusionIndex);
         }
         return null;
     }
 
-    private IDirectedGraph buildJGraphT(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
+    public IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
+        return null;
+    }
+
+    public IDirectedGraph buildWithConclusionIndex(String conclusionIndex) throws InterruptedException, InvalidSettingValueException {
+        if(graph instanceof JGraphTAdapter){
+            return buildJGraphT("", conclusionIndex);
+        }
+        return null;
+    }
+
+    private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex) throws InterruptedException, InvalidSettingValueException {
         Iterable<Argument> arguments = repository.readAll();
 
         int threadPoolSize = Integer.parseInt(System.getenv().get("THREAD_POOL_SIZE"));
@@ -56,7 +63,7 @@ public class GraphBuilderForThreads implements IGraphBuilder {
         }, 30,30, TimeUnit.SECONDS);
 
         for(Argument argument : arguments){
-            threadPoolExecutor.submit(new MatchThread(graph, argument, premiseIndex));
+            threadPoolExecutor.submit(new MatchThread(graph, argument, "", conclusionIndex));
         }
 
         threadPoolExecutor.shutdown();
