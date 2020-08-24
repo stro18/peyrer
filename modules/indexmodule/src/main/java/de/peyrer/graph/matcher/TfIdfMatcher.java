@@ -5,6 +5,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
@@ -24,12 +25,16 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
         IndexSearcher searcher = new IndexSearcher(iReader);
         searcher.setSimilarity(new ClassicSimilarity());
 
-        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
+        AnalyzerModule analyzerModule = new AnalyzerModule();
+        Analyzer analyzer = analyzerModule.getAnalyzer();
         QueryParser parser = new QueryParser("conclusionText", analyzer);
 
-        Query query = parser.parse(stringToMatch);
+        Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 100, 0.8);
+        double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TDIDF"));
+        threshold *= analyzerModule.analyze("premiseText", stringToMatch).length();
+
+        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, threshold);
 
         for (Map<String,String> match : matches){
             match.remove("score");
@@ -52,11 +57,13 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
 
     @Override
     public String setDirectoryName_Conclusions(String directoryName_conclusions) {
-        return null;
+        this.directoryName_Conclusions = directoryName_conclusions;
+        return directoryName_conclusions;
     }
 
     @Override
     public String setDirectoryName(String directoryName) {
-        return null;
+        this.directoryName = directoryName;
+        return directoryName;
     }
 }
