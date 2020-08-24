@@ -4,6 +4,7 @@ import de.peyrer.graph.*;
 import de.peyrer.indexer.*;
 import de.peyrer.relevance.IRelevanceComputer;
 import de.peyrer.relevance.SumComputer;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,7 +37,7 @@ public class Indexmodule implements IIndexmodule {
     }
 
     @Override
-    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException {
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException, ParseException {
         Instant start = Instant.now();
 
         IRelevanceComputer relevanceComputer = new SumComputer();
@@ -139,7 +140,7 @@ public class Indexmodule implements IIndexmodule {
         }
     }
 
-    private IDirectedGraph buildGraph() throws InvalidSettingValueException, IOException, InterruptedException {
+    private IDirectedGraph buildGraph() throws InvalidSettingValueException, IOException, InterruptedException, ParseException {
         IGraphBuilder graphBuilder = this.getGraphBuilder();
 
         String matcherType = System.getenv().get("MATCHING");

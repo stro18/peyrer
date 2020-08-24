@@ -2,6 +2,7 @@ package de.peyrer.graph;
 
 import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class MatchThread implements Callable<Integer> {
             Iterable<Map<String,String>> matches;
             try {
                 matches = matcher.match();
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 e.printStackTrace();
                 return 1;
             }
@@ -90,7 +91,7 @@ public class MatchThread implements Callable<Integer> {
         Iterable<Map<String,String>> matches;
         try {
             matches = matcher.match();
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
             return 1;
         }

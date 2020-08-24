@@ -12,7 +12,12 @@ import java.util.Map;
 
 public abstract class AbstractSimilarityMatcher implements ISimilarityMatcher
 {
-    protected Iterable<Map<String,String>> searchPremiseIndex(IndexSearcher searcher, Query query, int limit, int threshold) throws IOException {
+    protected String stringToMatch;
+    protected String directoryName;
+    protected String directoryName_Conclusions;
+    protected String argumentId;
+
+    protected Iterable<Map<String,String>> searchPremiseIndex(IndexSearcher searcher, Query query, int limit, double threshold) throws IOException {
         LinkedList<Map<String,String>> result = new LinkedList<>();
 
         ScoreDoc[] hits = searcher.search(query, limit).scoreDocs;
