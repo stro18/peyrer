@@ -39,10 +39,14 @@ public class GraphBuilder implements IGraphBuilder {
         }
     }
 
-    public IDirectedGraph build(String premiseIndex) throws IOException {
+    public IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws IOException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex, "");
         }
+        return null;
+    }
+
+    public IDirectedGraph buildWithConclusionIndex(String conclusionIndex) throws IOException {
         return null;
     }
 

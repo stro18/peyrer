@@ -44,8 +44,17 @@ public class ConclusionIndexer extends AbstractIndexer {
             // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
             doc.add(new StoredField("argumentId", argument.id));
 
+            String conclusion;
+            String matching = System.getenv().get("MATCHING");
+            // Necessary for Phrase-Matching with stopwords, see: https://stackoverflow.com/questions/31719249/how-to-query-a-phrase-with-stopwords-in-elasticsearch
+            if (matching != null && (matching.equals("PHRASE_PREMISE"))) {
+                conclusion = new AnalyzerModule().analyze("premiseText", argument.conclusion);
+            } else {
+                conclusion = argument.conclusion;
+            }
+
             // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
-            doc.add(new TextField("conclusionText", argument.conclusion, Field.Store.YES));
+            doc.add(new TextField("conclusionText", conclusion, Field.Store.YES));
 
             if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")){
                 AnalyzerModule analyzerModule = new AnalyzerModule();
