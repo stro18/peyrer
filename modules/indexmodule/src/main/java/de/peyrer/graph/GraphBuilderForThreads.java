@@ -39,6 +39,9 @@ public class GraphBuilderForThreads implements IGraphBuilder {
     }
 
     public IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
+        if(graph instanceof JGraphTAdapter){
+            return buildJGraphT(premiseIndex, "");
+        }
         return null;
     }
 
@@ -63,7 +66,7 @@ public class GraphBuilderForThreads implements IGraphBuilder {
         }, 30,30, TimeUnit.SECONDS);
 
         for(Argument argument : arguments){
-            threadPoolExecutor.submit(new MatchThread(graph, argument, "", conclusionIndex));
+            threadPoolExecutor.submit(new MatchThread(graph, argument, premiseIndex, conclusionIndex));
         }
 
         threadPoolExecutor.shutdown();

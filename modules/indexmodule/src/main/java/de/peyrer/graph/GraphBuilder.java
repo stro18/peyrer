@@ -46,7 +46,7 @@ public class GraphBuilder implements IGraphBuilder {
         return null;
     }
 
-    public IDirectedGraph buildWithConclusionIndex(String premiseIndex) throws IOException {
+    public IDirectedGraph buildWithConclusionIndex(String conclusionIndex) throws IOException {
         return null;
     }
 
