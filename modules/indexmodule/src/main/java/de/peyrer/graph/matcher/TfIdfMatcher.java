@@ -31,7 +31,7 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
 
         Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TDIDF"));
+        double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TFIDF"));
         threshold *= analyzerModule.analyze("premiseText", stringToMatch).length();
 
         Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, threshold);
