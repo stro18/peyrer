@@ -23,7 +23,9 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class RelevanceIndexerTest {
     @Mock(name = "argumentRepository")
@@ -33,7 +35,7 @@ public class RelevanceIndexerTest {
     RelevanceIndexer indexer;
     {
         try {
-            indexer = new RelevanceIndexer("..", "..", "index");
+            indexer = new RelevanceIndexer("src", "main", "resources", "relevanceindex");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,12 +48,14 @@ public class RelevanceIndexerTest {
 
     @Test
     public void testIndex() {
-        // Mocking of argumentRepository
         Argument argument = new Argument("1", "Abortion is bad", new String[]{"Health risks for the mother"});
-        argument.setRelevance(0.5);
         Argument argument2 = new Argument("2", "Abortion is bad", new String[]{"Abortion is murder"});
-        argument2.setRelevance(1.5);
 
+        Map<String,Double> relevance = new HashMap<>();
+        relevance.put("1",0.5);
+        relevance.put("2",1.5);
+
+        // Mocking of argumentRepository
         Iterator<Argument> iterator = (Iterator<Argument>) Mockito.mock(Iterator.class);
         Mockito.when(iterator.hasNext()).thenReturn(true).thenReturn(true).thenReturn(false);
         Mockito.when(iterator.next()).thenReturn(argument).thenReturn(argument2);
@@ -62,6 +66,7 @@ public class RelevanceIndexerTest {
         Mockito.when(argumentRepository.readAll()).thenReturn(iterable);
 
         try {
+            indexer.setRelevance(relevance);
             indexer.index();
         } catch (IOException e) {
             e.printStackTrace();

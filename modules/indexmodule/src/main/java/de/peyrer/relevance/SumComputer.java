@@ -68,18 +68,25 @@ public class SumComputer implements IRelevanceComputer{
 			}
 		}
 
+		if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")) {
+			this.saveRelevance(relevanceMap);
+		}
+
+		return relevanceMap;
+	}
+
+	private void saveRelevance(Map<String,Double> relevanceMap)
+	{
 		System.out.println("Saving of relevance started at : " + java.time.ZonedDateTime.now());
 		int count = 0;
-		for(Map.Entry<String, Double> rvMap : relevanceMap.entrySet()){
+		for (Map.Entry<String, Double> rvMap : relevanceMap.entrySet()) {
 			repo.updateRelevance(rvMap.getKey(), rvMap.getValue());
 
 			count++;
-			if(count % 1000 == 0){
+			if (count % 1000 == 0) {
 				System.out.println("Progress: Relevance of " + count + " arguments saved at: " + java.time.ZonedDateTime.now());
 			}
 		}
 		System.out.println("Saving of relevance ended at : " + java.time.ZonedDateTime.now());
-
-		return relevanceMap;
 	}
 }
