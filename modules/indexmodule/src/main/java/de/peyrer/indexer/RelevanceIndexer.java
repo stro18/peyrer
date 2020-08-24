@@ -42,6 +42,8 @@ public class RelevanceIndexer extends AbstractRelevanceIndexer {
         Iterable<Argument> arguments = argumentRepository.readAll();
 
         for(Argument argument : arguments){
+            double relevance = this.relevance.get(argument.id);
+
             Document doc = new Document();
 
             // field types: https://lucene.apache.org/core/8_5_1/core/org/apache/lucene/index/package-summary.html#field_types
@@ -49,11 +51,11 @@ public class RelevanceIndexer extends AbstractRelevanceIndexer {
             doc.add(new StoredField("argumentId", argument.id));
 
             // Option1 for scoring relevance: Doc fields are used for efficient value-based sorting, and for faceting, but they are not useful for filtering.
-            doc.add(new DoubleDocValuesField("relevance", argument.relevance == 0 ?
-                    1-AbstractDirectedGraph.dampingFactor : argument.relevance));
+            doc.add(new DoubleDocValuesField("relevance", relevance == 0 ?
+                    1-AbstractDirectedGraph.dampingFactor : relevance));
             // Option2 for scoring relevance: Feature fields can be used to store static scoring factors into documents.
-            doc.add(new FeatureField("feature", "relevance", argument.relevance == 0 ?
-                    (float) (1-AbstractDirectedGraph.dampingFactor) : (float) argument.relevance));
+            doc.add(new FeatureField("feature", "relevance", relevance == 0 ?
+                    (float) (1-AbstractDirectedGraph.dampingFactor) : (float) relevance));
 
             // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusion", argument.conclusion, Field.Store.YES));
