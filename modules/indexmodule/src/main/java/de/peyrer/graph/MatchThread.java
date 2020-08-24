@@ -19,7 +19,6 @@ public class MatchThread implements Callable<Integer> {
 
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
-    private static final String PHRASE_THREAD = "PHRASE_THREAD";
 
     MatchThread(AbstractDirectedGraph graph, Argument argument, String premiseIndexPath) throws InvalidSettingValueException {
         this.graph = graph;
@@ -32,7 +31,6 @@ public class MatchThread implements Callable<Integer> {
                 this.matcher = new AndMatcher();
                 break;
             case PHRASE:
-            case PHRASE_THREAD:
                 this.matcher = new PhraseMatcher();
                 break;
             default:

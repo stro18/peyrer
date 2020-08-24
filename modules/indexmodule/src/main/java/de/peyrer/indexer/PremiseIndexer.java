@@ -52,7 +52,7 @@ public class PremiseIndexer extends AbstractIndexer {
 
                 String matching = System.getenv().get("MATCHING");
                 // Necessary for Phrase-Matching with stopwords, see: https://stackoverflow.com/questions/31719249/how-to-query-a-phrase-with-stopwords-in-elasticsearch
-                if (matching != null && (matching.equals("PHRASE") || matching.equals("PHRASE_THREAD"))) {
+                if (matching != null && (matching.equals("PHRASE"))) {
                     premise = new AnalyzerModule().analyze("premiseText",premise);
                 }
 

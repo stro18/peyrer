@@ -24,10 +24,6 @@ public class Indexmodule implements IIndexmodule {
     private static final String[] premiseIndexPath = new String[]{"tempIndex", "premiseIndex"};
     private static final String[] conclusionIndexPath = new String[]{"tempIndex", "conclusionIndex"};
 
-    private static final String AND = "AND";
-    private static final String PHRASE = "PHRASE";
-    private static final String PHRASE_THREAD = "PHRASE_THREAD";
-
     @Override
     public String getIndexPath(){
         Path path = Paths.get(System.getProperty("user.dir"), "index");
@@ -116,15 +112,14 @@ public class Indexmodule implements IIndexmodule {
     }
 
     private IGraphBuilder getGraphBuilder() throws InvalidSettingValueException {
-        String matcherType = System.getenv().get("MATCHING");
-        switch(matcherType){
-            case AND:
-            case PHRASE:
-                return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
-            case PHRASE_THREAD:
+        String threading = System.getenv().get("THREADING").toLowerCase();
+        switch(threading){
+            case "true":
                 return new GraphBuilderForThreads(IGraphBuilder.GraphType.JGRAPHT);
+            case "false":
+                return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
             default:
-                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
+                throw new InvalidSettingValueException("The setting MATCHING=" + threading +  " is not allowed!");
         }
     }
 
