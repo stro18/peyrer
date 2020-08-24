@@ -1,10 +1,7 @@
 package de.peyrer.indexmodule;
 
 import de.peyrer.graph.*;
-import de.peyrer.indexer.ConclusionIndexer;
-import de.peyrer.indexer.IIndexer;
-import de.peyrer.indexer.PremiseIndexer;
-import de.peyrer.indexer.RelevanceIndexer;
+import de.peyrer.indexer.*;
 import de.peyrer.relevance.IRelevanceComputer;
 import de.peyrer.relevance.SumComputer;
 
@@ -44,7 +41,7 @@ public class Indexmodule implements IIndexmodule {
 
         IRelevanceComputer relevanceComputer = new SumComputer();
 
-        IIndexer relevanceIndexer = new RelevanceIndexer("index");
+        AbstractRelevanceIndexer relevanceIndexer = new RelevanceIndexer("index");
 
         this.prepareIndexForMatching();
 
@@ -61,11 +58,12 @@ public class Indexmodule implements IIndexmodule {
         System.out.println("Computing and saving of relevance started at : " + java.time.ZonedDateTime.now());
         relevanceComputer.setGraph(graph);
         relevanceComputer.setPageRank(pageRank);
-        relevanceComputer.computeAndSaveRelevance();
+        Map<String,Double> relevance = relevanceComputer.computeAndSaveRelevance();
         System.out.println("Computing and saving of relevance ended at : " + java.time.ZonedDateTime.now());
 
         System.out.println("Indexing of relevance started at : " + java.time.ZonedDateTime.now());
         try {
+            relevanceIndexer.setRelevance(relevance);
             relevanceIndexer.index();
         } catch (IOException e) {
             e.printStackTrace();

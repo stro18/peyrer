@@ -19,7 +19,7 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.CharArrayReader;
 import java.io.IOException;
 
-public class RelevanceIndexer extends AbstractIndexer {
+public class RelevanceIndexer extends AbstractRelevanceIndexer {
 
     IArgumentRepository argumentRepository;
 
