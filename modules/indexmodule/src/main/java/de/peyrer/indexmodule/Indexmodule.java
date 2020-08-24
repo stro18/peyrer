@@ -25,6 +25,7 @@ public class Indexmodule implements IIndexmodule {
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
+    private static final String TFIDF = "TFIDF";
 
     @Override
     public String getIndexPath(){
@@ -86,6 +87,7 @@ public class Indexmodule implements IIndexmodule {
                 conclusionIndexRequired = true;
                 break;
             case PHRASE:
+            case TFIDF:
                 premiseIndexRequired = true;
                 conclusionIndexRequired = false;
                 break;
@@ -151,6 +153,7 @@ public class Indexmodule implements IIndexmodule {
                         Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
                 );
             case PHRASE:
+            case TFIDF:
                 return graphBuilder.buildWithPremiseIndex(
                         Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
                 );

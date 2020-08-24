@@ -1,5 +1,6 @@
 package de.peyrer.graph;
 
+import de.peyrer.graph.matcher.TfIdfMatcher;
 import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -23,6 +24,7 @@ public class MatchThread implements Callable<Integer> {
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
+    private static final String TFIDF = "TFIDF";
 
     MatchThread(AbstractDirectedGraph graph, Argument argument, String premiseIndexPath, String conclusionIndexPath)
             throws InvalidSettingValueException {
@@ -41,6 +43,9 @@ public class MatchThread implements Callable<Integer> {
                 break;
             case PHRASE_PREMISE:
                 this.matcher = new PhraseMatcherForPremises();
+                break;
+            case TFIDF:
+                this.matcher = new TfIdfMatcher();
                 break;
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
