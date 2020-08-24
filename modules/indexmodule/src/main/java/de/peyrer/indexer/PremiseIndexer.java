@@ -50,8 +50,9 @@ public class PremiseIndexer extends AbstractIndexer {
                 doc.add(new StoredField("argumentId", argument.id));
                 doc.add(new StoredField("premiseId", Integer.toString(premiseId)));
 
+                String matching = System.getenv().get("MATCHING");
                 // Necessary for Phrase-Matching with stopwords, see: https://stackoverflow.com/questions/31719249/how-to-query-a-phrase-with-stopwords-in-elasticsearch
-                if (System.getenv().get("MATCHING") != null && System.getenv().get("MATCHING").equals("PHRASE")) {
+                if (matching != null && (matching.equals("PHRASE"))) {
                     premise = new AnalyzerModule().analyze("premiseText",premise);
                 }
 

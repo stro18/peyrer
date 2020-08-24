@@ -5,19 +5,21 @@ import de.peyrer.repository.IArgumentRepository;
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
 public class JGraphTAdapter extends AbstractDirectedGraph {
-    private DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber> graph;
+    private final AsSynchronizedGraph<String, DefaultEdgeWithPremiseNumber> graph;
 
-    private IArgumentRepository argumentRepository;
+    private final IArgumentRepository argumentRepository;
 
     public JGraphTAdapter()
     {
-        this.graph = new DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber>(DefaultEdgeWithPremiseNumber.class);
+        DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber> innerGraph = new DefaultDirectedGraph<>(DefaultEdgeWithPremiseNumber.class);
+        this.graph = new AsSynchronizedGraph<>(innerGraph);
         this.argumentRepository = new ArgumentRepository();
     }
 

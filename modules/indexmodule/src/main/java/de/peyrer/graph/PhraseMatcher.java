@@ -25,8 +25,8 @@ public class PhraseMatcher extends AbstractMatcher {
     private QueryParser parser;
 
     @Override
-    public Iterable<Map<String,String>> match() throws IOException {
-
+    public Iterable<Map<String,String>> match() throws IOException
+    {
         LinkedList<Map<String,String>> result = new LinkedList<>();
         Directory directory = FSDirectory.open(Paths.get(directoryName));
         DirectoryReader iReader = DirectoryReader.open(directory);
@@ -35,13 +35,11 @@ public class PhraseMatcher extends AbstractMatcher {
         this.parser = new QueryParser("premiseText", analyzer);
         Query query = this.parser.createPhraseQuery("premiseText", new AnalyzerModule().analyze("premiseText",stringToMatch));
 
-        ScoreDoc[] hits = null;
-
         int matchNumber = this.searcher.count(query);
         if(matchNumber == 0) {
             return result;
         }
-        hits = this.searcher.search(query, matchNumber).scoreDocs;
+        ScoreDoc[] hits = this.searcher.search(query, matchNumber).scoreDocs;
 
         for (int i = 0; i < hits.length; i++) {
             Document doc = this.searcher.doc(hits[i].doc);

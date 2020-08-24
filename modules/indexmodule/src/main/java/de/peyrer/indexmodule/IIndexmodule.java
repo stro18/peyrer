@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface IIndexmodule {
 
-    public void indexWithRelevance() throws IOException, InvalidSettingValueException;
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException;
 
     public String getIndexPath();
 }

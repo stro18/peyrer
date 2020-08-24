@@ -1,16 +1,12 @@
 package de.peyrer.indexmodule;
 
-import de.peyrer.graph.GraphBuilder;
-import de.peyrer.graph.IDirectedGraph;
+import de.peyrer.graph.*;
 import de.peyrer.indexer.ConclusionIndexer;
 import de.peyrer.indexer.IIndexer;
 import de.peyrer.indexer.PremiseIndexer;
 import de.peyrer.indexer.RelevanceIndexer;
 import de.peyrer.relevance.IRelevanceComputer;
 import de.peyrer.relevance.SumComputer;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,8 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class Indexmodule implements IIndexmodule {
@@ -41,10 +35,10 @@ public class Indexmodule implements IIndexmodule {
     }
 
     @Override
-    public void indexWithRelevance() throws IOException, InvalidSettingValueException {
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException {
         Instant start = Instant.now();
 
-        GraphBuilder graphBuilder = new GraphBuilder(GraphBuilder.GraphType.JGRAPHT);
+        IGraphBuilder graphBuilder = this.getGraphBuilder();
 
         IRelevanceComputer relevanceComputer = new SumComputer();
 
@@ -114,6 +108,18 @@ public class Indexmodule implements IIndexmodule {
             conclusionIndexer.index();
 
             System.out.println("Indexing of conclusions ended at : " + java.time.ZonedDateTime.now());
+        }
+    }
+
+    private IGraphBuilder getGraphBuilder() throws InvalidSettingValueException {
+        String threading = System.getenv().get("THREADING").toLowerCase();
+        switch(threading){
+            case "true":
+                return new GraphBuilderForThreads(IGraphBuilder.GraphType.JGRAPHT);
+            case "false":
+                return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + threading +  " is not allowed!");
         }
     }
 
