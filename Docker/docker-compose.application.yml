@@ -13,5 +13,5 @@ services:
             - ../.env
         volumes:
             - ../out:/out
-            - /usr/peyrer/index
+            - ../index:/usr/peyrer/index
             - /usr/peyrer/tempIndex
