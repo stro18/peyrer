@@ -15,9 +15,6 @@ public class GraphBuilderForThreads implements IGraphBuilder {
 
     private final ArgumentRepository repository;
 
-    private static final String AND = "AND";
-    private static final String PHRASE = "PHRASE";
-
     public GraphBuilderForThreads(IGraphBuilder.GraphType graphType) throws InvalidSettingValueException {
         this.repository = new ArgumentRepository();
 
@@ -25,6 +22,8 @@ public class GraphBuilderForThreads implements IGraphBuilder {
             case JGRAPHT:
                 this.graph = new JGraphTAdapter();
                 break;
+            case JGRAPHT_WEIGHTED:
+                this.graph = new JGraphTAdapterWeighted();
             default:
                 throw new InvalidSettingValueException("The setting GRAPH_TYPE=" + graphType + " is not allowed!");
         }

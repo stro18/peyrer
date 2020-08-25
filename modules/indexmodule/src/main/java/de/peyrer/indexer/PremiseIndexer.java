@@ -39,7 +39,7 @@ public class PremiseIndexer extends AbstractIndexer {
     public void index() throws IOException {
         String matching = System.getenv().get("MATCHING");
 
-        if (matching != null && (matching.equals("PHRASE"))) {
+        if (matching != null && (matching.equals("TFIDF"))) {
             config.setSimilarity(new ClassicSimilarity());
         }
         Directory fsDirectory = FSDirectory.open(indexPath);
