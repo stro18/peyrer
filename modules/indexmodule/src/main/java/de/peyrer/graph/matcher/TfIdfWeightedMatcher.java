@@ -31,13 +31,24 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
 
         Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, 0.0);
+        int limit = 10;
+
+        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, limit, 0.0);
+
+        return this.normalizeScore(matches, 10 * limit);
+    }
+
+    private Iterable<Map<String, String>> normalizeScore(Iterable<Map<String, String>> matches, int base)
+    {
+        double sum = 0;
+        for (Map<String,String> match : matches){
+            sum += Double.parseDouble(match.get("score"));
+        }
+
+        double normalize = sum/base;
 
         for (Map<String,String> match : matches){
-            String newScore = String.valueOf(
-                    Double.parseDouble(match.get("score"))
-                    / analyzerModule.analyze("premiseText", stringToMatch).length()
-            );
+            String newScore = String.valueOf(Double.parseDouble(match.get("score")) / normalize);
 
             match.replace("score", newScore);
         }
@@ -53,7 +64,7 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
 
     @Override
     public String setArgumentId(String id) {
-        this.argumentId = argumentId;
+        this.argumentId = id;
         return argumentId;
     }
 

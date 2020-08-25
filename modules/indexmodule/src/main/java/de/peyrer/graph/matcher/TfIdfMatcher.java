@@ -51,7 +51,7 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
 
     @Override
     public String setArgumentId(String id) {
-        this.argumentId = argumentId;
+        this.argumentId = id;
         return argumentId;
     }
 
