@@ -4,17 +4,13 @@ import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
-public class JGraphTAdapterWeighted extends AbstractJGraphTAdapter {
-
-    protected AsSynchronizedGraph<String, DefaultWeightedEdgeWithPremiseNumber> graph;
-
-    protected PageRank<String, DefaultWeightedEdgeWithPremiseNumber> pageRanker;
-
+public class JGraphTAdapterWeighted extends AbstractJGraphTAdapter
+{
     public JGraphTAdapterWeighted()
     {
         super();
 
-        DefaultDirectedWeightedGraph<String, DefaultWeightedEdgeWithPremiseNumber> innerGraph
+        DefaultDirectedWeightedGraph<String, IEdgeWithPremiseNumber> innerGraph
                 = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdgeWithPremiseNumber.class);
         this.graph = new AsSynchronizedGraph<>(innerGraph);
 
