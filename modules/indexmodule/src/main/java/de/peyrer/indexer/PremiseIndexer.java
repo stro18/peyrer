@@ -2,6 +2,7 @@ package de.peyrer.indexer;
 
 import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.indexmodule.Indexmodule;
+import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
@@ -26,6 +27,11 @@ public class PremiseIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
+    private static final String AND = "AND";
+    private static final String PHRASE = "PHRASE";
+    private static final String TFIDF = "TFIDF";
+    private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
+
     public PremiseIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
@@ -36,12 +42,23 @@ public class PremiseIndexer extends AbstractIndexer {
     }
 
     @Override
-    public void index() throws IOException {
+    public void index() throws IOException, InvalidSettingValueException {
         String matching = System.getenv().get("MATCHING");
 
-        if (matching != null && (matching.equals("TFIDF"))) {
-            config.setSimilarity(new ClassicSimilarity());
+        if (matching != null) {
+            switch (matching) {
+                case TFIDF:
+                case TFIDF_WEIGHTED:
+                    config.setSimilarity(new ClassicSimilarity());
+                    break;
+                case AND:
+                case PHRASE:
+                    break;
+                default:
+                    throw new InvalidSettingValueException("The setting MATCHING=" + matching + " is not allowed!");
+            }
         }
+
         Directory fsDirectory = FSDirectory.open(indexPath);
         IndexWriter indexWriter = new IndexWriter(fsDirectory, config);
 
