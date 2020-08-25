@@ -47,7 +47,9 @@ public class SumComputerTest {
 		jGraphTAdapter.addEdge("2", "4", "2");
 
 		Map<String,Double> pageRank = new HashMap<String,Double>();
-		pageRank.put("1", 0.9);
+
+		// average pagerank 0.5
+		pageRank.put("1", 0.8);
 		pageRank.put("2", 0.5);
 		pageRank.put("3", 0.4);
 		pageRank.put("4", 0.3);
@@ -69,8 +71,21 @@ public class SumComputerTest {
 
 		Map<String,Double> relevance = sumComputer.computeAndSaveRelevance();
 
-		Assert.assertEquals(0.5, relevance.get("1"), 0.0);
-		Assert.assertEquals(0.7, relevance.get("2"), 0.0);
+		/*
+		Compute relevance manually:
+		A1: 0.5  => normalized (multiply with normalize) 0.93
+		A2: 0.7 => 1.30
+		A3: 0.5 => 0.93
+		A4: 0.5 => 0.93
+		A5: 0.5 => 0.93
+		sum: 2.7, base: 5, normalize= 2.7/5 = 0.54
+		 */
+
+		Assert.assertEquals(0.93, relevance.get("1"), 0.01);
+		Assert.assertEquals(1.30, relevance.get("2"), 0.01);
+		Assert.assertEquals(0.93, relevance.get("3"), 0.01);
+		Assert.assertEquals(0.93, relevance.get("4"), 0.01);
+		Assert.assertEquals(0.93, relevance.get("5"), 0.01);
 	}
 }
 
