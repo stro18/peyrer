@@ -31,11 +31,7 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
 
         Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 100, 0.0);
-
-        for (Map<String,String> match : matches){
-            match.remove("score");
-        }
+        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, 0.0);
 
         return matches;
     }

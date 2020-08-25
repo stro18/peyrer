@@ -51,6 +51,7 @@ public class MatchThread implements Callable<Integer> {
                 break;
             case TFIDF_WEIGHTED:
                 this.matcher = new TfIdfWeightedMatcher();
+                break;
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
         }
@@ -119,7 +120,17 @@ public class MatchThread implements Callable<Integer> {
 
         for(Map<String,String> match : matches){
             graph.addVertex(match.get("argumentId"));
-            graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"), 1);
+
+            try {
+                if (weighted()) {
+                    graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"), Double.parseDouble(match.get("score")));
+                } else {
+                    graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"), 1);
+                }
+            } catch (InvalidSettingValueException e) {
+                e.printStackTrace();
+                return 1;
+            }
         }
 
         return 0;
