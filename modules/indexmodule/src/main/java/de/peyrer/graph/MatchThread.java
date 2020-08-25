@@ -1,6 +1,7 @@
 package de.peyrer.graph;
 
 import de.peyrer.graph.matcher.TfIdfMatcher;
+import de.peyrer.graph.matcher.TfIdfWeightedMatcher;
 import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -25,6 +26,7 @@ public class MatchThread implements Callable<Integer> {
     private static final String PHRASE = "PHRASE";
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
     private static final String TFIDF = "TFIDF";
+    private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
 
     MatchThread(AbstractDirectedGraph graph, Argument argument, String premiseIndexPath, String conclusionIndexPath)
             throws InvalidSettingValueException {
@@ -47,6 +49,8 @@ public class MatchThread implements Callable<Integer> {
             case TFIDF:
                 this.matcher = new TfIdfMatcher();
                 break;
+            case TFIDF_WEIGHTED:
+                this.matcher = new TfIdfWeightedMatcher();
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
         }
@@ -80,7 +84,17 @@ public class MatchThread implements Callable<Integer> {
 
             for(Map<String,String> match : matches){
                 graph.addVertex(match.get("argumentId"));
-                graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), 1);
+
+                try {
+                    if (weighted()) {
+                        graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), Integer.parseInt(match.get("score")));
+                    } else {
+                        graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), 1);
+                    }
+                } catch (InvalidSettingValueException e) {
+                    e.printStackTrace();
+                    return 1;
+                }
             }
 
             premiseId++;
@@ -109,5 +123,20 @@ public class MatchThread implements Callable<Integer> {
         }
 
         return 0;
+    }
+
+    private boolean weighted() throws InvalidSettingValueException {
+        String matcherType = System.getenv().get("MATCHING");
+        switch(matcherType){
+            case AND:
+            case PHRASE:
+            case PHRASE_PREMISE:
+            case TFIDF:
+                return false;
+            case TFIDF_WEIGHTED:
+                return true;
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
+        }
     }
 }
