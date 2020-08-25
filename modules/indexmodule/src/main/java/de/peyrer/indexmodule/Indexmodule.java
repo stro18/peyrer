@@ -27,6 +27,7 @@ public class Indexmodule implements IIndexmodule {
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
     private static final String TFIDF = "TFIDF";
     private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
+    private static final String BM25 = "BM25";
 
     @Override
     public String getIndexPath(){
@@ -90,6 +91,7 @@ public class Indexmodule implements IIndexmodule {
             case PHRASE:
             case TFIDF:
             case TFIDF_WEIGHTED:
+            case BM25:
                 premiseIndexRequired = true;
                 conclusionIndexRequired = false;
                 break;
@@ -143,6 +145,7 @@ public class Indexmodule implements IIndexmodule {
                 type = IGraphBuilder.GraphType.JGRAPHT;
                 break;
             case TFIDF_WEIGHTED:
+            case BM25:
                 type = IGraphBuilder.GraphType.JGRAPHT_WEIGHTED;
                 break;
             default:
@@ -174,6 +177,7 @@ public class Indexmodule implements IIndexmodule {
             case PHRASE:
             case TFIDF:
             case TFIDF_WEIGHTED:
+            case BM25:
                 return graphBuilder.buildWithPremiseIndex(
                         Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
                 );

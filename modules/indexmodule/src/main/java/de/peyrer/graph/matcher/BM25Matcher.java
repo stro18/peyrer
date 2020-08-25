@@ -8,6 +8,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -16,14 +17,14 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
-{
+public class BM25Matcher extends AbstractSimilarityMatcher {
+
     @Override
-    public Iterable<Map<String, String>> match() throws IOException, ParseException {
+    public Iterable<Map<String, String>> match() throws IOException {
         Directory directory = FSDirectory.open(Paths.get(directoryName));
         DirectoryReader iReader = DirectoryReader.open(directory);
         IndexSearcher searcher = new IndexSearcher(iReader);
-        searcher.setSimilarity(new ClassicSimilarity());
+        searcher.setSimilarity(new BM25Similarity());
 
         AnalyzerModule analyzerModule = new AnalyzerModule();
         Analyzer analyzer = analyzerModule.getAnalyzer();
@@ -37,7 +38,6 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
 
         return this.normalizeScore(matches, 10 * limit);
     }
-
 
     @Override
     public String setStringToMatch(String stringToMatch) {

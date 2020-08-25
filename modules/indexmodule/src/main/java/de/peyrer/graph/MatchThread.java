@@ -1,5 +1,6 @@
 package de.peyrer.graph;
 
+import de.peyrer.graph.matcher.BM25Matcher;
 import de.peyrer.graph.matcher.TfIdfMatcher;
 import de.peyrer.graph.matcher.TfIdfWeightedMatcher;
 import de.peyrer.indexmodule.InvalidSettingValueException;
@@ -27,6 +28,7 @@ public class MatchThread implements Callable<Integer> {
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
     private static final String TFIDF = "TFIDF";
     private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
+    private static final String BM25 = "BM25";
 
     MatchThread(AbstractDirectedGraph graph, Argument argument, String premiseIndexPath, String conclusionIndexPath)
             throws InvalidSettingValueException {
@@ -51,6 +53,9 @@ public class MatchThread implements Callable<Integer> {
                 break;
             case TFIDF_WEIGHTED:
                 this.matcher = new TfIdfWeightedMatcher();
+                break;
+            case BM25:
+                this.matcher = new BM25Matcher();
                 break;
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
@@ -145,6 +150,7 @@ public class MatchThread implements Callable<Integer> {
             case TFIDF:
                 return false;
             case TFIDF_WEIGHTED:
+            case BM25:
                 return true;
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");

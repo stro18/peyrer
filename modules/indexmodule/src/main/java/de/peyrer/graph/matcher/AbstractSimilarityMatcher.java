@@ -37,6 +37,24 @@ public abstract class AbstractSimilarityMatcher implements ISimilarityMatcher
         return result;
     }
 
+    protected Iterable<Map<String, String>> normalizeScore(Iterable<Map<String, String>> matches, int base)
+    {
+        double sum = 0;
+        for (Map<String,String> match : matches){
+            sum += Double.parseDouble(match.get("score"));
+        }
+
+        double normalize = sum/base;
+
+        for (Map<String,String> match : matches){
+            String newScore = String.valueOf(Double.parseDouble(match.get("score")) / normalize);
+
+            match.replace("score", newScore);
+        }
+
+        return matches;
+    }
+
     protected Iterable<Map<String,String>> searchConclusionIndex(IndexSearcher searcher, Query query, int limit, int threshold) throws IOException {
         return new LinkedList<>();
     }
