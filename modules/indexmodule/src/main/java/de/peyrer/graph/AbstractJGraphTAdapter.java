@@ -3,31 +3,29 @@ package de.peyrer.graph;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
 import org.jgrapht.alg.scoring.PageRank;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class JGraphTAdapter extends AbstractDirectedGraph {
-    private final AsSynchronizedGraph<String, DefaultEdgeWithPremiseNumber> graph;
+public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
 
-    private final IArgumentRepository argumentRepository;
+    protected final IArgumentRepository argumentRepository;
 
-    public JGraphTAdapter()
-    {
-        DefaultDirectedGraph<String, DefaultEdgeWithPremiseNumber> innerGraph = new DefaultDirectedGraph<>(DefaultEdgeWithPremiseNumber.class);
-        this.graph = new AsSynchronizedGraph<>(innerGraph);
+    protected AsSynchronizedGraph<String, IEdgeWithPremiseNumber> graph;
+
+    protected PageRank<String, IEdgeWithPremiseNumber> pageRanker;
+
+    protected AbstractJGraphTAdapter() {
+        super();
+
         this.argumentRepository = new ArgumentRepository();
     }
 
     @Override
-    public Map<String, Double> computeAndSavePageRank() {
-        PageRank<String, DefaultEdgeWithPremiseNumber> pageRanker = new PageRank<String, DefaultEdgeWithPremiseNumber>(graph, dampingFactor, maxIterations, toleranceDefault);
-
+    public Map<String, Double> computeAndSavePageRank()
+    {
         Map<String,Double> pageRankScores = pageRanker.getScores();
 
         Double[] pageRankValues = pageRankScores.values().toArray(new Double[0]);
@@ -63,16 +61,9 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
     }
 
     @Override
-    public String[] addEdge(String sourceVertex, String targetVertex, String premiseId, double weight) {
-        boolean success = graph.addEdge(sourceVertex, targetVertex, new DefaultEdgeWithPremiseNumber(premiseId));
-
-        return success ? null : new String[]{sourceVertex, targetVertex, premiseId};
-    }
-
-    @Override
     public int getNumberOfEdges() {
         int count = 0;
-        for(DefaultEdgeWithPremiseNumber edge : this.graph.edgeSet()){
+        for(IEdgeWithPremiseNumber edge : this.graph.edgeSet()){
             count++;
         }
         return count;
@@ -81,7 +72,7 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
     @Override
     public Iterable<String[]> getOutgoingEdges(String vertex) {
         LinkedList<String[]> edges = new LinkedList<String[]>();
-        for(DefaultEdgeWithPremiseNumber edge : this.graph.outgoingEdgesOf(vertex)){
+        for(IEdgeWithPremiseNumber edge : this.graph.outgoingEdgesOf(vertex)){
             String[] edgeAsArray = new String[3];
             edgeAsArray[0] = graph.getEdgeSource(edge);
             edgeAsArray[1] = graph.getEdgeTarget(edge);
@@ -94,7 +85,7 @@ public class JGraphTAdapter extends AbstractDirectedGraph {
 
     public Iterable<String[]> getIncomingEdges(String vertex) {
         LinkedList<String[]> edges = new LinkedList<String[]>();
-        for(DefaultEdgeWithPremiseNumber edge : this.graph.incomingEdgesOf(vertex)){
+        for(IEdgeWithPremiseNumber edge : this.graph.incomingEdgesOf(vertex)){
             String[] edgeAsArray = new String[3];
             edgeAsArray[0] = graph.getEdgeSource(edge);
             edgeAsArray[1] = graph.getEdgeTarget(edge);

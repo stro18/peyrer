@@ -27,8 +27,8 @@ public class JGraphTAdapterTest {
         jGraphTAdapter.addVertex("1");
         jGraphTAdapter.addVertex("2");
         jGraphTAdapter.addVertex("3");
-        jGraphTAdapter.addEdge("1", "2", "1");
-        jGraphTAdapter.addEdge("3", "1", "1");
+        jGraphTAdapter.addEdge("1", "2", "1", 1);
+        jGraphTAdapter.addEdge("3", "1", "1", 1);
     }
 
     @Test

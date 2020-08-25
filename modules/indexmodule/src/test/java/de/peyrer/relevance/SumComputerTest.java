@@ -42,9 +42,9 @@ public class SumComputerTest {
 		jGraphTAdapter.addVertex("3");
 		jGraphTAdapter.addVertex("4");
 		jGraphTAdapter.addVertex("5");
-		jGraphTAdapter.addEdge("1", "5", "1");
-		jGraphTAdapter.addEdge("2", "3", "1");
-		jGraphTAdapter.addEdge("2", "4", "2");
+		jGraphTAdapter.addEdge("1", "5", "1",1);
+		jGraphTAdapter.addEdge("2", "3", "1", 1);
+		jGraphTAdapter.addEdge("2", "4", "2", 1);
 
 		Map<String,Double> pageRank = new HashMap<String,Double>();
 		pageRank.put("1", 0.9);

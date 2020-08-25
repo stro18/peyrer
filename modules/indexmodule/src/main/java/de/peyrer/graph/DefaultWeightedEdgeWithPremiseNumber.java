@@ -1,12 +1,10 @@
 package de.peyrer.graph;
 
-import org.jgrapht.graph.DefaultEdge;
-
-class DefaultEdgeWithPremiseNumber extends DefaultEdge implements IEdgeWithPremiseNumber {
-
+public class DefaultWeightedEdgeWithPremiseNumber implements IEdgeWithPremiseNumber
+{
     private String premiseId;
 
-    DefaultEdgeWithPremiseNumber(String premiseId){
+    DefaultWeightedEdgeWithPremiseNumber(String premiseId){
         super();
 
         this.premiseId = premiseId;

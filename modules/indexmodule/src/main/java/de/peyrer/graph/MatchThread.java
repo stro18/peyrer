@@ -80,7 +80,7 @@ public class MatchThread implements Callable<Integer> {
 
             for(Map<String,String> match : matches){
                 graph.addVertex(match.get("argumentId"));
-                graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId));
+                graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), 1);
             }
 
             premiseId++;
@@ -105,7 +105,7 @@ public class MatchThread implements Callable<Integer> {
 
         for(Map<String,String> match : matches){
             graph.addVertex(match.get("argumentId"));
-            graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"));
+            graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"), 1);
         }
 
         return 0;

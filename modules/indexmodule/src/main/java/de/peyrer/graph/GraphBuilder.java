@@ -73,7 +73,7 @@ public class GraphBuilder implements IGraphBuilder {
 
             for(Map<String,String> match : matches){
                 graph.addVertex(match.get("argumentId"));
-                graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"));
+                graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"), 1);
             }
 
             counter++;
