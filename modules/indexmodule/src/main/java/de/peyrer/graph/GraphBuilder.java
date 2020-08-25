@@ -3,6 +3,7 @@ package de.peyrer.graph;
 import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class GraphBuilder implements IGraphBuilder {
         }
     }
 
-    public IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws IOException {
+    public IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws IOException, ParseException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex, "");
         }
@@ -50,14 +51,14 @@ public class GraphBuilder implements IGraphBuilder {
         return null;
     }
 
-    public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException {
+    public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws IOException, ParseException {
         if(graph instanceof JGraphTAdapter){
             return buildJGraphT(premiseIndex, conclusionIndex);
         }
         return null;
     };
 
-    private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex) throws IOException {
+    private IDirectedGraph buildJGraphT(String premiseIndex, String conclusionIndex) throws IOException, ParseException {
         Iterable<Argument> arguments = repository.readAll();
         matcher.setDirectoryName(premiseIndex);
         matcher.setDirectoryName_Conclusions(conclusionIndex);
@@ -72,7 +73,7 @@ public class GraphBuilder implements IGraphBuilder {
 
             for(Map<String,String> match : matches){
                 graph.addVertex(match.get("argumentId"));
-                graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"));
+                graph.addEdge(match.get("argumentId"), argument.id, match.get("premiseId"), 1);
             }
 
             counter++;

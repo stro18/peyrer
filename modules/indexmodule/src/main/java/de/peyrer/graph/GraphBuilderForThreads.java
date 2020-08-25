@@ -15,15 +15,15 @@ public class GraphBuilderForThreads implements IGraphBuilder {
 
     private final ArgumentRepository repository;
 
-    private static final String AND = "AND";
-    private static final String PHRASE = "PHRASE";
-
     public GraphBuilderForThreads(IGraphBuilder.GraphType graphType) throws InvalidSettingValueException {
         this.repository = new ArgumentRepository();
 
         switch(graphType){
             case JGRAPHT:
                 this.graph = new JGraphTAdapter();
+                break;
+            case JGRAPHT_WEIGHTED:
+                this.graph = new JGraphTAdapterWeighted();
                 break;
             default:
                 throw new InvalidSettingValueException("The setting GRAPH_TYPE=" + graphType + " is not allowed!");
@@ -32,14 +32,14 @@ public class GraphBuilderForThreads implements IGraphBuilder {
 
     @Override
     public IDirectedGraph build(String premiseIndex, String conclusionIndex) throws InvalidSettingValueException, InterruptedException {
-        if(graph instanceof JGraphTAdapter){
+        if(graph instanceof AbstractJGraphTAdapter){
             return buildJGraphT(premiseIndex, conclusionIndex);
         }
         return null;
     }
 
     public IDirectedGraph buildWithPremiseIndex(String premiseIndex) throws InterruptedException, InvalidSettingValueException {
-        if(graph instanceof JGraphTAdapter){
+        if(graph instanceof AbstractJGraphTAdapter){
             return buildJGraphT(premiseIndex, "");
         }
         return null;

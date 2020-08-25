@@ -2,6 +2,7 @@ package de.peyrer.indexer;
 
 import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.indexmodule.Indexmodule;
+import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
@@ -14,6 +15,8 @@ import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -25,6 +28,12 @@ public class PremiseIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
+    private static final String AND = "AND";
+    private static final String PHRASE = "PHRASE";
+    private static final String TFIDF = "TFIDF";
+    private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
+    private static final String BM25 = "BM25";
+
     public PremiseIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
@@ -35,7 +44,26 @@ public class PremiseIndexer extends AbstractIndexer {
     }
 
     @Override
-    public void index() throws IOException {
+    public void index() throws IOException, InvalidSettingValueException {
+        String matching = System.getenv().get("MATCHING");
+
+        if (matching != null) {
+            switch (matching) {
+                case TFIDF:
+                case TFIDF_WEIGHTED:
+                    config.setSimilarity(new ClassicSimilarity());
+                    break;
+                case BM25:
+                    config.setSimilarity(new BM25Similarity());
+                    break;
+                case AND:
+                case PHRASE:
+                    break;
+                default:
+                    throw new InvalidSettingValueException("The setting MATCHING=" + matching + " is not allowed!");
+            }
+        }
+
         Directory fsDirectory = FSDirectory.open(indexPath);
         IndexWriter indexWriter = new IndexWriter(fsDirectory, config);
 
@@ -50,7 +78,6 @@ public class PremiseIndexer extends AbstractIndexer {
                 doc.add(new StoredField("argumentId", argument.id));
                 doc.add(new StoredField("premiseId", Integer.toString(premiseId)));
 
-                String matching = System.getenv().get("MATCHING");
                 // Necessary for Phrase-Matching with stopwords, see: https://stackoverflow.com/questions/31719249/how-to-query-a-phrase-with-stopwords-in-elasticsearch
                 if (matching != null && (matching.equals("PHRASE"))) {
                     premise = new AnalyzerModule().analyze("premiseText",premise);

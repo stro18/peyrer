@@ -4,6 +4,7 @@ import de.peyrer.graph.*;
 import de.peyrer.indexer.*;
 import de.peyrer.relevance.IRelevanceComputer;
 import de.peyrer.relevance.SumComputer;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,6 +25,9 @@ public class Indexmodule implements IIndexmodule {
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
+    private static final String TFIDF = "TFIDF";
+    private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
+    private static final String BM25 = "BM25";
 
     @Override
     public String getIndexPath(){
@@ -36,7 +40,7 @@ public class Indexmodule implements IIndexmodule {
     }
 
     @Override
-    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException {
+    public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException, ParseException {
         Instant start = Instant.now();
 
         IRelevanceComputer relevanceComputer = new SumComputer();
@@ -85,6 +89,9 @@ public class Indexmodule implements IIndexmodule {
                 conclusionIndexRequired = true;
                 break;
             case PHRASE:
+            case TFIDF:
+            case TFIDF_WEIGHTED:
+            case BM25:
                 premiseIndexRequired = true;
                 conclusionIndexRequired = false;
                 break;
@@ -128,10 +135,28 @@ public class Indexmodule implements IIndexmodule {
     }
 
     private IGraphBuilder getGraphBuilder() throws InvalidSettingValueException {
+        IGraphBuilder.GraphType type;
+        String matching = System.getenv().get("MATCHING");
+        switch (matching) {
+            case AND:
+            case PHRASE:
+            case PHRASE_PREMISE:
+            case TFIDF:
+                type = IGraphBuilder.GraphType.JGRAPHT;
+                break;
+            case TFIDF_WEIGHTED:
+            case BM25:
+                type = IGraphBuilder.GraphType.JGRAPHT_WEIGHTED;
+                break;
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matching + " is not allowed!");
+        }
+
+
         String threading = System.getenv().get("THREADING").toLowerCase();
         switch(threading){
             case "true":
-                return new GraphBuilderForThreads(IGraphBuilder.GraphType.JGRAPHT);
+                return new GraphBuilderForThreads(type);
             case "false":
                 return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
             default:
@@ -139,7 +164,7 @@ public class Indexmodule implements IIndexmodule {
         }
     }
 
-    private IDirectedGraph buildGraph() throws InvalidSettingValueException, IOException, InterruptedException {
+    private IDirectedGraph buildGraph() throws InvalidSettingValueException, IOException, InterruptedException, ParseException {
         IGraphBuilder graphBuilder = this.getGraphBuilder();
 
         String matcherType = System.getenv().get("MATCHING");
@@ -150,6 +175,9 @@ public class Indexmodule implements IIndexmodule {
                         Paths.get(System.getProperty("user.dir"), conclusionIndexPath).toString()
                 );
             case PHRASE:
+            case TFIDF:
+            case TFIDF_WEIGHTED:
+            case BM25:
                 return graphBuilder.buildWithPremiseIndex(
                         Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
                 );
