@@ -2,6 +2,7 @@ package de.peyrer.indexer;
 
 import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.indexmodule.Indexmodule;
+import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 import de.peyrer.repository.IArgumentRepository;
@@ -66,7 +67,7 @@ public class PremiseIndexerTest {
 
         try {
             indexer.index();
-        } catch (IOException e) {
+        } catch (IOException | InvalidSettingValueException e) {
             e.printStackTrace();
         }
 

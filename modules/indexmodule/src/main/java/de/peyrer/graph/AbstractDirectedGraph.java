@@ -10,5 +10,5 @@ public abstract class AbstractDirectedGraph implements IDirectedGraph {
 
     public abstract String addVertex(String vertex);
 
-    public abstract String[] addEdge(String sourceVertex, String targetVertex, String premiseId);
+    public abstract String[] addEdge(String sourceVertex, String targetVertex, String premiseId, double weight);
 }

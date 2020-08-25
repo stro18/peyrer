@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class TfIdfMatcher extends AbstractSimilarityMatcher {
-
+public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
+{
     @Override
     public Iterable<Map<String, String>> match() throws IOException, ParseException {
         Directory directory = FSDirectory.open(Paths.get(directoryName));
@@ -31,13 +31,26 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
 
         Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TFIDF"));
-        threshold *= analyzerModule.analyze("premiseText", stringToMatch).length();
+        int limit = 10;
 
-        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, threshold);
+        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, limit, 0.0);
+
+        return this.normalizeScore(matches, 10 * limit);
+    }
+
+    private Iterable<Map<String, String>> normalizeScore(Iterable<Map<String, String>> matches, int base)
+    {
+        double sum = 0;
+        for (Map<String,String> match : matches){
+            sum += Double.parseDouble(match.get("score"));
+        }
+
+        double normalize = sum/base;
 
         for (Map<String,String> match : matches){
-            match.remove("score");
+            String newScore = String.valueOf(Double.parseDouble(match.get("score")) / normalize);
+
+            match.replace("score", newScore);
         }
 
         return matches;

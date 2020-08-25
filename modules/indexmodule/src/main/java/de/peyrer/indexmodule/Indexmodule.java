@@ -26,6 +26,7 @@ public class Indexmodule implements IIndexmodule {
     private static final String PHRASE = "PHRASE";
     private static final String PHRASE_PREMISE = "PHRASE_PREMISE";
     private static final String TFIDF = "TFIDF";
+    private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
 
     @Override
     public String getIndexPath(){
@@ -88,6 +89,7 @@ public class Indexmodule implements IIndexmodule {
                 break;
             case PHRASE:
             case TFIDF:
+            case TFIDF_WEIGHTED:
                 premiseIndexRequired = true;
                 conclusionIndexRequired = false;
                 break;
@@ -131,10 +133,27 @@ public class Indexmodule implements IIndexmodule {
     }
 
     private IGraphBuilder getGraphBuilder() throws InvalidSettingValueException {
+        IGraphBuilder.GraphType type;
+        String matching = System.getenv().get("MATCHING");
+        switch (matching) {
+            case AND:
+            case PHRASE:
+            case PHRASE_PREMISE:
+            case TFIDF:
+                type = IGraphBuilder.GraphType.JGRAPHT;
+                break;
+            case TFIDF_WEIGHTED:
+                type = IGraphBuilder.GraphType.JGRAPHT_WEIGHTED;
+                break;
+            default:
+                throw new InvalidSettingValueException("The setting MATCHING=" + matching + " is not allowed!");
+        }
+
+
         String threading = System.getenv().get("THREADING").toLowerCase();
         switch(threading){
             case "true":
-                return new GraphBuilderForThreads(IGraphBuilder.GraphType.JGRAPHT);
+                return new GraphBuilderForThreads(type);
             case "false":
                 return new GraphBuilder(IGraphBuilder.GraphType.JGRAPHT);
             default:
@@ -154,6 +173,7 @@ public class Indexmodule implements IIndexmodule {
                 );
             case PHRASE:
             case TFIDF:
+            case TFIDF_WEIGHTED:
                 return graphBuilder.buildWithPremiseIndex(
                         Paths.get(System.getProperty("user.dir"), premiseIndexPath).toString()
                 );
