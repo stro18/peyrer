@@ -33,6 +33,15 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
 
         Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, 0.0);
 
+        for (Map<String,String> match : matches){
+            String newScore = String.valueOf(
+                    Double.parseDouble(match.get("score"))
+                    / analyzerModule.analyze("premiseText", stringToMatch).length()
+            );
+
+            match.replace("score", newScore);
+        }
+
         return matches;
     }
 
