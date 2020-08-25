@@ -1,11 +1,14 @@
 package de.peyrer.graph;
 
+import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
 public class JGraphTAdapterWeighted extends AbstractJGraphTAdapter {
 
     protected AsSynchronizedGraph<String, DefaultWeightedEdgeWithPremiseNumber> graph;
+
+    protected PageRank<String, DefaultWeightedEdgeWithPremiseNumber> pageRanker;
 
     public JGraphTAdapterWeighted()
     {
@@ -14,6 +17,8 @@ public class JGraphTAdapterWeighted extends AbstractJGraphTAdapter {
         DefaultDirectedWeightedGraph<String, DefaultWeightedEdgeWithPremiseNumber> innerGraph
                 = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdgeWithPremiseNumber.class);
         this.graph = new AsSynchronizedGraph<>(innerGraph);
+
+        this.pageRanker = new PageRank<>(graph, dampingFactor, maxIterations, toleranceDefault);
     }
 
     @Override
