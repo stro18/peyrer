@@ -15,6 +15,7 @@ import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -31,6 +32,7 @@ public class PremiseIndexer extends AbstractIndexer {
     private static final String PHRASE = "PHRASE";
     private static final String TFIDF = "TFIDF";
     private static final String TFIDF_WEIGHTED = "TFIDF_WEIGHTED";
+    private static final String BM25 = "BM25";
 
     public PremiseIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
@@ -50,6 +52,9 @@ public class PremiseIndexer extends AbstractIndexer {
                 case TFIDF:
                 case TFIDF_WEIGHTED:
                     config.setSimilarity(new ClassicSimilarity());
+                    break;
+                case BM25:
+                    config.setSimilarity(new BM25Similarity());
                     break;
                 case AND:
                 case PHRASE:
