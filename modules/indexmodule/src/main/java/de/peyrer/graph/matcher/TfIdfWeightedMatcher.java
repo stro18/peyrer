@@ -38,23 +38,6 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
         return this.normalizeScore(matches, 10 * limit);
     }
 
-    private Iterable<Map<String, String>> normalizeScore(Iterable<Map<String, String>> matches, int base)
-    {
-        double sum = 0;
-        for (Map<String,String> match : matches){
-            sum += Double.parseDouble(match.get("score"));
-        }
-
-        double normalize = sum/base;
-
-        for (Map<String,String> match : matches){
-            String newScore = String.valueOf(Double.parseDouble(match.get("score")) / normalize);
-
-            match.replace("score", newScore);
-        }
-
-        return matches;
-    }
 
     @Override
     public String setStringToMatch(String stringToMatch) {
