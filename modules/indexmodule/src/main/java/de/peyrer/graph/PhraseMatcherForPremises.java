@@ -35,7 +35,7 @@ public class PhraseMatcherForPremises extends AbstractMatcher {
         Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.parser = new QueryParser("conclusionText", analyzer);
 
-        int wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
+        int wordsCount = new StringTokenizer(analyzerModule.analyze("conclusionText", stringToMatch)).countTokens();
 
         LinkedList<Map<String,String>> result = new LinkedList<>();
         if (wordsCount != 0) {
