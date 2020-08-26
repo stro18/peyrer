@@ -2,8 +2,8 @@ package de.peyrer.graph;
 
 public abstract class AbstractMatcher implements Matcher{
 
-    public String stringToMatch;
-    public String directoryName;
-    public String directoryName_Conclusions;
-    public String argumentId;
+    protected String stringToMatch;
+    protected String directoryName;
+    protected String directoryName_Conclusions;
+    protected String argumentId;
 }
