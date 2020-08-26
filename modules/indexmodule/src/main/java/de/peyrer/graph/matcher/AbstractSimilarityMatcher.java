@@ -2,6 +2,7 @@ package de.peyrer.graph.matcher;
 
 import de.peyrer.graph.AbstractMatcher;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -13,20 +14,31 @@ import java.util.Map;
 
 public abstract class AbstractSimilarityMatcher extends AbstractMatcher implements ISimilarityMatcher
 {
+    protected static boolean logged = false;
+
+
     protected Iterable<Map<String,String>> searchPremiseIndex(IndexSearcher searcher, Query query, int limit, double threshold) throws IOException {
         LinkedList<Map<String,String>> result = new LinkedList<>();
 
         ScoreDoc[] hits = searcher.search(query, limit).scoreDocs;
 
-        for (int i = 0; i < hits.length; i++) {
-            if (threshold != 0 && hits[i].score < threshold){
+        for (ScoreDoc hit : hits) {
+            if (threshold != 0 && hit.score < threshold) {
                 break;
             }
 
-            Document doc = searcher.doc(hits[i].doc);
-            Map<String,String> found = new HashMap<>();
+            Document doc = searcher.doc(hit.doc);
+
+            if (!logged) {
+                logged = true;
+                Explanation explanation = searcher.explain(query, hit.doc);
+
+                this.logExplanation(explanation, 1);
+            }
+
+            Map<String, String> found = new HashMap<>();
             found.put("argumentId", doc.get("argumentId"));
-            found.put("score", String.valueOf(hits[i].score));
+            found.put("score", String.valueOf(hit.score));
             result.add(found);
         }
 
@@ -49,6 +61,23 @@ public abstract class AbstractSimilarityMatcher extends AbstractMatcher implemen
         }
 
         return matches;
+    }
+
+    protected void logExplanation(Explanation explanation, int step)
+    {
+        if (step == 1) {
+            System.out.println("Formula for calculating the matching score (before normalization):");
+        }
+
+        for (int i = 0; i < step; i++) {
+            System.out.print("  ");
+        }
+
+        System.out.println(explanation.getDescription());
+
+        for (Explanation details : explanation.getDetails()) {
+            this.logExplanation(details, step + 1);
+        }
     }
 
     protected Iterable<Map<String,String>> searchConclusionIndex(IndexSearcher searcher, Query query, int limit, int threshold) throws IOException {
