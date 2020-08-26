@@ -16,7 +16,6 @@ public abstract class AbstractSimilarityMatcher extends AbstractMatcher implemen
 {
     protected static boolean logged = false;
 
-
     protected Iterable<Map<String,String>> searchPremiseIndex(IndexSearcher searcher, Query query, int limit, double threshold) throws IOException {
         LinkedList<Map<String,String>> result = new LinkedList<>();
 
