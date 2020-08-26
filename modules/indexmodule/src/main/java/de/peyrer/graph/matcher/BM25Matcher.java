@@ -15,7 +15,9 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class BM25Matcher extends AbstractSimilarityMatcher {
 
@@ -30,13 +32,21 @@ public class BM25Matcher extends AbstractSimilarityMatcher {
         Analyzer analyzer = analyzerModule.getAnalyzer();
         QueryParser parser = new QueryParser("conclusionText", analyzer);
 
-        Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
+        int wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
 
-        int limit = 10;
+        Iterable<Map<String, String>> matches;
+        if (wordsCount == 0) {
+            matches = new LinkedList<>();
+        } else {
+            Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, limit, 0.0);
+            int limit = 10;
+            matches = this.searchPremiseIndex(searcher, query, limit, 0.0);
 
-        return this.normalizeScore(matches, 10 * limit);
+            matches = this.normalizeScore(matches, 10 * limit);
+        }
+
+        return matches;
     }
 
     @Override

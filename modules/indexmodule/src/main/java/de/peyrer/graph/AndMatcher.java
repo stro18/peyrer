@@ -19,25 +19,22 @@ import java.util.*;
 class AndMatcher extends AbstractMatcher {
 
     @Override
-    public Iterable<Map<String,String>> match() throws IOException {
+    public Iterable<Map<String,String>> match() throws IOException
+    {
         LinkedList<Map<String,String>> result = new LinkedList<>();
 
-        //directory for premise index
-        Directory directory = null;
-        DirectoryReader iReader = null;
-        //directory for conclusion index
-        Directory directory_Conclusions = null;
-        DirectoryReader iReader_Conclusions = null;
-
-        try {
-            directory = FSDirectory.open(Paths.get(directoryName));
-            iReader = DirectoryReader.open(directory);
-            //search the conclusions
-            directory_Conclusions = FSDirectory.open(Paths.get(directoryName_Conclusions));
-            iReader_Conclusions = DirectoryReader.open(directory_Conclusions);
-        } catch (IOException e) {
-            e.printStackTrace();
+        AnalyzerModule analyzerModule = new AnalyzerModule();
+        int wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
+        if (wordsCount == 0) {
+            return result;
         }
+
+        //directory for premise index
+        Directory directory = FSDirectory.open(Paths.get(directoryName));
+        DirectoryReader iReader = DirectoryReader.open(directory);
+        //directory for conclusion index
+        Directory directory_Conclusions = FSDirectory.open(Paths.get(directoryName_Conclusions));
+        DirectoryReader iReader_Conclusions = DirectoryReader.open(directory_Conclusions);
 
         IndexSearcher searcher = new IndexSearcher(iReader);
         IndexSearcher searcher_Conclusions = new IndexSearcher(iReader_Conclusions);

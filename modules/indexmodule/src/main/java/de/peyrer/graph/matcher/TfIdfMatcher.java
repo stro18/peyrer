@@ -14,7 +14,9 @@ import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class TfIdfMatcher extends AbstractSimilarityMatcher {
 
@@ -29,15 +31,22 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
         Analyzer analyzer = analyzerModule.getAnalyzer();
         QueryParser parser = new QueryParser("conclusionText", analyzer);
 
-        Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
+        int wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
 
-        double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TFIDF"));
-        threshold *= analyzerModule.analyze("premiseText", stringToMatch).length();
+        Iterable<Map<String, String>> matches;
+        if (wordsCount == 0) {
+            matches = new LinkedList<>();
+        } else {
+            Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-        Iterable<Map<String,String>> matches = this.searchPremiseIndex(searcher, query, 10, threshold);
+            double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TFIDF"));
+            threshold *= wordsCount;
 
-        for (Map<String,String> match : matches){
-            match.remove("score");
+            matches = this.searchPremiseIndex(searcher, query, 10, threshold);
+
+            for (Map<String,String> match : matches){
+                match.remove("score");
+            }
         }
 
         return matches;

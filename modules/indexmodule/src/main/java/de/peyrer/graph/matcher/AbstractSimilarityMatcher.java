@@ -1,5 +1,6 @@
 package de.peyrer.graph.matcher;
 
+import de.peyrer.graph.AbstractMatcher;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -10,13 +11,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public abstract class AbstractSimilarityMatcher implements ISimilarityMatcher
+public abstract class AbstractSimilarityMatcher extends AbstractMatcher implements ISimilarityMatcher
 {
-    protected String stringToMatch;
-    protected String directoryName;
-    protected String directoryName_Conclusions;
-    protected String argumentId;
-
     protected Iterable<Map<String,String>> searchPremiseIndex(IndexSearcher searcher, Query query, int limit, double threshold) throws IOException {
         LinkedList<Map<String,String>> result = new LinkedList<>();
 
