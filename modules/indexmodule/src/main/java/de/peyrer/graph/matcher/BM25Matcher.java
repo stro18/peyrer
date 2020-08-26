@@ -42,8 +42,6 @@ public class BM25Matcher extends AbstractSimilarityMatcher {
 
             int limit = 10;
             matches = this.searchPremiseIndex(searcher, query, limit, 0.0);
-
-            matches = this.normalizeScore(matches, 10 * limit);
         }
 
         return matches;
