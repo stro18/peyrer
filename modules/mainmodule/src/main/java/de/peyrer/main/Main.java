@@ -120,10 +120,8 @@ public class Main {
         writer.close();
     }
 
-    private static NodeList readTopicsFromXml(String ... directory) throws Exception {
-        String path = Main.buildSourcePath(directory);
-
-        File inputFile = new File(path);
+    private static NodeList readTopicsFromXml(String directory) throws Exception {
+        File inputFile = new File(directory);
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -133,17 +131,6 @@ public class Main {
         NodeList topicList = doc.getElementsByTagName("topic");
 
         return topicList;
-    }
-
-    private static String buildSourcePath(String ... directory){
-        Path wantedIndexPath = Paths.get(System.getProperty("user.dir"));
-
-        while(directory.length > 0 && directory[0].equals("..")){
-            wantedIndexPath = wantedIndexPath.getParent();
-            directory = Arrays.copyOfRange(directory, 1, directory.length);
-        }
-
-        return Paths.get(wantedIndexPath.toString(), directory).toString();
     }
 
     private static void writeResultsToOutputFile(PrintWriter writer, int topicId, Results results) {
