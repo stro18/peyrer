@@ -11,5 +11,4 @@ RUN mvn -f /usr/src/pom.xml -P SKIP_DATABASEMODULE_TESTS clean install
 FROM adoptopenjdk/openjdk11:alpine-jre
 WORKDIR /usr/peyrer
 COPY --from=build /usr/src/modules/mainmodule/target/mainmodule-1.0-SNAPSHOT-jar-with-dependencies.jar .
-COPY topics ./topics/
 ENTRYPOINT ["java","-jar", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "mainmodule-1.0-SNAPSHOT-jar-with-dependencies.jar"]

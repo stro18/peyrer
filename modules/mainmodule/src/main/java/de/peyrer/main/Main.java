@@ -26,13 +26,20 @@ public class Main {
 
     private static final boolean FEATURE_FIELD_QUERY = Boolean.parseBoolean(System.getenv("FEATURE_FIELD_QUERY"));
     private static final float QUERY_COEFFICIENT = Float.parseFloat(System.getenv("QUERY_COEFFICIENT"));
-    private static final String OUTPUT_FILE_PATH = String.format("/out/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    private static final String OUTPUT_FILE_PATH = System.getenv("OUT_DIR")
+            + ((System.getenv("ENV").equals("PROD")) ? "/run.txt" : String.format("/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
     private static final String OUTPUT_TAG = System.getenv("OUTPUT_TAG");
     private static final int RESULT_AMOUNT = Integer.parseInt(System.getenv("RESULT_AMOUNT"));
     private static final boolean INDEX_ARGUMENTS = Boolean.parseBoolean(System.getenv("INDEX_ARGUMENTS"));
+    private static final String TOPICS_FILE_PATH = System.getenv("IN_DIR") + "/topics.xml";
 
     public static void main (String[] args)
     {
+        if (System.getenv("FEATURE_FIELD_QUERY") == null) {
+            System.err.println("Env var missing");
+            System.exit(-1);
+        }
+
         String indexPath;
         try {
             Indexmodule indexmodule = new Indexmodule();
@@ -59,7 +66,7 @@ public class Main {
 
         NodeList topics;
         try {
-            topics = Main.readTopicsFromXml("topics/topicsTest.xml");
+            topics = Main.readTopicsFromXml(TOPICS_FILE_PATH);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
