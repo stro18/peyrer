@@ -5,6 +5,7 @@ services:
         build:
             context: ..
             dockerfile: Docker/Dockerfile
+        restart: always
         networks:
             - bridge_network
         depends_on:
