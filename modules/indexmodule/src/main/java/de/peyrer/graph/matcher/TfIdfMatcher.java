@@ -40,7 +40,7 @@ public class TfIdfMatcher extends AbstractSimilarityMatcher {
             Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
             double threshold = Double.parseDouble(System.getenv().get("THRESHOLD_TFIDF"));
-            int limit = 10;
+            int limit = Integer.parseInt(System.getenv().get("EDGES_LIMIT"));
             matches = this.searchPremiseIndex(searcher, query, limit, threshold);
 
             for (Map<String,String> match : matches){

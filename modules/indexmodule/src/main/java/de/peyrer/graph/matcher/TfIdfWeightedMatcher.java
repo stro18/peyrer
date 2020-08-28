@@ -39,7 +39,7 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
         } else {
             Query query = parser.createBooleanQuery("premiseText", stringToMatch, BooleanClause.Occur.SHOULD);
 
-            int limit = 10;
+            int limit = Integer.parseInt(System.getenv().get("EDGES_LIMIT"));
             matches = this.searchPremiseIndex(searcher, query, limit, 0.0);
         }
 
