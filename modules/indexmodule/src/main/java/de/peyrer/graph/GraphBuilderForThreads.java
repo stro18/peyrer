@@ -46,7 +46,7 @@ public class GraphBuilderForThreads implements IGraphBuilder {
     }
 
     public IDirectedGraph buildWithConclusionIndex(String conclusionIndex) throws InterruptedException, InvalidSettingValueException {
-        if(graph instanceof JGraphTAdapter){
+        if(graph instanceof AbstractJGraphTAdapter){
             return buildJGraphT("", conclusionIndex);
         }
         return null;

@@ -93,7 +93,7 @@ public class MatchThread implements Callable<Integer> {
 
                 try {
                     if (weighted()) {
-                        graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), Integer.parseInt(match.get("score")));
+                        graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), Double.parseDouble(match.get("score")));
                     } else {
                         graph.addEdge(argument.id, match.get("argumentId"), String.valueOf(premiseId), 1);
                     }
