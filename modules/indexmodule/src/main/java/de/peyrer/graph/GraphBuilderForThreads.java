@@ -4,6 +4,7 @@ import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -74,7 +75,11 @@ public class GraphBuilderForThreads implements IGraphBuilder {
 
         scheduledExecutor.shutdownNow();
 
-        System.out.println("Number of edges: " + graph.getNumberOfEdges());
+        Map<String,String> analysis = graph.analyse();
+
+        for (Map.Entry<String, String> entry : analysis.entrySet()) {
+            System.out.println(entry.getKey() + entry.getValue());
+        }
 
         return graph;
     }
