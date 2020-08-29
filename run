@@ -11,4 +11,4 @@ done
 
 mkdir -p OUT_DIR
 
-docker-compose -f Docker/docker-compose.base.prod.yml -f Docker/docker-compose.application.prod.yml run -e IN_DIR="${IN_DIR}" -e OUT_DIR="${OUT_DIR}" searchengine
+docker-compose -f Docker/docker-compose.base.prod.yml -f Docker/docker-compose.application.prod.yml up -d
