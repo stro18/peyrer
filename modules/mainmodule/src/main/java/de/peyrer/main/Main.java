@@ -73,6 +73,8 @@ public class Main {
             return;
         }
 
+        System.out.println("Output path: " + OUTPUT_FILE_PATH);
+
         PrintWriter writer;
         try {
             writer = new PrintWriter(OUTPUT_FILE_PATH);
@@ -83,6 +85,8 @@ public class Main {
         }
 
         for(int i = 0; i < topics.getLength(); i++) {
+            System.out.println("Processing topic: " + (i + 1) );
+
             Element topic;
             if(topics.item(i) instanceof Element){
                 topic = (Element) topics.item(i);
@@ -116,6 +120,7 @@ public class Main {
             }
 
             writeResultsToOutputFile(writer, topicId, results);
+            System.out.println("Successful for topic: " + topic.getElementsByTagName("title").item(0).getTextContent());
         }
         writer.close();
     }
