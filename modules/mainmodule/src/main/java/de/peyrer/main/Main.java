@@ -54,6 +54,8 @@ public class Main {
             return;
         }
 
+        System.out.println("Started retrieval process!");
+
         IQueryBuilder queryBuilder = (FEATURE_FIELD_QUERY) ? new FeatureFieldQueryBuilder(QUERY_COEFFICIENT) : new DocValueFieldQueryBuilder(QUERY_COEFFICIENT);
         RetrievalModule retrievalModule = null;
         try {
@@ -123,6 +125,8 @@ public class Main {
             System.out.println("Successful for topic: " + topic.getElementsByTagName("title").item(0).getTextContent());
         }
         writer.close();
+
+        System.out.println("Finished retrieval process!");
     }
 
     private static NodeList readTopicsFromXml(String directory) throws Exception {
