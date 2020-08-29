@@ -5,6 +5,9 @@ import de.peyrer.repository.IArgumentRepository;
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.concurrent.AsSynchronizedGraph;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
@@ -63,15 +66,26 @@ public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
         Arrays.sort(pageRankValues);
         Double current = 0d;
         int count = 0;
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(String.format("/out/pagerank-distribution_%s.xml",
+                    java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        } catch (FileNotFoundException e) {
+            System.err.println("Cannot open output file for PageRank distribution logging.");
+        }
+        writer.println("<PageRanks>");
         for(Double pageRank : pageRankValues){
             if(pageRank.equals(current)){
                 count++;
             }else{
+                writer.println("<PageRank rank='" + current + "'>\n\t<Amount num='" + count + "' />\n</PageRank>\n");
                 System.out.println("Pagerank " + current + " occurs " + count + " times.");
                 current = pageRank;
                 count = 1;
             }
         }
+        writer.println("</PageRanks>");
+        writer.close();
     }
 
     @Override
