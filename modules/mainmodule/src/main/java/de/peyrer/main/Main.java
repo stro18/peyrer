@@ -55,6 +55,7 @@ public class Main {
         }
 
         System.out.println("Started retrieval process!");
+        System.out.println("Query coefficient: " + QUERY_COEFFICIENT);
 
         IQueryBuilder queryBuilder = (FEATURE_FIELD_QUERY) ? new FeatureFieldQueryBuilder(QUERY_COEFFICIENT) : new DocValueFieldQueryBuilder(QUERY_COEFFICIENT);
         RetrievalModule retrievalModule = null;
