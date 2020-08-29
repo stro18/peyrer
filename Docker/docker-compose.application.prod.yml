@@ -14,8 +14,6 @@ services:
             - ../.env
         environment:
             - ENV=PROD
-            - IN_DIR=${IN_DIR}
-            - OUT_DIR=${OUT_DIR}
         volumes:
             - /tmp:/tmp
             - /media:/media
