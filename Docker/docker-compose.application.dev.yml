@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+    searchengine:
+        build:
+            context: ..
+            dockerfile: Docker/Dockerfile
+        networks:
+            - bridge_network
+        depends_on:
+            - mongo
+        env_file:
+            - ../.env
+        environment:
+            - IN_DIR=/topics
+            - OUT_DIR=/out
+            - ENV=DEV
+        volumes:
+            - ../out:/out
+            - ../topics:/topics
+            - ../index:/usr/peyrer/index
+            - /usr/peyrer/tempIndex

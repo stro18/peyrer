@@ -5,13 +5,17 @@ services:
         build:
             context: ..
             dockerfile: Docker/Dockerfile
+        restart: always
         networks:
             - bridge_network
         depends_on:
             - mongo
         env_file:
             - ../.env
+        environment:
+            - ENV=PROD
         volumes:
-            - ../out:/out
+            - /tmp:/tmp
+            - /media:/media
             - ../index:/usr/peyrer/index
             - /usr/peyrer/tempIndex

@@ -26,13 +26,20 @@ public class Main {
 
     private static final boolean FEATURE_FIELD_QUERY = Boolean.parseBoolean(System.getenv("FEATURE_FIELD_QUERY"));
     private static final float QUERY_COEFFICIENT = Float.parseFloat(System.getenv("QUERY_COEFFICIENT"));
-    private static final String OUTPUT_FILE_PATH = String.format("/out/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    private static final String OUTPUT_FILE_PATH = System.getenv("OUT_DIR")
+            + ((System.getenv("ENV").equals("PROD")) ? "/run.txt" : String.format("/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
     private static final String OUTPUT_TAG = System.getenv("OUTPUT_TAG");
     private static final int RESULT_AMOUNT = Integer.parseInt(System.getenv("RESULT_AMOUNT"));
     private static final boolean INDEX_ARGUMENTS = Boolean.parseBoolean(System.getenv("INDEX_ARGUMENTS"));
+    private static final String TOPICS_FILE_PATH = System.getenv("IN_DIR") + "/topics.xml";
 
     public static void main (String[] args)
     {
+        if (System.getenv("FEATURE_FIELD_QUERY") == null) {
+            System.err.println("Env var missing");
+            System.exit(-1);
+        }
+
         String indexPath;
         try {
             Indexmodule indexmodule = new Indexmodule();
@@ -47,6 +54,9 @@ public class Main {
             return;
         }
 
+        System.out.println("Started retrieval process!");
+        System.out.println("Query coefficient: " + QUERY_COEFFICIENT);
+
         IQueryBuilder queryBuilder = (FEATURE_FIELD_QUERY) ? new FeatureFieldQueryBuilder(QUERY_COEFFICIENT) : new DocValueFieldQueryBuilder(QUERY_COEFFICIENT);
         RetrievalModule retrievalModule = null;
         try {
@@ -59,12 +69,14 @@ public class Main {
 
         NodeList topics;
         try {
-            topics = Main.readTopicsFromXml("topics/topicsTest.xml");
+            topics = Main.readTopicsFromXml(TOPICS_FILE_PATH);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
             return;
         }
+
+        System.out.println("Output path: " + OUTPUT_FILE_PATH);
 
         PrintWriter writer;
         try {
@@ -76,6 +88,8 @@ public class Main {
         }
 
         for(int i = 0; i < topics.getLength(); i++) {
+            System.out.println("Processing topic: " + (i + 1) );
+
             Element topic;
             if(topics.item(i) instanceof Element){
                 topic = (Element) topics.item(i);
@@ -84,7 +98,7 @@ public class Main {
                 System.exit(-1);
                 return;
             }
-            if(topic.getElementsByTagName("title").getLength() != 1 || topic.getElementsByTagName("number").getLength() != 1) {
+            if(topic.getElementsByTagName("title").getLength() != 1 || topic.getElementsByTagName("num").getLength() != 1) {
                 System.err.println("Input file has wrong format!");
                 System.exit(-1);
                 return;
@@ -101,7 +115,7 @@ public class Main {
 
             int topicId;
             try {
-                topicId = Integer.parseInt(topic.getElementsByTagName("number").item(0).getTextContent());
+                topicId = Integer.parseInt(topic.getElementsByTagName("num").item(0).getTextContent());
             } catch (NumberFormatException e) {
                 System.err.println("Input file has wrong format!");
                 System.exit(-1);
@@ -109,14 +123,15 @@ public class Main {
             }
 
             writeResultsToOutputFile(writer, topicId, results);
+            System.out.println("Successful for topic: " + topic.getElementsByTagName("title").item(0).getTextContent());
         }
         writer.close();
+
+        System.out.println("Finished retrieval process!");
     }
 
-    private static NodeList readTopicsFromXml(String ... directory) throws Exception {
-        String path = Main.buildSourcePath(directory);
-
-        File inputFile = new File(path);
+    private static NodeList readTopicsFromXml(String directory) throws Exception {
+        File inputFile = new File(directory);
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -126,17 +141,6 @@ public class Main {
         NodeList topicList = doc.getElementsByTagName("topic");
 
         return topicList;
-    }
-
-    private static String buildSourcePath(String ... directory){
-        Path wantedIndexPath = Paths.get(System.getProperty("user.dir"));
-
-        while(directory.length > 0 && directory[0].equals("..")){
-            wantedIndexPath = wantedIndexPath.getParent();
-            directory = Arrays.copyOfRange(directory, 1, directory.length);
-        }
-
-        return Paths.get(wantedIndexPath.toString(), directory).toString();
     }
 
     private static void writeResultsToOutputFile(PrintWriter writer, int topicId, Results results) {
