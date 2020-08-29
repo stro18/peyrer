@@ -25,7 +25,11 @@ public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
 
     public static String arguments_with_incoming_degree_at_least_two = "Number of arguments with at least incoming degree two: ";
 
-    public static String median_degree = "Median degree: ";
+    public static String median_degree = "Median incoming degree: ";
+
+    public static String highest_degree = "Highest incoming degree: ";
+
+    public static String argument_with_highest_degree = "Argument with highest incoming degree: ";
 
     protected AbstractJGraphTAdapter() {
         super();
@@ -121,6 +125,9 @@ public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
         int argumentsWithNullEdges = 0;
         int argumentsWithOneEdge = 0;
         int argumentsWithAtleastTwoEdges = 0;
+        int medianDegree = 0;
+        int highestDegree = 0;
+        String argumentWithHighestDegree = "";
 
         List<Integer> argumentsMedianDegree = new LinkedList<>();
         int numberOfArguments = 0;
@@ -144,22 +151,29 @@ public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
                 default:
                     argumentsWithAtleastTwoEdges++;
             }
+
+            if (incomingEdges > highestDegree) {
+                highestDegree = incomingEdges;
+                argumentWithHighestDegree = vertex;
+            }
         }
 
         averageNumberOfEdges = (double) numberOfEdges / numberOfArguments;
 
         Integer[] medianArray = argumentsMedianDegree.toArray(new Integer[0]);
         Arrays.sort(medianArray);
-        int median = medianArray[medianArray.length/2];
+        medianDegree = medianArray[medianArray.length/2];
 
         Map<String,String> result = new HashMap<>();
 
         result.put(number_of_edges, String.valueOf(numberOfEdges));
         result.put(average_number_of_edges, String.valueOf(averageNumberOfEdges));
-        result.put(median_degree, String.valueOf(median));
+        result.put(median_degree, String.valueOf(medianDegree));
         result.put(arguments_with_incoming_degree_zero, String.valueOf(argumentsWithNullEdges));
         result.put(arguments_with_incoming_degree_one, String.valueOf(argumentsWithOneEdge));
         result.put(arguments_with_incoming_degree_at_least_two, String.valueOf(argumentsWithAtleastTwoEdges));
+        result.put(highest_degree, String.valueOf(highestDegree));
+        result.put(argument_with_highest_degree, argumentWithHighestDegree);
 
         return result;
     }
