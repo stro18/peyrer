@@ -1,5 +1,6 @@
 package de.peyrer.graph;
 
+import de.peyrer.analyzermodule.AnalyzerModule;
 import de.peyrer.graph.matcher.BM25Matcher;
 import de.peyrer.graph.matcher.TfIdfMatcher;
 import de.peyrer.graph.matcher.TfIdfWeightedMatcher;
@@ -9,6 +10,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 
 public class MatchThread implements Callable<Integer> {
@@ -22,6 +24,8 @@ public class MatchThread implements Callable<Integer> {
     private final String conclusionIndexPath;
 
     private final Matcher matcher;
+
+    private boolean processPremises = false;
 
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
@@ -47,6 +51,7 @@ public class MatchThread implements Callable<Integer> {
                 break;
             case PHRASE_PREMISE:
                 this.matcher = new PhraseMatcherForPremises();
+                this.processPremises = true;
                 break;
             case TFIDF:
                 this.matcher = new TfIdfMatcher();
@@ -64,7 +69,7 @@ public class MatchThread implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        if (this.matcher instanceof PhraseMatcherForPremises) {
+        if (processPremises) {
             return this.processPremises();
 
         } else {
@@ -83,6 +88,7 @@ public class MatchThread implements Callable<Integer> {
             Iterable<Map<String,String>> matches;
             try {
                 matches = matcher.match();
+                this.logLengthWithScore(premise, matches);
             } catch (IOException | ParseException e) {
                 e.printStackTrace();
                 return 1;
@@ -116,6 +122,7 @@ public class MatchThread implements Callable<Integer> {
         Iterable<Map<String,String>> matches;
         try {
             matches = matcher.match();
+            this.logLengthWithScore(argument.conclusion, matches);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             return 1;
@@ -154,6 +161,37 @@ public class MatchThread implements Callable<Integer> {
                 return true;
             default:
                 throw new InvalidSettingValueException("The setting MATCHING=" + matcherType +  " is not allowed!");
+        }
+    }
+
+    private void logLengthWithScore(String stringToMatch, Iterable<Map<String,String>> matches) throws IOException
+    {
+        AnalyzerModule analyzerModule = new AnalyzerModule();
+        int wordsCount;
+        if (processPremises) {
+            wordsCount = new StringTokenizer(analyzerModule.analyze("conclusionText", stringToMatch)).countTokens();
+        } else {
+            wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
+        }
+
+        if (wordsCount <= 4 || wordsCount >= 10) {
+            int count = 0;
+            double sum = 0;
+            for (Map<String,String> match : matches) {
+                count++;
+                sum += match.get("score") == null ? 1 : Double.parseDouble(match.get("score"));
+            }
+
+            double average = Double.isNaN(sum/count) ? 0 : sum/count;
+
+            if (wordsCount <= 4) {
+                GraphBuilderForThreads.numberOfPhrasesWithLowLength++;
+                GraphBuilderForThreads.averageScoreForPhrasesWithLowLength += average;
+            } else {
+                // wordsCount >= 10
+                GraphBuilderForThreads.numberOfPhrasesWithHighLength++;
+                GraphBuilderForThreads.averageScoreForPhrasesWithHighLength += average;
+            }
         }
     }
 }

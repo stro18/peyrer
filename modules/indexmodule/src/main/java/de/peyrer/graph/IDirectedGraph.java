@@ -9,4 +9,6 @@ public interface IDirectedGraph {
     int getNumberOfEdges();
 
     Iterable<String[]> getOutgoingEdges(String vertex);
+
+    Map<String,String> analyse();
 }

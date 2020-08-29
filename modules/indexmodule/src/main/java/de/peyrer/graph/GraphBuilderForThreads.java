@@ -4,6 +4,7 @@ import de.peyrer.indexmodule.InvalidSettingValueException;
 import de.peyrer.model.Argument;
 import de.peyrer.repository.ArgumentRepository;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -14,6 +15,14 @@ public class GraphBuilderForThreads implements IGraphBuilder {
     private final AbstractDirectedGraph graph;
 
     private final ArgumentRepository repository;
+
+    public static int numberOfPhrasesWithLowLength;
+
+    public static double averageScoreForPhrasesWithLowLength;
+
+    public static int numberOfPhrasesWithHighLength;
+
+    public static double averageScoreForPhrasesWithHighLength;
 
     public GraphBuilderForThreads(IGraphBuilder.GraphType graphType) throws InvalidSettingValueException {
         this.repository = new ArgumentRepository();
@@ -74,7 +83,16 @@ public class GraphBuilderForThreads implements IGraphBuilder {
 
         scheduledExecutor.shutdownNow();
 
-        System.out.println("Number of edges: " + graph.getNumberOfEdges());
+        Map<String,String> analysis = graph.analyse();
+
+        for (Map.Entry<String, String> entry : analysis.entrySet()) {
+            System.out.println(entry.getKey() + entry.getValue());
+        }
+
+        System.out.println("Average score for the highest ranked matches for conclusions (or premises) with less than 5 words: "
+                + averageScoreForPhrasesWithLowLength / numberOfPhrasesWithLowLength);
+        System.out.println("Average score for the highest ranked matches for conclusions (or premises) with at least 10 words: "
+                + averageScoreForPhrasesWithHighLength / numberOfPhrasesWithHighLength);
 
         return graph;
     }
