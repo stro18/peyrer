@@ -32,6 +32,7 @@ public class Main {
     private static final int RESULT_AMOUNT = Integer.parseInt(System.getenv("RESULT_AMOUNT"));
     private static final boolean INDEX_ARGUMENTS = Boolean.parseBoolean(System.getenv("INDEX_ARGUMENTS"));
     private static final String TOPICS_FILE_PATH = System.getenv("IN_DIR") + "/topics.xml";
+    private static final String MATCHING = System.getenv("MATCHING");
 
     public static void main (String[] args)
     {
@@ -149,7 +150,7 @@ public class Main {
                 writeResultToOutputFile(writer,
                         topicId,
                         result,
-                        OUTPUT_TAG);
+                        OUTPUT_TAG + "_" + MATCHING + "_" + QUERY_COEFFICIENT);
             } catch (IOException e) {
                 System.err.println(String.format("An error occurred while writing to the output file: %s", e.getMessage()));
                 writer.close();
