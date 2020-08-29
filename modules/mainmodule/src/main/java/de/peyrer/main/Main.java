@@ -97,7 +97,7 @@ public class Main {
                 System.exit(-1);
                 return;
             }
-            if(topic.getElementsByTagName("title").getLength() != 1 || topic.getElementsByTagName("number").getLength() != 1) {
+            if(topic.getElementsByTagName("title").getLength() != 1 || topic.getElementsByTagName("num").getLength() != 1) {
                 System.err.println("Input file has wrong format!");
                 System.exit(-1);
                 return;
@@ -114,7 +114,7 @@ public class Main {
 
             int topicId;
             try {
-                topicId = Integer.parseInt(topic.getElementsByTagName("number").item(0).getTextContent());
+                topicId = Integer.parseInt(topic.getElementsByTagName("num").item(0).getTextContent());
             } catch (NumberFormatException e) {
                 System.err.println("Input file has wrong format!");
                 System.exit(-1);
