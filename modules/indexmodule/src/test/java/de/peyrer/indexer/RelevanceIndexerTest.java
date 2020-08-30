@@ -83,11 +83,15 @@ public class RelevanceIndexerTest {
         }
         IndexSearcher isearcher = new IndexSearcher(ireader);
 
+        AnalyzerModule analyzerModule = new AnalyzerModule();
         // Creates a boolean query that searches for "regulated militia":
-        CharArraySet stopSet = new CharArraySet(new AnalyzerModule().getStopwords(), true);
-        Analyzer analyzer = new StandardAnalyzer(stopSet);
-        QueryParser parser = new QueryParser("conclusion", analyzer);
-        Query query = parser.createBooleanQuery("conclusion", "Abortion is bad", BooleanClause.Occur.MUST);
+        QueryParser parser = new QueryParser("conclusion", analyzerModule.getAnalyzer());
+        Query query = null;
+        try {
+            query = parser.createBooleanQuery("conclusion", analyzerModule.analyze("conclusion", "Abortion is bad"), BooleanClause.Occur.MUST);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         SortField sortField = new SortField("relevance", SortField.Type.DOUBLE, true);
         Sort sortByRelevance = new Sort(sortField);

@@ -78,11 +78,15 @@ public class ConclusionIndexerTest {
         }
         IndexSearcher isearcher = new IndexSearcher(ireader);
 
+        AnalyzerModule analyzerModule = new AnalyzerModule();
         // Creates a boolean query that searches for "regulated militia":
-        CharArraySet stopSet = new CharArraySet(new AnalyzerModule().getStopwords(), true);
-        Analyzer analyzer = new StandardAnalyzer(stopSet);
-        QueryParser parser = new QueryParser("conclusionText", analyzer);
-        Query query = parser.createBooleanQuery("conclusionText", "Abortion is bad", BooleanClause.Occur.MUST);
+        QueryParser parser = new QueryParser("conclusionText", analyzerModule.getAnalyzer());
+        Query query = null;
+        try {
+            query = parser.createBooleanQuery("conclusionText", analyzerModule.analyze("conclusionText", "Abortion is bad"), BooleanClause.Occur.MUST);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ScoreDoc[] hits = new ScoreDoc[0];
 

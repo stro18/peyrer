@@ -22,11 +22,14 @@ public class ConclusionIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
+    private AnalyzerModule analyzerModule;
+
     public ConclusionIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
         this.indexPath = this.createIndexDirectory(directory);
 
+        this.analyzerModule = new AnalyzerModule();
         Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
@@ -39,27 +42,18 @@ public class ConclusionIndexer extends AbstractIndexer {
         Iterable<Argument> arguments = argumentRepository.readAll();
 
         for(Argument argument : arguments){
+            String conclusion = analyzerModule.analyze("conclusionText", argument.conclusion);
+
             Document doc = new Document();
 
             // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
             doc.add(new StoredField("argumentId", argument.id));
 
-            String conclusion;
-            String matching = System.getenv().get("MATCHING");
-            // Necessary for Phrase-Matching with stopwords, see: https://stackoverflow.com/questions/31719249/how-to-query-a-phrase-with-stopwords-in-elasticsearch
-            if (matching != null && (matching.equals("PHRASE_PREMISE"))) {
-                conclusion = new AnalyzerModule().analyze("premiseText", argument.conclusion);
-            } else {
-                conclusion = argument.conclusion;
-            }
-
             // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
             doc.add(new TextField("conclusionText", conclusion, Field.Store.YES));
 
             if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")){
-                AnalyzerModule analyzerModule = new AnalyzerModule();
-                String resultString = analyzerModule.analyze("conclusionText", argument.conclusion);
-                argumentRepository.updateConclusionNormalized(argument.id, resultString);
+                argumentRepository.updateConclusionNormalized(argument.id, conclusion);
             }
 
             indexWriter.addDocument(doc);

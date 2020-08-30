@@ -1,5 +1,6 @@
 package de.peyrer.analyzermodule;
 
+import opennlp.tools.stemmer.PorterStemmer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AnalyzerModule {
 
@@ -21,7 +23,7 @@ public class AnalyzerModule {
     }
 
     public Analyzer getAnalyzer(){
-        return analyzer;
+        return new StandardAnalyzer();
     }
 
     public List<String> getStopwords() {
@@ -44,6 +46,10 @@ public class AnalyzerModule {
         stream.end();
         stream.close();
 
-        return String.join(" ", result);
+        PorterStemmer stemmer = new PorterStemmer();
+
+        String stemmed = result.stream().map(s -> stemmer.stem(s)).collect(Collectors.joining(" "));
+
+        return stemmed;
     }
 }

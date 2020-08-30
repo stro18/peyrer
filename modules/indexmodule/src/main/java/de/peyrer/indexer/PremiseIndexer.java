@@ -28,6 +28,8 @@ public class PremiseIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
+    private AnalyzerModule analyzerModule;
+
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";
     private static final String TFIDF = "TFIDF";
@@ -39,7 +41,8 @@ public class PremiseIndexer extends AbstractIndexer {
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
+        this.analyzerModule = new AnalyzerModule();
+        Analyzer analyzer = analyzerModule.getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 
@@ -72,16 +75,13 @@ public class PremiseIndexer extends AbstractIndexer {
         for(Argument argument : arguments){
             int premiseId = 0;
             for(String premise : argument.premises){
+                premise = analyzerModule.analyze("premiseText", premise);
+
                 Document doc = new Document();
 
                 // A field whose value is stored (not indexed) so that IndexSearcher.doc(int) will return the field and its value.
                 doc.add(new StoredField("argumentId", argument.id));
                 doc.add(new StoredField("premiseId", Integer.toString(premiseId)));
-
-                // Necessary for Phrase-Matching with stopwords, see: https://stackoverflow.com/questions/31719249/how-to-query-a-phrase-with-stopwords-in-elasticsearch
-                if (matching != null && (matching.equals("PHRASE"))) {
-                    premise = new AnalyzerModule().analyze("premiseText",premise);
-                }
 
                 // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
                 doc.add(new TextField("premiseText", premise, Field.Store.YES));
