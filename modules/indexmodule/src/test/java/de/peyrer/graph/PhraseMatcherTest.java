@@ -1,38 +1,26 @@
 package de.peyrer.graph;
 
 import de.peyrer.analyzermodule.AnalyzerModule;
-import de.peyrer.indexmodule.Indexmodule;
-import de.peyrer.model.Argument;
-import de.peyrer.repository.ArgumentRepository;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.*;
 
 public class PhraseMatcherTest {
 
@@ -48,7 +36,7 @@ public class PhraseMatcherTest {
     }
 
     @Test
-    public void testMatch(){
+    public void testMatch() {
         Iterable<Map<String,String>> result = null;
         IndexWriter iw = null;
         Map<String,String> premise = new HashMap<String,String>();
@@ -56,8 +44,14 @@ public class PhraseMatcherTest {
         premise.put("2","Abortion is Murder");
         premise.put("3","Abortion is the murder");
 
+        AnalyzerModule analyzerModule = new AnalyzerModule();
         matcher.setArgumentId("4");
-        matcher.setStringToMatch("Abortion is murder");
+
+        try {
+            matcher.setStringToMatch(analyzerModule.analyze("premiseText", "Abortion is murder"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Document doc1 = new Document();
         doc1.add(new StoredField("argumentId", 1));

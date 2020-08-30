@@ -25,6 +25,8 @@ public class MatchThread implements Callable<Integer> {
 
     private final Matcher matcher;
 
+    private final AnalyzerModule analyzerModule;
+
     private boolean processPremises = false;
 
     private static final String AND = "AND";
@@ -40,6 +42,7 @@ public class MatchThread implements Callable<Integer> {
         this.argument = argument;
         this.premiseIndexPath = premiseIndexPath;
         this.conclusionIndexPath = conclusionIndexPath;
+        this.analyzerModule = new AnalyzerModule();
 
         String matcherType = System.getenv().get("MATCHING");
         switch(matcherType){
@@ -83,6 +86,12 @@ public class MatchThread implements Callable<Integer> {
 
         int premiseId = 0;
         for (String premise : argument.premises) {
+            try {
+                premise = analyzerModule.analyze("conclusionText", premise);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             matcher.setStringToMatch(premise);
 
             Iterable<Map<String,String>> matches;
@@ -115,14 +124,22 @@ public class MatchThread implements Callable<Integer> {
         return 0;
     }
 
-    private Integer processConclusion(){
-        matcher.setStringToMatch(argument.conclusion);
+    private Integer processConclusion()
+    {
+        String conclusion = null;
+        try {
+            conclusion = analyzerModule.analyze("premiseText", argument.conclusion);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        matcher.setStringToMatch(conclusion);
         matcher.setDirectoryName(premiseIndexPath);
 
         Iterable<Map<String,String>> matches;
         try {
             matches = matcher.match();
-            this.logLengthWithScore(argument.conclusion, matches);
+            this.logLengthWithScore(conclusion, matches);
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             return 1;
@@ -166,13 +183,7 @@ public class MatchThread implements Callable<Integer> {
 
     private void logLengthWithScore(String stringToMatch, Iterable<Map<String,String>> matches) throws IOException
     {
-        AnalyzerModule analyzerModule = new AnalyzerModule();
-        int wordsCount;
-        if (processPremises) {
-            wordsCount = new StringTokenizer(analyzerModule.analyze("conclusionText", stringToMatch)).countTokens();
-        } else {
-            wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
-        }
+        int wordsCount = new StringTokenizer(stringToMatch).countTokens();
 
         if (wordsCount <= 4 || wordsCount >= 10) {
             int count = 0;

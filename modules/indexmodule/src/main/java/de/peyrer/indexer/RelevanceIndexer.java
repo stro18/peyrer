@@ -25,12 +25,15 @@ public class RelevanceIndexer extends AbstractRelevanceIndexer {
 
     IndexWriterConfig config;
 
+    private AnalyzerModule analyzerModule;
+
     public RelevanceIndexer(String ... directory) throws IOException {
         this.argumentRepository = new ArgumentRepository();
 
         this.indexPath = this.createIndexDirectory(directory);
 
-        Analyzer analyzer = (new AnalyzerModule()).getAnalyzer();
+        this.analyzerModule = new AnalyzerModule();
+        Analyzer analyzer = analyzerModule.getAnalyzer();
         this.config = new IndexWriterConfig(analyzer);
     }
 
@@ -43,6 +46,7 @@ public class RelevanceIndexer extends AbstractRelevanceIndexer {
 
         for(Argument argument : arguments){
             double relevance = this.relevance.get(argument.id);
+            String conclusion = analyzerModule.analyze("conclusion", argument.conclusion);
 
             Document doc = new Document();
 
@@ -58,7 +62,7 @@ public class RelevanceIndexer extends AbstractRelevanceIndexer {
                     (float) (1-AbstractDirectedGraph.dampingFactor) : (float) relevance));
 
             // A field that is indexed and tokenized, without term vectors. Additionally it is stored without being tokenized.
-            doc.add(new TextField("conclusion", argument.conclusion, Field.Store.YES));
+            doc.add(new TextField("conclusion", conclusion, Field.Store.YES));
 
             indexWriter.addDocument(doc);
         }
