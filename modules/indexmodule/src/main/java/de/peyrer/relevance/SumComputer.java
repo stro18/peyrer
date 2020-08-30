@@ -63,6 +63,8 @@ public class SumComputer extends AbstractRelevanceComputer
 
 		this.normalizeRelevance(relevanceMap, relevanceMap.size());
 
+		this.logRelevanceData(relevanceMap);
+
 		if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")) {
 			this.saveRelevance(relevanceMap);
 		}
