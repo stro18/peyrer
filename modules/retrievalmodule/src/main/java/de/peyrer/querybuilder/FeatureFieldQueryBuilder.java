@@ -18,15 +18,14 @@ public class FeatureFieldQueryBuilder extends AbstractQueryBuilder {
 	@Override
 	public Query getQuery(String queryString) throws ParseException {
 		Query originalQuery = this.getOriginalQuery(queryString);
-		Query featureQuery = this.createFeatureQuery();
-		Query query = new BooleanQuery.Builder()
-				.add(originalQuery, Occur.MUST)
-				.add(new BoostQuery(featureQuery, this.coefficient), Occur.SHOULD)
-				.build();
+		BooleanQuery.Builder builder = new BooleanQuery.Builder()
+				.add(originalQuery, Occur.MUST);
+		if(!Boolean.parseBoolean(System.getenv("BASELINE"))) builder.add(this.createFeatureQuery(this.coefficient), Occur.SHOULD);
+		Query query = builder.build();
 		return query;
 	}
 
-	private Query createFeatureQuery() {
-		return FeatureField.newSaturationQuery("feature", "relevance");
+	private Query createFeatureQuery(float weight) {
+		return FeatureField.newLogQuery("feature", "relevance", weight, 1);
 	}
 }
