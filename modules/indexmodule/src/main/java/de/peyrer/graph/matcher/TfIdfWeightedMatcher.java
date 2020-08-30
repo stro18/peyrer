@@ -31,7 +31,7 @@ public class TfIdfWeightedMatcher extends AbstractSimilarityMatcher
         Analyzer analyzer = analyzerModule.getAnalyzer();
         QueryParser parser = new QueryParser("premiseText", analyzer);
 
-        int wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
+        int wordsCount = new StringTokenizer(stringToMatch).countTokens();
 
         Iterable<Map<String, String>> matches;
         if (wordsCount == 0) {

@@ -33,24 +33,19 @@ public class PhraseMatcher extends AbstractMatcher {
         this.searcher = new IndexSearcher(iReader);
 
         AnalyzerModule analyzerModule = new AnalyzerModule();
-        Analyzer analyzer = analyzerModule.getAnalyzer();
-        this.parser = new QueryParser("premiseText", analyzer);
+        this.parser = new QueryParser("premiseText", analyzerModule.getAnalyzer());
 
-        int wordsCount = new StringTokenizer(analyzerModule.analyze("premiseText", stringToMatch)).countTokens();
+        int wordsCount = new StringTokenizer(stringToMatch).countTokens();
 
         LinkedList<Map<String,String>> result = new LinkedList<>();
         if (wordsCount != 0) {
-            Query query = this.parser.createPhraseQuery("premiseText", analyzerModule.analyze("premiseText", stringToMatch));
+            Query query = this.parser.createPhraseQuery("premiseText", stringToMatch);
 
-            int matchNumber = this.searcher.count(query);
-            if (matchNumber == 0) {
-                return result;
-            }
-            ScoreDoc[] hits = this.searcher.search(query, matchNumber).scoreDocs;
+            ScoreDoc[] hits = this.searcher.search(query, 100).scoreDocs;
 
             for (int i = 0; i < hits.length; i++) {
                 Document doc = this.searcher.doc(hits[i].doc);
-                if (new AnalyzerModule().analyze("premiseText", stringToMatch).length() == new AnalyzerModule().analyze("premiseText", doc.get("premiseText")).length()) {
+                if (wordsCount == new StringTokenizer(doc.get("premiseText")).countTokens()) {
                     Map<String, String> match = new HashMap<>();
                     match.put("argumentId", doc.get("argumentId"));
                     match.put("premiseId", doc.get("premiseId"));
