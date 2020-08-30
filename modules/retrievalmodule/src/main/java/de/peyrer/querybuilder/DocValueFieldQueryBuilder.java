@@ -8,6 +8,8 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SortField;
 
+import java.io.IOException;
+
 public class DocValueFieldQueryBuilder extends AbstractQueryBuilder {
 
 	private float coefficient = 1.0f;
@@ -17,7 +19,7 @@ public class DocValueFieldQueryBuilder extends AbstractQueryBuilder {
 	}
 	
 	@Override
-	public Query getQuery(String queryString) throws ParseException {
+	public Query getQuery(String queryString) throws ParseException, IOException {
 		Expression expr;
 		try {
 			expr = JavascriptCompiler.compile(coefficient + " * relevance");
