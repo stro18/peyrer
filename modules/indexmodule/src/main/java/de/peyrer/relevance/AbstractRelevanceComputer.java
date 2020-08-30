@@ -2,6 +2,7 @@ package de.peyrer.relevance;
 
 import de.peyrer.repository.ArgumentRepository;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public abstract class AbstractRelevanceComputer implements IRelevanceComputer
@@ -27,6 +28,24 @@ public abstract class AbstractRelevanceComputer implements IRelevanceComputer
         }
 
         return relevanceMap;
+    }
+
+    protected void logRelevanceData(Map<String, Double> relevanceMap)
+    {
+        double sum = 0;
+        int counter = 0;
+        for (Map.Entry<String, Double> relevance : relevanceMap.entrySet()){
+            counter++;
+            sum += relevance.getValue();
+        }
+
+        System.out.println("Average relevance: " + sum/counter);
+
+        Double[] medianArray = relevanceMap.values().toArray(new Double[0]);
+        Arrays.sort(medianArray);
+        double medianRelevance = medianArray[medianArray.length/2];
+
+        System.out.println("Median relevance: " + medianRelevance);
     }
 
     protected void saveRelevance(Map<String,Double> relevanceMap)
