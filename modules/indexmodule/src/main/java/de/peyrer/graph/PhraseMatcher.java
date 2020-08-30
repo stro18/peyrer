@@ -41,7 +41,7 @@ public class PhraseMatcher extends AbstractMatcher {
         if (wordsCount != 0) {
             Query query = this.parser.createPhraseQuery("premiseText", stringToMatch);
 
-            ScoreDoc[] hits = this.searcher.search(query, 100).scoreDocs;
+            ScoreDoc[] hits = this.searcher.search(query, 1000).scoreDocs;
 
             for (int i = 0; i < hits.length; i++) {
                 Document doc = this.searcher.doc(hits[i].doc);
