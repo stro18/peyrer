@@ -26,13 +26,15 @@ public class Main {
 
     private static final boolean FEATURE_FIELD_QUERY = Boolean.parseBoolean(System.getenv("FEATURE_FIELD_QUERY"));
     private static final float QUERY_COEFFICIENT = Float.parseFloat(System.getenv("QUERY_COEFFICIENT"));
+    private static final String MATCHING = System.getenv("MATCHING");
+    private static final String OUTPUT_TAG = System.getenv("OUTPUT_TAG")
+            + "_" + MATCHING
+            + "_" + ((!Boolean.parseBoolean(System.getenv("BASELINE"))) ? QUERY_COEFFICIENT : "0.0");
     private static final String OUTPUT_FILE_PATH = System.getenv("OUT_DIR")
-            + ((System.getenv("ENV").equals("PROD")) ? "/run.txt" : String.format("/out_%s.trec", java.time.ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-    private static final String OUTPUT_TAG = System.getenv("OUTPUT_TAG");
+            + ((System.getenv("ENV").equals("PROD")) ? "/run.txt" : String.format("/out-%s.trec", OUTPUT_TAG));
     private static final int RESULT_AMOUNT = Integer.parseInt(System.getenv("RESULT_AMOUNT"));
     private static final boolean INDEX_ARGUMENTS = Boolean.parseBoolean(System.getenv("INDEX_ARGUMENTS"));
     private static final String TOPICS_FILE_PATH = System.getenv("IN_DIR") + "/topics.xml";
-    private static final String MATCHING = System.getenv("MATCHING");
 
     public static void main (String[] args)
     {
@@ -145,12 +147,13 @@ public class Main {
     }
 
     private static void writeResultsToOutputFile(PrintWriter writer, int topicId, Results results) {
+        boolean baseline = Boolean.parseBoolean(System.getenv("BASELINE"));
         for(Result result : results) {
             try {
                 writeResultToOutputFile(writer,
                         topicId,
                         result,
-                        OUTPUT_TAG + "_" + MATCHING + "_" + QUERY_COEFFICIENT);
+                        OUTPUT_TAG);
             } catch (IOException e) {
                 System.err.println(String.format("An error occurred while writing to the output file: %s", e.getMessage()));
                 writer.close();
