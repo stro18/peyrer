@@ -28,7 +28,7 @@ public class PremiseIndexer extends AbstractIndexer {
 
     IndexWriterConfig config;
 
-    private AnalyzerModule analyzerModule;
+    private final AnalyzerModule analyzerModule;
 
     private static final String AND = "AND";
     private static final String PHRASE = "PHRASE";

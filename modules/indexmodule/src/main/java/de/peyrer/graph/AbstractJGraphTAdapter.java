@@ -42,9 +42,7 @@ public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
     {
         Map<String,Double> pageRankScores = pageRanker.getScores();
 
-        if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")) {
-            this.logPageRank(pageRankScores);
-        }
+        this.logPageRank(pageRankScores);
 
         if (System.getenv().get("DEBUG") != null && System.getenv().get("DEBUG").equals("1")) {
             System.out.println("Saving of pageRank started at : " + java.time.ZonedDateTime.now());
@@ -63,15 +61,24 @@ public abstract class AbstractJGraphTAdapter extends AbstractDirectedGraph {
         Arrays.sort(pageRankValues);
         Double current = 0d;
         int count = 0;
+        int other = 0;
+        int otherCount = 0;
         for(Double pageRank : pageRankValues){
             if(pageRank.equals(current)){
                 count++;
             }else{
-                System.out.println("Pagerank " + current + " occurs " + count + " times.");
+                if (count > 10 || current == 0) {
+                    System.out.println("Pagerank " + current + " occurs " + count + " times.");
+                } else {
+                    other++;
+                    otherCount += count;
+                }
                 current = pageRank;
                 count = 1;
             }
         }
+        System.out.println("Maximum Pagerank " + current + " occurs " + count + " times.");
+        System.out.println(other + " other pageranks occur altogether " + otherCount + " times.");
     }
 
     @Override
