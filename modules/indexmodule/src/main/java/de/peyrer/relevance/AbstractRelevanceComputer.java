@@ -46,6 +46,27 @@ public abstract class AbstractRelevanceComputer implements IRelevanceComputer
         double medianRelevance = medianArray[medianArray.length/2];
 
         System.out.println("Median relevance: " + medianRelevance);
+
+        Double current = 0d;
+        int count = 0;
+        int other = 0;
+        int otherCount = 0;
+        for(Double relevance : medianArray){
+            if(relevance.equals(current)){
+                count++;
+            }else{
+                if (count > 10 || current == 0) {
+                    System.out.println("Relevance " + current + " occurs " + count + " times.");
+                } else {
+                    other++;
+                    otherCount += count;
+                }
+                current = relevance;
+                count = 1;
+            }
+        }
+        System.out.println("Maximum relevance " + current + " occurs " + count + " times.");
+        System.out.println(other + " other relevances occur altogether " + otherCount + " times.");
     }
 
     protected void saveRelevance(Map<String,Double> relevanceMap)
