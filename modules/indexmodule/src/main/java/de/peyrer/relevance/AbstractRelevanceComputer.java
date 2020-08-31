@@ -30,6 +30,27 @@ public abstract class AbstractRelevanceComputer implements IRelevanceComputer
         return relevanceMap;
     }
 
+    protected Map<String, Double> normalizeRelevanceMaximum(Map<String, Double> relevanceMap)
+    {
+        double sum = 0;
+        int count = 0;
+        for (Map.Entry<String, Double> relevance : relevanceMap.entrySet()){
+            count++;
+            sum += relevance.getValue();
+        }
+
+        double normalize = sum/count;
+
+        for (Map.Entry<String, Double> relevance : relevanceMap.entrySet()){
+            double newValue = relevance.getValue() / normalize;
+            newValue = newValue <= 10 ? newValue : 10;
+
+            relevance.setValue(newValue);
+        }
+
+        return relevanceMap;
+    }
+
     protected void logRelevanceData(Map<String, Double> relevanceMap)
     {
         double sum = 0;

@@ -61,7 +61,7 @@ public class SumComputer extends AbstractRelevanceComputer
 			relevanceMap.put(node.getKey(), relevanceSum);
 		}
 
-		this.normalizeRelevance(relevanceMap, relevanceMap.size());
+		relevanceMap = this.normalizeRelevanceMaximum(relevanceMap);
 
 		this.logRelevanceData(relevanceMap);
 
