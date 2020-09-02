@@ -1,2 +1,16 @@
 /.idea
-peyrer.iml
+*.iml
+**/target
+argument_ndjson/*
+argument_ndjson
+raw_data/*
+**/index
+**/.settings
+**/.project
+**/.classpath
+**/premiseindex
+**/conclusionindex
+**/relevanceindex
+**/testindex
+/Docker/docker-compose.debug.yml
+/out/

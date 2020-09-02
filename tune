@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for i in $(LC_NUMERIC=en seq 0.1 0.1 3); do
+    echo "Weight: ${i}";
+    docker-compose -f Docker/docker-compose.base.dev.yml \
+    -f Docker/docker-compose.application.dev.yml \
+    run -e QUERY_COEFFICIENT="${i}" searchengine;
+done
