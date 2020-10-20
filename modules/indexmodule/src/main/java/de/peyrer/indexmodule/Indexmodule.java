@@ -7,6 +7,7 @@ import de.peyrer.relevance.SumComputer;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,9 +31,9 @@ public class Indexmodule implements IIndexmodule {
     private static final String BM25 = "BM25";
 
     @Override
-    public String getIndexPath(){
-        Path path = Paths.get(System.getProperty("user.dir"), "index");
-        if(Files.exists(path)){
+    public String getIndexPath() throws IOException {
+        if(this.indexExist("index")){
+            Path path = Paths.get(System.getProperty("user.dir"), "index");
             return path.toString();
         }else{
             return null;
@@ -190,8 +191,14 @@ public class Indexmodule implements IIndexmodule {
         }
     }
 
-    private boolean indexExist(String ... path){
+    private boolean indexExist(String ... path) throws IOException {
         Path pathObject = Paths.get(System.getProperty("user.dir"), path);
-        return Files.exists(pathObject);
+        if (Files.isDirectory(pathObject)) {
+            try (DirectoryStream<Path> directory = Files.newDirectoryStream(pathObject)) {
+                return directory.iterator().hasNext();
+            }
+        }
+
+        return false;
     }
 }
