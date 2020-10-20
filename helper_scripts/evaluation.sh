@@ -10,6 +10,6 @@ esac
 done
 for f in "${RESULT_DIR}/${RESULT_FILE_PREFIX}"*.trec; do
   echo "${f}"
-     ../trec_eval/trec_eval -m ndcg_cut.5,10 "${QREL_FILE}" "${f}"
+     ../../trec_eval/trec_eval -m ndcg_cut.5,10 "${QREL_FILE}" "${f}"
   echo ""
 done
