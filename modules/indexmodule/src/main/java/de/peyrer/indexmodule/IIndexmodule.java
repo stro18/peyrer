@@ -9,5 +9,5 @@ public interface IIndexmodule {
 
     public void indexWithRelevance() throws IOException, InvalidSettingValueException, InterruptedException, ParseException;
 
-    public String getIndexPath();
+    public String getIndexPath() throws IOException;
 }
