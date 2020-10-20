@@ -5,7 +5,10 @@ It uses an adaption of the original PageRank algorithm to rank the arguments of 
 build the argument graph, the search engine employs several "matching" methods to find conclusions and premises of 
 arguments that contain the same core statement.        
 You can find more detailed information about our approach in our paper 'Applying “PageRank for Argument Relevance” to 
-the args.me Corpus'.
+the args.me Corpus'.  
+  
+Prerequisites:  
+You need to have Docker and Docker-Compose installed on your local machine.  
 
 Quick start:  
 1. Put your .ndjson files into the directory $YOUR_PROJECT_DIR/argument_ndjson. For example, you can generate these 
@@ -25,6 +28,7 @@ Quit database server and application:
 Important Notes:  
 * Currently, available 'matching' methods are Identity, TFIDF and BM25. You can change that method and other settings 
 inside the .env file.
+* This argument search engine is built mainly with Java, Apache Lucene and MongoDB.  
 * Please pay attention to your runtime environment, as there are duplicate docker files for production environment.
-* The use of this argument search engine is not restricted to the args.me corpus. The only condition for your arguments is that 
-they contain a part for the conclusion and one for premises.
+* The use of this argument search engine is not restricted to the args.me corpus. The only condition for the argument
+structure is that it must contain a part for the conclusion and one for premises.
