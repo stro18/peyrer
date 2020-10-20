@@ -7,10 +7,10 @@ arguments that contain the same core statement.
 You can find more detailed information about our approach in our paper 'Applying “PageRank for Argument Relevance” to 
 the args.me Corpus'.  
   
-Prerequisites:  
+**Prerequisites:**  
 You need to have Docker and Docker-Compose installed on your local machine.  
 
-Quick start:  
+**Quick start:**  
 1. Put your .ndjson files into the directory $YOUR_PROJECT_DIR/argument_ndjson. You may generate these 
 files by using the provided json_conversion script.
 2. `cd $YOUR_PROJECT_DIR/Docker`  
@@ -26,7 +26,7 @@ Show logs:
 Quit database server and application:  
 `docker-compose -f docker-compose.base.dev.yml -f docker-compose.application.dev.yml down --remove-orphans`  
 
-Important Notes:  
+**Important Notes:**  
 * Currently, available 'matching' methods are Identity, TFIDF and BM25. You can change that method and other settings 
 inside the .env file.
 * This argument search engine is built mainly with Java 11, Apache Lucene and MongoDB.  
