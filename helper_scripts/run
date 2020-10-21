@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# script for starting search engine on TIRA
+# e.g. ./run -i ../topics -o ../out
+
 while getopts i:o: option
 do
 case "${option}"
